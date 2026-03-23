@@ -86,7 +86,7 @@ export default function ProcessStepper() {
           <button
             key={step.path}
             onClick={() => i <= currentStep && navigate(step.path)}
-            className={`w-full p-3 rounded-md border text-left transition-all duration-300 ${styles.card} ${state === "active" ? "scale-[1.02]" : "hover:border-primary/50"
+            className={`w-full p-3 rounded-lg border text-left transition-all duration-300 ${styles.card} ${state === "active" ? "scale-[1.02]" : "hover:border-primary/50"
               }`}
           >
             <div className="flex items-center gap-1.5">

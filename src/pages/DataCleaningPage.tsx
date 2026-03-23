@@ -160,6 +160,7 @@ export function DataCleaningPage() {
 
   const [history, setHistory] = useState<Record<string, any>[][]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
+  const [serverRedoAvailable, setServerRedoAvailable] = useState(0);
 
   const [currentPage, setCurrentPage] = useState(0);
   const [fetchingPage, setFetchingPage] = useState(false);
@@ -322,7 +323,7 @@ export function DataCleaningPage() {
   }, [historyIndex]);
 
   const canUndo = historyIndex > 0;
-  const canRedo = historyIndex < history.length - 1;
+  const canRedo = (historyIndex < history.length - 1) || serverRedoAvailable > 0;
 
   const availableIssueTypes = useMemo(() => {
     if (issueTypes.length) return issueTypes;
@@ -394,6 +395,10 @@ export function DataCleaningPage() {
     if (!sid) return null;
 
     const payload = await api.refreshedData(sid);
+
+    if (typeof payload.redo_available === 'number') {
+      setServerRedoAvailable(payload.redo_available);
+    }
 
     if (payload.issues) {
       processIssuesData(payload.issues);
@@ -670,76 +675,6 @@ export function DataCleaningPage() {
     }
   }, []);
 
-  const handleUndoStable = useCallback(async () => {
-    try {
-      const sid = getActiveSessionId();
-      if (sid) {
-        // Capture current state before rollback for possible Redo
-        const stateBeforeUndo = JSON.parse(JSON.stringify(allRows));
-        const editLogBeforeUndo = JSON.parse(JSON.stringify(editLog));
-
-        await api.rollback(sid, 1);
-        sessionStartRequestCache.delete(sid); // Clear cache on rollback
-        if (canUndo) {
-          const idx = historyIndex - 1;
-          const rows = history[idx];
-          setHistoryIndex(idx);
-          setAllRows(rows);
-          setEditLog(historyEditLog[idx] ?? []);
-          await resetVirtualRows(rows);
-        }
-
-        // Always refresh from server to ensure issues and state are in sync after rollback
-        const issueRows = await loadSessionStartIssues(sid);
-        if (issueRows?.length) {
-          const refreshedRows = issueRows.map((r: IssueRow) => ({ ...r.data, __rowIndex: r.row_index }));
-          setAllRows(refreshedRows);
-          await resetVirtualRows(refreshedRows);
-        }
-
-        addActivityLog({ kind: 'action', actor: 'user', title: 'Undo', description: 'Reverted last change' });
-        toast.success('Undo completed successfully.');
-      }
-    } catch (error) {
-      showApiErrorToast(error, 'Failed to undo');
-    }
-  }, [canUndo, history, historyIndex, allRows, editLog, resetVirtualRows, historyEditLog, addActivityLog, getActiveSessionId, refreshRowsFromSession]);
-
-  const handleRedoStable = useCallback(async () => {
-    if (!canRedo) return;
-    try {
-      const idx = historyIndex + 1;
-      const nextRows = history[idx];
-
-      const sid = getActiveSessionId();
-      if (sid) {
-        await api.redo(sid, 1);
-        sessionStartRequestCache.delete(sid); // Clear cache on redo
-      }
-
-      setHistoryIndex(idx);
-      setAllRows(nextRows);
-      setEditLog(historyEditLog[idx] ?? []);
-
-      // Refresh from server after redo to sync issues
-      if (sid) {
-        const issueRows = await loadSessionStartIssues(sid);
-        if (issueRows?.length) {
-          const refreshedRows = issueRows.map((r: IssueRow) => ({ ...r.data, __rowIndex: r.row_index }));
-          setAllRows(refreshedRows);
-          await resetVirtualRows(refreshedRows);
-        }
-      }
-
-      addActivityLog({ kind: 'action', actor: 'user', title: 'Redo', description: 'Reapplied reverted change' });
-
-      await resetVirtualRows(nextRows);
-      toast.success('Redo completed successfully.');
-    } catch (error) {
-      showApiErrorToast(error, 'Failed to redo');
-    }
-  }, [canRedo, history, historyIndex, resetVirtualRows, historyEditLog, addActivityLog, getActiveSessionId]);
-
   const loadSessionStartIssues = useCallback(async (sessionId: string, forceRefresh = false) => {
     try {
       let request;
@@ -752,6 +687,11 @@ export function DataCleaningPage() {
         sessionStartRequestCache.set(sessionId, request);
       }
       const payload = await request;
+
+      if (typeof payload.redo_available === 'number') {
+        setServerRedoAvailable(payload.redo_available);
+      }
+
       const rows = payload.issues?.rows || [];
 
       if (payload.issues) {
@@ -775,7 +715,89 @@ export function DataCleaningPage() {
       );
       throw error; // Re-throw the error if needed for further handling
     }
-  }, []);
+  }, [processIssuesData]);
+
+  const handleUndoStable = useCallback(async () => {
+    try {
+      const sid = getActiveSessionId();
+      if (sid) {
+        await api.rollback(sid, 1);
+        sessionStartRequestCache.delete(sid); // Clear cache on rollback
+
+        if (canUndo) {
+          const idx = historyIndex - 1;
+          const rows = history[idx];
+          setHistoryIndex(idx);
+          setAllRows(rows);
+          setEditLog(historyEditLog[idx] ?? []);
+          await resetVirtualRows(rows);
+        }
+
+        // Always refresh from server to ensure issues and state are in sync after rollback
+        const issueRows = await loadSessionStartIssues(sid, true);
+        const refreshedRows = (issueRows || []).map((r: IssueRow) => ({
+          ...r.data,
+          __rowIndex: r.row_index,
+          _issues: r.issues || null
+        }));
+
+        setAllRows(refreshedRows);
+        await resetVirtualRows(refreshedRows);
+
+        addActivityLog({ kind: 'action', actor: 'user', title: 'Undo', description: 'Reverted last change' });
+        toast.success('Undo completed successfully.');
+      }
+    } catch (error) {
+      showApiErrorToast(error, 'Failed to undo');
+    }
+  }, [canUndo, history, historyIndex, editLog, resetVirtualRows, historyEditLog, addActivityLog, getActiveSessionId, loadSessionStartIssues]);
+
+  const handleRedoStable = useCallback(async () => {
+    if (!canRedo) return;
+    try {
+      const sid = getActiveSessionId();
+      if (sid) {
+        const response = await api.redo(sid, 1);
+        sessionStartRequestCache.delete(sid); // Clear cache on redo
+        if (typeof response?.redo_available === 'number') {
+          setServerRedoAvailable(response.redo_available);
+        }
+      }
+
+      const hasNextLocal = historyIndex < history.length - 1;
+      let finalRows: Record<string, any>[] = [];
+
+      if (hasNextLocal) {
+        const idx = historyIndex + 1;
+        const nextRows = history[idx];
+        setHistoryIndex(idx);
+        setAllRows(nextRows);
+        setEditLog(historyEditLog[idx] ?? []);
+        finalRows = nextRows;
+      }
+
+      // Refresh from server after redo to sync issues
+      if (sid) {
+        const issueRows = await loadSessionStartIssues(sid, true);
+        const refreshedRows = (issueRows || []).map((r: IssueRow) => ({
+          ...r.data,
+          __rowIndex: r.row_index,
+          _issues: r.issues || null
+        }));
+        setAllRows(refreshedRows);
+        finalRows = refreshedRows;
+      }
+
+      addActivityLog({ kind: 'action', actor: 'user', title: 'Redo', description: 'Reapplied reverted change' });
+
+      if (finalRows.length > 0) {
+        await resetVirtualRows(finalRows);
+      }
+      toast.success('Redo completed successfully.');
+    } catch (error) {
+      showApiErrorToast(error, 'Failed to redo');
+    }
+  }, [canRedo, history, historyIndex, resetVirtualRows, historyEditLog, addActivityLog, getActiveSessionId, loadSessionStartIssues]);
 
   useEffect(() => {
     const onDocClick = (e: MouseEvent) => {
