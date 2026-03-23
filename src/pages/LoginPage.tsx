@@ -173,7 +173,7 @@ export function LoginPage() {
                   </div>
                 )}
 
-                <Button type="submit" className="w-full h-11 font-semibold" disabled={loading}>
+                <Button type="submit" className="w-full h-11 font-semibold hover:scale-x-[1.02]" disabled={loading}>
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Sign In
                 </Button>
