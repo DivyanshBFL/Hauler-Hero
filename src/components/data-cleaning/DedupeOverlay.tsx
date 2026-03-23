@@ -1,0 +1,286 @@
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Loader2, Plus, X } from 'lucide-react';
+import type { DedupeCondition, DedupeMode, DedupeMethod, DrawerType, KeepRemove, PreviewRow } from './types';
+
+type Props = {
+    drawer: DrawerType;
+    previewOpen: boolean;
+    setDrawer: (v: DrawerType) => void;
+    setPreviewOpen: (v: boolean) => void;
+    previewColumns: string[];
+    previewRows: PreviewRow[];
+    displayValue: (v: unknown) => string;
+
+    dedupeError: string | null;
+    dedupeMode: DedupeMode;
+    setDedupeMode: (v: DedupeMode) => void;
+    duplicateIndicatorCount: number;
+    ignoreCase: boolean;
+    setIgnoreCase: (v: boolean) => void;
+    ignoreWhitespace: boolean;
+    setIgnoreWhitespace: (v: boolean) => void;
+    dedupeColumns: string[];
+    setDedupeColumns: (updater: (prev: string[]) => string[]) => void;
+    columnPickerValue: string;
+    setColumnPickerValue: (v: string) => void;
+    columns: string[];
+    keepRemove: KeepRemove;
+    setKeepRemove: (v: KeepRemove) => void;
+    conditions: DedupeCondition[];
+    setConditions: (updater: (prev: DedupeCondition[]) => DedupeCondition[]) => void;
+    previewLoading: boolean;
+    applyDedupLoading: boolean;
+    onBuildPreview: () => Promise<void> | void;
+    onRemoveDuplicates: () => Promise<void> | void;
+    flagDuplicates: boolean;
+    setFlagDuplicates: (v: boolean) => void;
+    dedupeMethod: DedupeMethod;
+    setDedupeMethod: (v: DedupeMethod) => void;
+
+};
+
+export default function DedupeOverlay(props: Props) {
+    const {
+        drawer,
+        previewOpen,
+        setDrawer,
+        setPreviewOpen,
+        previewColumns,
+        previewRows,
+        displayValue,
+        dedupeError,
+        dedupeMode,
+        setDedupeMode,
+        duplicateIndicatorCount,
+        ignoreCase,
+        setIgnoreCase,
+        ignoreWhitespace,
+        setIgnoreWhitespace,
+        dedupeColumns,
+        setDedupeColumns,
+        columnPickerValue,
+        setColumnPickerValue,
+        columns,
+        keepRemove,
+        setKeepRemove,
+        conditions,
+        setConditions,
+        previewLoading,
+        applyDedupLoading,
+        onBuildPreview,
+        onRemoveDuplicates,
+        flagDuplicates,
+        setFlagDuplicates,
+        dedupeMethod,
+        setDedupeMethod,
+    } = props;
+
+    if (!(drawer || previewOpen)) return null;
+
+    return (
+        <div className="fixed inset-0 z-50">
+            <div className="absolute inset-0 bg-black/25" onClick={() => { setDrawer(null); setPreviewOpen(false); }} />
+            {previewOpen && (
+                <div 
+                    className="absolute left-4 top-4 bottom-4 bg-background border border-border rounded shadow-2xl overflow-hidden transition-all duration-300"
+                    style={{ right: drawer ? '580px' : '4%' }}
+                >
+                    <div className="h-10 px-6 bg-emerald-100 border-b border-emerald-200 flex items-center justify-between">
+                        <h5 className="text-xl font-medium">Preview</h5>
+                        <button onClick={() => setPreviewOpen(false)}><X className="h-8 w-8" /></button>
+                    </div>
+                    <div className="p-4 h-[calc(100%-40px)] overflow-auto">
+                        <Table className="min-w-full text-sm">
+                            <TableHeader className="bg-muted sticky top-0">
+                                <TableRow>
+                                    {previewColumns.map((c) => (
+                                        <TableHead key={c} className="px-3 py-2 border-b text-left uppercase tracking-wide text-muted-foreground whitespace-nowrap">{c}</TableHead>
+                                    ))}
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {previewRows.map((r, i) => {
+                                    const rowClass = flagDuplicates
+                                        ? (r.shaded ? 'bg-red-50 hover:bg-red-100' : 'bg-white hover:bg-gray-50')
+                                        : 'odd:bg-background even:bg-primary/10';
+                                    return (
+                                        <TableRow key={String(r.rowIndex) + '-' + String(i)} className={rowClass}>
+                                            {previewColumns.map((c) => (
+                                                <TableCell key={String(r.rowIndex) + '-' + c} className="px-3 py-2 border-b whitespace-nowrap">{displayValue(r.row[c]) || ''}</TableCell>
+                                            ))}
+                                        </TableRow>
+                                    );
+                                })}
+                                {!previewRows.length && (
+                                    <TableRow>
+                                        <TableCell colSpan={Math.max(previewColumns.length, 1)} className="px-4 py-6 text-center text-muted-foreground">No duplicate rows found.</TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
+                </div>
+            )}
+
+            {drawer && (
+                <div className="absolute right-0 top-0 h-full w-full max-w-[560px] bg-background border-l border-border shadow-2xl z-10">
+                    <div className="h-16 px-6 border-b border-border flex items-center justify-between">
+                        <h3 className="text-2xl font-normal tracking-tight text-foreground">
+                            {drawer === 'dedupe' ? (dedupeMode === 'column' ? 'Deduplicate column-wise' : 'Deduplicate row-wise') : 'Fix Addresses'}
+                        </h3>
+                        <button onClick={() => setDrawer(null)} className="text-muted-foreground hover:text-foreground"><X className="h-6 w-6" /></button>
+                    </div>
+
+                    <div className="p-6 space-y-4 text-sm">
+                        {drawer === 'dedupe' && (
+                            <>
+                                {dedupeError && (
+                                    <div className="rounded-md border border-amber-300 bg-amber-50 text-amber-900 px-3 py-2 text-xs">
+                                        {dedupeError}
+                                    </div>
+                                )}
+
+                                <div className="flex items-center gap-4">
+                                    <label className="inline-flex items-center gap-2 text-sm">
+                                        <input type="radio" checked={dedupeMode === 'column'} onChange={() => setDedupeMode('column')} /> Column wise
+                                    </label>
+                                    <label className="inline-flex items-center gap-2 text-sm">
+                                        <input type="radio" checked={dedupeMode === 'row'} onChange={() => setDedupeMode('row')} /> Row wise
+                                    </label>
+                                    {duplicateIndicatorCount > 0 && (
+                                        <div className="ml-auto text-red-500 bg-red-50 border border-red-100 rounded-md px-3 py-1.5 text-sm font-medium">
+                                            {duplicateIndicatorCount} duplicate {dedupeMode === 'column' ? 'columns' : 'rows'} found
+                                        </div>
+                                    )}
+                                </div>
+
+                                {dedupeMode === 'column' && (
+                                    <div className="border border-border rounded-lg p-3 space-y-2">
+                                        <div className="flex flex-wrap gap-2 mb-3">
+                                            {dedupeColumns.map((c) => (
+                                                <span key={c} className="inline-flex items-center gap-2 px-3 py-1 rounded bg-muted text-sm">
+                                                    {c}
+                                                    <button onClick={() => setDedupeColumns((prev) => prev.filter((x) => x !== c))}><X className="h-3.5 w-3.5" /></button>
+                                                </span>
+                                            ))}
+                                        </div>
+                                        <div className="relative">
+                                            <select
+                                                className="w-full h-11 border border-border rounded-md px-3 bg-background text-sm"
+                                                value={columnPickerValue}
+                                                onChange={(e) => {
+                                                    const v = e.target.value;
+                                                    setColumnPickerValue('');
+                                                    if (!v) return;
+                                                    setDedupeColumns((prev) => (prev.includes(v) ? prev : [...prev, v]));
+                                                }}
+                                            >
+                                                <option value="">Select columns</option>
+                                                {columns.map((c) => <option key={c} value={c}>{c}</option>)}
+                                            </select>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div>
+                                    <p className="text-sm font-medium mb-2">Options</p>
+                                    <div className="flex flex-wrap gap-4 text-sm">
+                                        <label className="inline-flex items-center gap-3"><input type="checkbox" checked={ignoreCase} onChange={(e) => setIgnoreCase(e.target.checked)} /> Ignore case</label>
+                                        <label className="inline-flex items-center gap-3"><input type="checkbox" checked={ignoreWhitespace} onChange={(e) => setIgnoreWhitespace(e.target.checked)} /> Ignore whitespace</label>
+                                        <label className="inline-flex items-center gap-3"><input type="checkbox" checked={flagDuplicates} onChange={(e) => setFlagDuplicates(e.target.checked)} /> Flag duplicate records</label>
+                                    </div>
+                                </div>
+
+                                {dedupeMode === 'column' && (
+                                    <>
+                                        <div>
+                                            <p className="text-sm text-muted-foreground mb-2">Select how to duplicate</p>
+                                            <select
+                                                className="w-full h-11 border border-border rounded-md px-3 bg-background text-sm"
+                                                value={dedupeMethod}
+                                                onChange={(e) => setDedupeMethod(e.target.value as DedupeMethod)}
+                                            >
+                                                <option value="automatic">Automatic</option>
+                                                <option value="manual">Manual conditions</option>
+                                            </select>
+                                        </div>
+
+                                        {dedupeMethod === 'manual' && (
+                                            <div className="space-y-4">
+                                                <p className="text-sm font-medium flex items-center">
+                                                    Enter conditions to select which rows to
+                                                    <label className="ml-3 mr-3 inline-flex items-center gap-2 text-sm font-normal">
+                                                        <input type="radio" checked={keepRemove === 'keep'} onChange={() => setKeepRemove('keep')} /> Keep
+                                                    </label>
+                                                    <label className="inline-flex items-center gap-2 text-sm font-normal">
+                                                        <input type="radio" checked={keepRemove === 'remove'} onChange={() => setKeepRemove('remove')} /> Remove
+                                                    </label>
+                                                </p>
+
+                                                {conditions.map((cond, idx) => (
+                                                    <div key={'cond-' + String(idx)} className="flex items-center gap-2">
+                                                        <span className="text-sm shrink-0">if</span>
+                                                        <select
+                                                            className="h-11 flex-1 min-w-[120px] border border-border rounded-md px-3 bg-background text-sm"
+                                                            value={cond.column}
+                                                            onChange={(e) => setConditions((prev) => prev.map((p, i) => (i === idx ? { ...p, column: e.target.value } : p)))}
+                                                        >
+                                                            {columns.map((c) => <option key={c} value={c}>{c}</option>)}
+                                                        </select>
+                                                        <select
+                                                            className="h-11 flex-1 min-w-[120px] border border-border rounded-md px-3 bg-background text-sm"
+                                                            value={cond.operator}
+                                                            onChange={(e) => setConditions((prev) => prev.map((p, i) => (i === idx ? { ...p, operator: e.target.value as DedupeCondition['operator'] } : p)))}
+                                                        >
+                                                            <option value="is">Is</option>
+                                                            <option value="is_not">Is not</option>
+                                                            <option value="contains">Contains</option>
+                                                            <option value="starts_with">Starts with</option>
+                                                            <option value="ends_with">Ends with</option>
+                                                            <option value="greater_than">Greater than</option>
+                                                            <option value="less_than">Less than</option>
+                                                        </select>
+                                                        <Input
+                                                            className="h-11 flex-1 min-w-[120px] text-sm"
+                                                            value={cond.value}
+                                                            onChange={(e) => setConditions((prev) => prev.map((p, i) => (i === idx ? { ...p, value: e.target.value } : p)))}
+                                                        />
+                                                        <Button variant="outline" size="icon" className="h-11 w-11 shrink-0"
+                                                            onClick={() => setConditions((prev) => [...prev, { column: columns[0] || '', operator: 'is', value: '' }])}>
+                                                            <Plus className="h-5 w-5" />
+                                                        </Button>
+                                                        {conditions.length > 1 && (
+                                                            <Button variant="outline" size="icon" className="h-11 w-11 shrink-0"
+                                                                onClick={() => setConditions((prev) => prev.filter((_, i) => i !== idx))}>
+                                                                <X className="h-5 w-5" />
+                                                            </Button>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+
+                                <div className="absolute bottom-0 left-0 right-0 border-t border-border bg-background p-4 flex gap-2">
+                                    <Button variant="outline" onClick={() => { setDrawer(null); setPreviewOpen(false); }} disabled={previewLoading || applyDedupLoading}>Cancel</Button>
+                                    <Button onClick={() => void onBuildPreview()} disabled={previewLoading || applyDedupLoading}>
+                                        {previewLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                        Preview
+                                    </Button>
+                                    <Button variant="destructive" onClick={() => void onRemoveDuplicates()} disabled={previewLoading || applyDedupLoading}>
+                                        {applyDedupLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                        Remove Duplicates
+                                    </Button>
+                                </div>
+                            </>
+                        )}
+
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
