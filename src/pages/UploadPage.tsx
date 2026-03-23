@@ -351,14 +351,14 @@ export function UploadPage() {
           <ProcessStepper />
         </div>
         <Card className="shadow-lg border border-border bg-card animate-in">
-          <CardHeader className="pb-4">
+          <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-md bg-primary flex items-center justify-center shadow-sm">
+              <div className="h-10 w-10 rounded-md bg-primary flex items-center justify-center shadow-sm">
                 <Upload className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <CardTitle className="text-xl font-normal">Upload File</CardTitle>
-                <CardDescription className="text-sm text-muted-foreground">
+                <CardTitle className="text-md font-normal">Upload File</CardTitle>
+                <CardDescription className="text-xs text-muted-foreground">
                   Upload your source CSV or XLSX file to begin the data processing workflow
                 </CardDescription>
               </div>
@@ -376,7 +376,7 @@ export function UploadPage() {
                   className="hidden"
                 />
 
-                <Button onClick={openFilePicker} className="w-full sm:w-auto font-semibold">
+                <Button onClick={openFilePicker} className="w-full sm:w-auto">
                   <Upload className="mr-2 h-4 w-4" />
                   Choose File (CSV or XLSX)
                 </Button>
@@ -415,11 +415,13 @@ export function UploadPage() {
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
                         <div className="flex items-center gap-4">
-                          <div className="text-xl" style={{ minWidth: "150px" }}>Data Preview</div>
 
-                          <div className="bg-green-100 text-green-800 border border-green-300 px-4 py-2 rounded-md text-sm">
-                            We have identified <span className="font-semibold">{sheet.headers.length} columns</span> and{' '}
+                          <div className="bg-green-100 text-green-800 border border-green-300 px-4 py-2 rounded-md w-full">
+                          <div className="text-md font-semibold " style={{ minWidth: "150px" }}>Data Preview</div>
+                            <span className='text-xs'>
+                              We have identified <span className="font-semibold">{sheet.headers.length} columns</span> and{' '}
                             <span className="font-semibold">{allRows.length} rows</span> in this uploaded file. This is a preview, you can proceed to the next step to map these fields and start processing your data.
+                            </span>
                           </div>
                         </div>
 
@@ -434,7 +436,7 @@ export function UploadPage() {
 
                         <div className="mt-4 max-h-96 rounded-lg border border-border overflow-auto">
                           <Table className="w-full min-w-[900px] text-sm">
-                            <TableHeader className="bg-muted/60">
+                            <TableHeader className="bg-muted/60 font-bold">
                               <TableRow>
                                 {previewHeaders.map((header) => (
                                   <TableHead
@@ -448,7 +450,7 @@ export function UploadPage() {
                             </TableHeader>
                             <TableBody>
                               {previewRows.map((row, rowIndex) => (
-                                <TableRow key={rowIndex} className="odd:bg-background even:bg-primary/10">
+                                <TableRow key={rowIndex} className="">
                                   {previewHeaders.map((header) => (
                                     <TableCell
                                       key={`${rowIndex}-${header}`}
