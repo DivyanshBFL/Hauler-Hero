@@ -26,7 +26,8 @@ import {
   Undo2,
   Redo2,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  ShieldAlert
 } from 'lucide-react';
 import { PAGE_OUTER, PAGE_CONTAINER } from '@/constants/layout';
 import ProcessStepper from '@/components/ProcessStepper';
@@ -1385,9 +1386,7 @@ export function DataCleaningPage() {
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-start gap-4">
                 <div className="h-12 w-12 rounded-md bg-primary flex items-center justify-center shadow-sm">
-                  <svg className="w-6 h-6 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  </svg>
+                  <ShieldAlert className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <div>
                   <CardTitle className="text-xl font-normal">Issue Grouped Review</CardTitle>

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { api } from '@/services/api';
-import { Loader2, Download,ChevronLeft, ChevronRight } from 'lucide-react';
+import { Loader2, Download, ChevronLeft, ChevronRight, Table2 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
 import type { FieldMapping } from '@/services/api';
@@ -344,10 +344,8 @@ export function DataPreviewPage() {
           <CardHeader className="pb-4">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-start gap-4">
-                <div className="h-12 w-12 flex items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
+                <div className="h-12 w-12 rounded-md bg-primary flex items-center justify-center shadow-sm">
+                  <Table2 className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <div className="space-y-1">
                   <CardTitle className="text-xl font-semibold tracking-tight">Mapped Data Preview</CardTitle>
@@ -383,8 +381,8 @@ export function DataPreviewPage() {
                     key={entity}
                     onClick={() => setSelectedEntity(entity)}
                     className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${selectedEntity === entity
-                        ? 'border-primary text-primary'
-                        : 'border-transparent text-muted-foreground hover:text-foreground'
+                      ? 'border-primary text-primary'
+                      : 'border-transparent text-muted-foreground hover:text-foreground'
                       }`}
                   >
                     {entity}

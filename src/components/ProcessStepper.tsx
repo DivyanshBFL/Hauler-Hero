@@ -28,12 +28,12 @@ const steps: Step[] = [
     path: "/field-mapping",
     Icon: GitMerge,
   },
-  {
-    title: "Mapped Data Preview",
-    subtitle: "Review data for processing",
-    path: "/data-preview",
-    Icon: Table2,
-  },
+  // {
+  //   title: "Mapped Data Preview",
+  //   // subtitle: "Review data for processing",
+  //   path: "/data-preview",
+  //   Icon: Table2,
+  // },
   {
     title: "Data Cleaning",
     subtitle: "Grouped issues with audit trail",
@@ -52,11 +52,11 @@ export default function ProcessStepper() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  const currentStep =
-    steps.findIndex((s) => pathname.startsWith(s.path)) ?? 0;
+  const currentStepIndex = steps.findIndex((s) => pathname.startsWith(s.path));
+  const currentStep = currentStepIndex === -1 && pathname.startsWith("/data-preview") ? 1 : (currentStepIndex === -1 ? 0 : currentStepIndex);
 
   return (
-    <div className="grid md:grid-cols-5 gap-3">
+    <div className="grid md:grid-cols-4 gap-3">
       {steps.map((step, i) => {
         const state =
           i < currentStep ? "completed" : i === currentStep ? "active" : "upcoming";
@@ -86,10 +86,10 @@ export default function ProcessStepper() {
           <button
             key={step.path}
             onClick={() => i <= currentStep && navigate(step.path)}
-            className={`w-full p-3 rounded-xl border text-left transition-all duration-300 ${styles.card} ${state === "active" ? "scale-[1.02]" : "hover:border-primary/50"
+            className={`w-full p-3 rounded-md border text-left transition-all duration-300 ${styles.card} ${state === "active" ? "scale-[1.02]" : "hover:border-primary/50"
               }`}
           >
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5">
               <span
                 className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-300 ${styles.icon}`}
               >

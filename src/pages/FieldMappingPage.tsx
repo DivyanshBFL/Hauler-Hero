@@ -20,7 +20,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { api } from '@/services/api';
 import type { CorrectionRequest, CorrectionManualChange } from '@/services/api';
 import type { FieldMapping, SheetData } from '@/services/api';
-import { Loader2, Search, Bot, Send, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Loader2, Search, Bot, Send, ChevronRight, ChevronLeft, GitMerge } from 'lucide-react';
 import { SourceFieldNode, TargetFieldNode } from '@/components/field-mapping';
 import { getTargetColumnsForEntity, getRequiredTargetColumnsForEntity } from '@/constants/targetColumns';
 import { PAGE_OUTER, PAGE_CONTAINER } from '@/constants/layout';
@@ -857,14 +857,7 @@ export function FieldMappingPage() {
           <CardHeader className="pb-4">
             <div className="flex items-center gap-3">
               <div className="h-12 w-12 rounded-md bg-primary flex items-center justify-center shadow-sm">
-                <svg className="w-6 h-6 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-                  />
-                </svg>
+                <GitMerge className="w-6 h-6 text-primary-foreground" />
               </div>
               <div>
                 <CardTitle className="text-xl font-normal">Map Your Fields</CardTitle>
