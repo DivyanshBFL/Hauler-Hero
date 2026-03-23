@@ -5,7 +5,7 @@ import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Upload, Loader2, X, ChevronRight  } from 'lucide-react';
+import { Upload, Loader2, X, ChevronRight } from 'lucide-react';
 import { PAGE_OUTER, PAGE_CONTAINER } from '@/constants/layout';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
@@ -30,6 +30,7 @@ type JoinSelection = {
 
 export function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const [sheets, setSheets] = useState<SheetData[]>([]);
   const [allRows, setAllRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -84,7 +85,10 @@ export function UploadPage() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) return;
+    processSelectedFile(selectedFile);
+  };
 
+  const processSelectedFile = (selectedFile: File) => {
     setSheets([]);
     setAllRows([]);
     setShowSheetSelector(false);
@@ -118,6 +122,24 @@ export function UploadPage() {
     } else {
       alert('Please select a valid CSV or XLSX file');
       setFile(null);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const selectedFile = e.dataTransfer.files?.[0];
+    if (selectedFile) {
+      processSelectedFile(selectedFile);
     }
   };
 
@@ -352,48 +374,83 @@ export function UploadPage() {
         </div>
         <Card className="shadow-lg border border-border bg-card animate-in">
           <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
-                <Upload className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <CardTitle className="text-md font-normal">Upload File</CardTitle>
-                <CardDescription className="text-xs text-muted-foreground">
-                  Upload your source CSV or XLSX file to begin the data processing workflow
-                </CardDescription>
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-md border border-primary flex items-center justify-center shadow-sm">
+                  <Upload className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-3">
+                    <CardTitle className="text-md font-normal">Upload File</CardTitle>
+                    {file && (
+                      <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-full text-xs font-medium animate-in fade-in slide-in-from-left-2">
+                        <span>📄 {file.name}</span>
+                        <X
+                          className="h-3 w-3 cursor-pointer hover:text-red-500 transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            resetUploadState();
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <CardDescription className="text-xs text-muted-foreground">
+                    Upload your source CSV or XLSX file to begin the data processing workflow
+                  </CardDescription>
+                </div>
               </div>
             </div>
           </CardHeader>
 
-          <CardContent className="space-y-6">
-            <div className="flex justify-center">
-              <div className="mt-4 flex flex-col sm:flex-row items-center gap-4 p-3 bg-muted/50 rounded-xl border-2 border-dashed border-border hover:border-primary/50 transition-colors">
-                <input
-                  type="file"
-                  accept=".csv,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                  onChange={handleFileChange}
-                  ref={fileInputRef}
-                  className="hidden"
-                />
+          <CardContent className="px-6 pt-0 pb-3 my-6">
+            <div className="flex justify-center flex-col items-center">
+              {!file && (
+                <div
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  className={`
+                    w-full max-w-3xl relative group flex flex-col items-center justify-center gap-6 p-12 
+                    rounded-3xl border-2 border-dashed transition-all duration-300 cursor-pointer
+                    ${isDragging
+                      ? 'border-primary bg-primary/10 scale-[1.02] shadow-2xl'
+                      : 'border-primary/40 bg-primary/[0.03] hover:border-primary/60 hover:bg-primary/[0.06]'
+                    }
+                  `}
+                  onClick={openFilePicker}
+                >
+                  <div className="relative">
+                    <div className="h-20 w-20 rounded-full border-2 border-primary flex items-center justify-center shadow-md transform group-hover:scale-110 transition-transform duration-300">
+                      <Upload className="h-10 w-10 text-primary" />
+                    </div>
+                    <div className="absolute -inset-4 bg-primary/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  </div>
 
-                <Button onClick={openFilePicker} className="w-full sm:w-auto">
-                  <Upload className="mr-2 h-4 w-4" />
-                  Choose File (CSV or XLSX)
-                </Button>
+                  <div className="text-center space-y-2">
+                    <h3 className="text-3xl font-normal text-foreground tracking-tight">Drop your file here</h3>
+                    <p className="text-xs font-semibold text-muted-foreground tracking-widest uppercase opacity-60">OR CLICK TO BROWSE</p>
+                  </div>
 
-                {file && (
-                  <>
-                    <span className="text-sm font-medium text-foreground bg-muted px-4 py-2 rounded-lg border border-border truncate max-w-full">
-                      📄 {file.name}
-                    </span>
+                  <Button
+                    variant="outline"
+                    className="relative overflow-hidden px-10 h-14 border-primary text-primary hover:bg-primary/10 font-bold rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Upload className="h-5 w-5" />
+                      CHOOSE FILE (CSV OR XLSX)
+                    </div>
+                  </Button>
 
-                    <X
-                      className="h-4 w-4 cursor-pointer text-gray-500 hover:text-red-500 transition"
-                      onClick={resetUploadState}
-                    />
-                  </>
-                )}
-              </div>
+                  <input
+                    type="file"
+                    accept=".csv,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    onChange={handleFileChange}
+                    ref={fileInputRef}
+                    className="hidden"
+                  />
+                </div>
+              )}
             </div>
 
             {sheets.length > 0 && (
@@ -420,7 +477,7 @@ export function UploadPage() {
                          
                             <span className='text-xs'>
                               Identified <span className="font-semibold">{sheet.headers.length} columns</span> and{' '}
-                            <span className="font-semibold">{allRows.length} rows</span> in this uploaded file.
+                              <span className="font-semibold">{allRows.length} rows</span> in this uploaded file.
                             </span>
                           </div>
                         </div>
@@ -474,7 +531,7 @@ export function UploadPage() {
             )}
           </CardContent>
           <div className="flex justify-end px-6 py-3 border-t bg-muted">
-            <Button onClick={handleNext} disabled={loading || !canProceed} className="px-8 h-11 font-semibold">
+            <Button onClick={handleNext} disabled={loading || !canProceed} variant="outline" className="px-8 h-11 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors">
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Next Step
               <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
