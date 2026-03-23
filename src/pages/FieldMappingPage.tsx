@@ -486,7 +486,7 @@ export function FieldMappingPage() {
   }, [chatCollapsed]);
 
   const nodeWidth = chatCollapsed ? 420 : 300;
-  const flowCanvasWidth = Math.max(flowPaneWidth, nodeWidth * 2 + HORIZONTAL_COLUMN_MARGIN * 2 + 120);
+  const flowCanvasWidth = Math.max(flowPaneWidth, nodeWidth * 2 + HORIZONTAL_COLUMN_MARGIN * 2 + 300);
   const sourceX = HORIZONTAL_COLUMN_MARGIN;
   const targetX = flowCanvasWidth - HORIZONTAL_COLUMN_MARGIN - nodeWidth;
 
