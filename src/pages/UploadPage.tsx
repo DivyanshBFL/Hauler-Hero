@@ -416,7 +416,7 @@ export function UploadPage() {
                       >
                         <div className=" gap-4">
                            <div className="text-sm font-semibold" >Data Preview :</div>
-                          <div className="bg-green-100 text-green-800 border border-green-300 px-2 py-1 rounded-md w-full mt-2">
+                          <div className="bg-primary/10 text-blue-900 border border-blue-300 px-2 py-1 rounded-md w-full mt-2">
                          
                             <span className='text-xs'>
                               Identified <span className="font-semibold">{sheet.headers.length} columns</span> and{' '}
@@ -426,7 +426,7 @@ export function UploadPage() {
                         </div>
 
                         {isJoinRequired && joinSelection && (
-                          <div className="mt-3 rounded-md border border-blue-300 bg-blue-50 px-2 py-2 text-xs text-blue-900 ">
+                          <div className="mt-3 rounded-md border border-blue-300 bg-primary/10 px-2 py-2 text-xs text-blue-900 ">
                             Join configured: <span className="font-semibold">{joinSelection.leftSheet}</span>
                             {' '}(<span className="font-semibold">{joinSelection.leftKey}</span>) {'->'}{' '}
                             <span className="font-semibold">{joinSelection.rightSheet}</span>
@@ -485,7 +485,7 @@ export function UploadPage() {
         </Card>
 
         <Dialog open={showSheetSelector} onOpenChange={(open) => setShowSheetSelector(open)}>
-          <DialogContent className="fixed left-1/2 top-1/2 z-50 w-[95vw] max-w-4xl -translate-x-1/2 -translate-y-1/2 data-[state=open]:animate-none data-[state=closed]:animate-none p-0">
+          <DialogContent className="fixed left-1/2 top-1/2 z-50 w-[95vw] max-w-4xl -translate-x-1/2 -translate-y-1/2 data-[state=open]:animate-none data-[state=closed]:animate-none p-0 gap-0">
             <DialogHeader className='border-b p-4'>
               <DialogTitle>Select Sheets To Join</DialogTitle>
               <DialogDescription>
@@ -496,7 +496,7 @@ export function UploadPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
               {/* Left Side */}
               <div className="rounded-lg border border-border bg-muted/20 p-4 space-y-3">
-                <div className="text-sm font-semibold text-foreground">Select Source Data (To Clean)</div>
+                <div className="text-sm font-semibold text-foreground">Parent Data</div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">Sheet</label>
                   <select
@@ -518,7 +518,7 @@ export function UploadPage() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Join Key</label>
+                  <label className="text-sm font-medium text-foreground">Related Column</label>
                   <select
                     className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
                     value={leftKey}
@@ -534,7 +534,7 @@ export function UploadPage() {
 
               {/* Right Side */}
               <div className="rounded-lg border border-border bg-muted/20 p-4 space-y-3">
-                <div className="text-sm font-semibold text-foreground">Master Data</div>
+                <div className="text-sm font-semibold text-foreground">Child Data</div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">Sheet</label>
                   <select
@@ -552,7 +552,7 @@ export function UploadPage() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Join Key</label>
+                  <label className="text-sm font-medium text-foreground">Related Column</label>
                   <select
                     className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
                     value={rightKey}
@@ -566,7 +566,7 @@ export function UploadPage() {
                 </div>
               </div>
             </div>
-
+            <div className='w-full border-b'></div>
             <Button
               type="button"
               onClick={handleConfirmJoinSelection}
@@ -578,7 +578,7 @@ export function UploadPage() {
                 !isRightKeyValid ||
                 effectiveLeftSheet === effectiveRightSheet
               }
-              className="max-w-[300px] mx-auto mb-4"
+              className="max-w-[300px] mx-auto my-4"
             >
               Confirm Join Selection
             </Button>
@@ -591,7 +591,7 @@ export function UploadPage() {
         <button
           onClick={handleNext}
           disabled={loading}
-          className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-primary/80 hover:bg-primary text-primary-foreground shadow-lg transition-all duration-200 disabled:opacity-50"
+          className="fixed right-4 top-1/2 -translate-y-1/2 z-30  rounded-full bg-primary/80 hover:bg-primary text-primary-foreground shadow-lg transition-all duration-200 disabled:opacity-50 p-0"
           title="Next: Field Mapping"
         >
           <ChevronRight className="h-6 w-6" />

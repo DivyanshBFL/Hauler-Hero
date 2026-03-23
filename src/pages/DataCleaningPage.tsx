@@ -1390,9 +1390,9 @@ export function DataCleaningPage() {
                   </svg>
                 </div>
                 <div>
-                  <CardTitle className="text-xl font-normal">Issue Grouped Review</CardTitle>
+                  <CardTitle className="font-normal">Issue Grouped Review</CardTitle>
                   <div className="relative mt-1 inline-block">
-                    <CardDescription className="text-sm text-muted-foreground">
+                    <CardDescription className="text-xs text-muted-foreground">
                       <span>
                         <button
                           type="button"

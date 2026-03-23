@@ -341,7 +341,7 @@ export function DataPreviewPage() {
         <div className="mb-4"><ProcessStepper /></div>
 
         <Card className="shadow-lg border border-border bg-card">
-          <CardHeader className="pb-4">
+          <CardHeader className="">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-start gap-4">
                 <div className="h-12 w-12 flex items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm">
@@ -394,7 +394,7 @@ export function DataPreviewPage() {
             )}
 
             {/* ── Table ────────────────────────────────────────── */}
-            <div className="border border-border rounded-xs overflow-hidden shadow-sm bg-card mt-2">
+            <div className="border border-border rounded-xs overflow-hidden shadow-sm bg-card mt-6">
               <div className="max-h-[60vh] overflow-auto">
                 {previewRows.length > 0 ? (
                   <Table className="w-full text-sm">
