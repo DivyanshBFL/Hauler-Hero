@@ -298,7 +298,7 @@ const DataAnalyticsPage = () => {
                             ? "bg-red-50 text-red-600"
                             : isChanged
                               ? "bg-amber-50/40"
-                              : "odd:bg-background even:bg-primary/10"
+                              : ""
                         }
                       >
                         {headers.map((col) => {

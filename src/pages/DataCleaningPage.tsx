@@ -1562,7 +1562,7 @@ export function DataCleaningPage() {
                         const hasIssue = (issueByColumn[col] ?? 0) > 0;
                         return (
                           <TableHead key={col} className="font-semibold relative px-2 py-3 text-left whitespace-nowrap">
-                            <span className={`absolute left-0 right-0 rounded-t-md top-0 h-1.5 transition-colors duration-200 ${hasIssue ? 'bg-red-500' : 'bg-emerald-500'}`} />
+                            <span className={`absolute left-0 right-0 top-0 h-1 transition-colors duration-200 mx-[1px] ${hasIssue ? 'bg-red-400' : 'bg-emerald-400'}`} />
                             <div className="flex items-center gap-1 mt-1">
                               <span>{col}</span>
                               <button type="button" className="inline-flex items-center justify-center h-5 w-5 rounded hover:bg-accent" onClick={(e) => {
@@ -1582,7 +1582,7 @@ export function DataCleaningPage() {
                     {filteredVisibleRows.map((row, idx) => {
                       const rowIndex = Number(row.__rowIndex ?? idx);
                       return (
-                        <TableRow key={`r-${rowIndex}`} className="odd:bg-background even:bg-primary/10">
+                        <TableRow key={`r-${rowIndex}`} className="">
                           {columns.map((col) => {
                             const cellIssues = rowIssueMap[rowIndex]?.[col] ?? [];
                             const visibleCellIssues =
