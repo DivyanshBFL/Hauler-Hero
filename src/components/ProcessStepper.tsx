@@ -5,6 +5,7 @@ import {
   Table2,
   ShieldAlert,
   ChartNoAxesCombined,
+  Check,
 } from "lucide-react";
 
 type Step = {
@@ -55,29 +56,29 @@ export default function ProcessStepper() {
     steps.findIndex((s) => pathname.startsWith(s.path)) ?? 0;
 
   return (
-    <div className="grid md:grid-cols-5 gap-1">
+    <div className="grid md:grid-cols-5 gap-3">
       {steps.map((step, i) => {
         const state =
           i < currentStep ? "completed" : i === currentStep ? "active" : "upcoming";
 
         const styles = {
           completed: {
-            card: "bg-blue-600 border-blue-600 text-white",
-            icon: "bg-white text-blue-600 border-white",
-            title: "text-white",
-            subtitle: "text-blue-100",
+            card: "bg-white border-slate-200",
+            icon: "bg-primary text-primary-foreground border-primary",
+            title: "text-slate-900",
+            subtitle: "text-slate-400",
           },
           active: {
-            card: "bg-white border-blue-300",
-            icon: "bg-blue-50 text-blue-600 border-blue-200",
-            title: "text-blue-600",
-            subtitle: "text-slate-500",
+            card: "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/20",
+            icon: "bg-transparent text-primary-foreground border-white/50",
+            title: "text-white",
+            subtitle: "text-primary-foreground/90",
           },
           upcoming: {
             card: "bg-white border-slate-200",
-            icon: "bg-white text-slate-400 border-slate-300",
-            title: "text-slate-600",
-            subtitle: "text-slate-400",
+            icon: "bg-white text-slate-300 border-slate-200",
+            title: "text-slate-500",
+            subtitle: "text-slate-300",
           },
         }[state];
 
@@ -85,20 +86,25 @@ export default function ProcessStepper() {
           <button
             key={step.path}
             onClick={() => i <= currentStep && navigate(step.path)}
-            className={`w-full p-2 rounded-lg border text-left transition shadow-md ${styles.card}`}
+            className={`w-full p-3 rounded-xl border text-left transition-all duration-300 ${styles.card} ${state === "active" ? "scale-[1.02]" : "hover:border-primary/50"
+              }`}
           >
-            <div className="flex items-center gap-3">
-              <span style={{ minWidth: "40px", minHeight: "40px" }}
-                className={`flex h-10 w-10 items-center justify-center rounded-full border ${styles.icon}`}
+            <div className="flex items-center gap-4">
+              <span
+                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-300 ${styles.icon}`}
               >
-                <step.Icon size={18} />
+                {state === "completed" ? (
+                  <Check size={20} strokeWidth={3} />
+                ) : (
+                  <step.Icon size={18} />
+                )}
               </span>
 
               <div className="min-w-0">
-                <p className={`font-semibold text-sm ${styles.title}`}>
+                <p className={`font-bold text-sm leading-tight ${styles.title}`}>
                   {step.title}
                 </p>
-                <p className={`text-xs truncate ${styles.subtitle}`}>
+                <p className={`text-[11px] mt-0.5 font-medium truncate ${styles.subtitle}`}>
                   {step.subtitle}
                 </p>
               </div>
