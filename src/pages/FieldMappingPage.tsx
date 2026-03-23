@@ -856,8 +856,8 @@ export function FieldMappingPage() {
         <Card className="shadow-lg border border-border bg-card animate-in">
           <CardHeader className="pb-4">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-md bg-primary flex items-center justify-center shadow-sm">
-                <GitMerge className="w-6 h-6 text-primary-foreground" />
+              <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
+                <GitMerge className="w-6 h-6 text-primary" />
               </div>
               <div>
                 <CardTitle className="text-xl font-normal">Map Your Fields</CardTitle>

@@ -6,7 +6,7 @@ import { LogOut } from 'lucide-react';
 
 export function Header() {
 
-  
+
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuth();
@@ -36,9 +36,9 @@ export function Header() {
         <div className="flex items-center gap-2">
           {/* <ThemeToggle /> */}
           <Button
-            variant="default"
+            variant="outline" // Changed from "default" to "outline"
             onClick={handleLogout}
-            className="font-semibold"
+            className="font-semibold bg-white text-primary border-primary hover:bg-primary/50 hover:text-white"
           >
             <LogOut className="mr-2 h-4 w-4" />
             <span className="hidden sm:inline">Logout</span>

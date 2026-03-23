@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { api } from '@/services/api';
-import { Loader2, Download, ChevronLeft, ChevronRight, Table2 } from 'lucide-react';
+import { Loader2, Download, ChevronLeft, ChevronRight, Table2, FileDown } from 'lucide-react';
 import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
 import type { FieldMapping } from '@/services/api';
