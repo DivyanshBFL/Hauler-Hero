@@ -5,6 +5,8 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { LogOut } from 'lucide-react';
 
 export function Header() {
+
+  
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuth();
