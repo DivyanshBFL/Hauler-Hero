@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, ChevronLeft, ChevronRight, ChartNoAxesCombined } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight,ChartNoAxesCombined } from "lucide-react";
 import { IMPORT_STATS_KEY, type ImportStats } from "@/types/importStats";
 import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
 import ProcessStepper from "@/components/ProcessStepper";
@@ -231,13 +231,14 @@ const DataAnalyticsPage = () => {
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
 
               <div className="flex items-start gap-4">
-
-                <div className="h-12 w-12 rounded-md bg-primary flex items-center justify-center shadow-sm">
-                  <ChartNoAxesCombined className="w-6 h-6 text-primary-foreground" />
+                
+                <div className="h-12 w-12 flex items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm">
+                <ChartNoAxesCombined className="text-primary" />
+                 
                 </div>
                 <div className="space-y-1">
-                  <CardTitle className="text-2xl font-normal">Entity Changes Preview</CardTitle>
-                  <CardDescription className="text-sm text-muted-foreground">
+                  <CardTitle className="text-sm font-normal">Entity Changes Preview</CardTitle>
+                  <CardDescription className="text-xs text-muted-foreground">
                     Data preview of the cleaned data
                     <span className="inline-flex items-center ml-3 px-3 py-1 text-xs font-medium bg-muted rounded-full border">
                       Changed rows: {changedRowsCount} | Changed cells: {changedCellsCount}
@@ -298,7 +299,7 @@ const DataAnalyticsPage = () => {
                             ? "bg-red-50 text-red-600"
                             : isChanged
                               ? "bg-amber-50/40"
-                              : ""
+                              : "odd:bg-background even:bg-primary/10"
                         }
                       >
                         {headers.map((col) => {
@@ -310,7 +311,7 @@ const DataAnalyticsPage = () => {
 
                           if (isAttr) {
                             const attrRaw = row.attribution || (row.data as any)?.attribution || (row.data as any)?.["Attribution"];
-                            const attrValue = typeof attrRaw === 'object' && attrRaw !== null
+                            const attrValue = typeof attrRaw === 'object' && attrRaw !== null 
                               ? (attrRaw.value || attrRaw.old_value || "—")
                               : (attrRaw || "—");
 
@@ -375,9 +376,7 @@ const DataAnalyticsPage = () => {
             </Button>
 
             <Button
-             variant='outline'
-              className="w-full sm:w-auto  border-primary text-primary font-semibold order-1 hover:bg-primary/10 transition-colors px-5 h-11 pr-3"
-              
+              variant="outline" className="px-5 h-11 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
               onClick={() => {
                 const total = rows.length;
                 const updated = changedRowsCount;

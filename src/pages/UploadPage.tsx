@@ -553,15 +553,15 @@ export function UploadPage() {
         </Card>
 
         <Dialog open={showSheetSelector} onOpenChange={(open) => setShowSheetSelector(open)}>
-          <DialogContent className="fixed left-1/2 top-1/2 z-50 w-[95vw] max-w-4xl -translate-x-1/2 -translate-y-1/2 data-[state=open]:animate-none data-[state=closed]:animate-none">
-            <DialogHeader>
+          <DialogContent className="fixed left-1/2 top-1/2 z-50 w-[95vw] max-w-4xl -translate-x-1/2 -translate-y-1/2 data-[state=open]:animate-none data-[state=closed]:animate-none p-0">
+            <DialogHeader className='border-b p-4'>
               <DialogTitle>Select Sheets To Join</DialogTitle>
               <DialogDescription>
                 Pick two different sheets and choose a join key for each.
               </DialogDescription>
             </DialogHeader>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
               {/* Left Side */}
               <div className="rounded-lg border border-border bg-muted/20 p-4 space-y-3">
                 {/* <div className="text-sm font-semibold text-foreground">Primary Data</div> */}
@@ -620,7 +620,7 @@ export function UploadPage() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Join Key</label>
+                  <label className="text-sm font-medium text-foreground">Related Column</label>
                   <select
                     className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
                     value={rightKey}
@@ -634,7 +634,7 @@ export function UploadPage() {
                 </div>
               </div>
             </div>
-
+<div className='w-full border-b'></div>
             <Button
               type="button"
               onClick={handleConfirmJoinSelection}
@@ -645,7 +645,8 @@ export function UploadPage() {
                 !isRightKeyValid ||
                 effectiveLeftSheet === effectiveRightSheet
               }
-              className="w-full"
+                variant="outline" 
+                className="px-5 h-11 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors max-w-[300px] mx-auto my-4 "
             >
               Confirm Join Selection
             </Button>

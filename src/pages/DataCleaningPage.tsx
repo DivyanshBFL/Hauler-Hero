@@ -1411,9 +1411,9 @@ export function DataCleaningPage() {
                   <ShieldAlert className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <CardTitle className="font-normal">Data Clean-up Workspace</CardTitle>
+                  <CardTitle className=" text-sm font-normal">Data Clean-up Workspace</CardTitle>
                   <div className="relative mt-1 inline-block">
-                    <CardDescription className="text-sm text-muted-foreground">
+                    <CardDescription className="text-xs text-muted-foreground">
                       <span>
                         <button
                           type="button"
