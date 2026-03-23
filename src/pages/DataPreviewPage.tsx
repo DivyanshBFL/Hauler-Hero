@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { api } from '@/services/api';
-import { Loader2, Download,ChevronLeft, ChevronRight } from 'lucide-react';
+import { Loader2, Download,ChevronLeft, ChevronRight,FileDown } from 'lucide-react';
 import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
 import type { FieldMapping } from '@/services/api';
@@ -350,8 +350,8 @@ export function DataPreviewPage() {
                   </svg>
                 </div>
                 <div className="space-y-1">
-                  <CardTitle className="text-xl font-semibold tracking-tight">Mapped Data Preview</CardTitle>
-                  <CardDescription className="text-sm text-muted-foreground">
+                  <CardTitle className="">Mapped Data Preview</CardTitle>
+                  <CardDescription className="mt-0">
                     Showing first 20 rows per entity &mdash; all&nbsp;
                     <span className="font-medium text-foreground">{totalRows}</span>
                     &nbsp;mapped rows will be processed
@@ -360,15 +360,12 @@ export function DataPreviewPage() {
               </div>
 
               <div className="flex flex-wrap gap-2">
-                <Button variant="outline" onClick={generateMappingPDF} disabled={generating || !totalRows} className="bg-muted text-gray-800 border-border">
-                  <Download className="mr-2 h-4 w-4" />
-                  {generating ? 'Generating...' : 'Report'}
+  
+                <Button variant="outline" onClick={handleDownloadExcel} disabled={!currentRows.length} className="">
+                  <FileDown className="mr-2 h-4 w-4" />Excel
                 </Button>
-                <Button variant="outline" onClick={handleDownloadExcel} disabled={!currentRows.length} className="bg-muted text-gray-800 border-border">
-                  <Download className="mr-2 h-4 w-4" />Excel
-                </Button>
-                <Button variant="outline" onClick={handleDownloadMappingJSON} disabled={!(allEntityMappings[selectedEntity]?.length)} className="bg-muted text-gray-800 border-border">
-                  <Download className="mr-2 h-4 w-4" />Mapping JSON
+                <Button variant="outline" onClick={handleDownloadMappingJSON} disabled={!(allEntityMappings[selectedEntity]?.length)} className="">
+                  <Download className="mr-2 h-4 w-4" />JSON
                 </Button>
               </div>
             </div>
@@ -397,7 +394,7 @@ export function DataPreviewPage() {
             )}
 
             {/* ── Table ────────────────────────────────────────── */}
-            <div className="border border-border rounded-xl overflow-hidden shadow-sm bg-card">
+            <div className="border border-border rounded-xs overflow-hidden shadow-sm bg-card mt-2">
               <div className="max-h-[60vh] overflow-auto">
                 {previewRows.length > 0 ? (
                   <Table className="w-full text-sm">
@@ -417,7 +414,7 @@ export function DataPreviewPage() {
                       {previewRows.map((row, rowIndex) => (
                         <TableRow
                           key={rowIndex}
-                          className="odd:bg-background even:bg-primary/10 hover:bg-muted/50 transition-colors"
+                          className=" hover:bg-muted/50 transition-colors"
                         >
                           {currentHeaders.map((h) => (
                             <TableCell key={h} className="whitespace-nowrap px-3 py-2">
