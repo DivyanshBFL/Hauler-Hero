@@ -102,21 +102,21 @@ export function LoginPage() {
         <section className="relative flex items-center justify-center p-6 md:p-12 bg-background">
 
           <div className="w-full max-w-md">
-            <CardHeader className="space-y-3 pb-6">
+            <CardHeader className="space-y-3 pb-6 border-none">
               <div className="flex justify-center">
-                <img src="/images/logo.png" alt="Hauler Hero" className="h-20 w-auto" />
+                <img src="/images/logo.png" alt="Hauler Hero" className="h-12 w-auto" />
               </div>
-              <CardTitle className="text-3xl text-center text-foreground font-bold">
+              <CardTitle className="h4 text-center text-foreground font-bold">
                 Welcome Back
               </CardTitle>
-              <CardDescription className="text-sm text-muted-foreground">
+              <CardDescription className="text-sm text-muted-foreground text-center">
                 Please Login to Your Account
               </CardDescription>
             </CardHeader>
 
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="space-y-2">
+            <CardContent className='flex justify-center'>
+              <form onSubmit={handleSubmit} className="space-y-5 flex-1 max-w-[300px]">
+                <div className="space-y-2 ">
                   <Label htmlFor="email" className="text-sm font-medium">Email</Label>
                   <Input
                     id="email"
@@ -126,7 +126,7 @@ export function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     disabled={loading}
-                    className="h-11 transition-all duration-200 focus:ring-2 focus:ring-ring"
+                    className="h-11 transition-all duration-200 focus:ring-2 focus:ring-ring mt-0 rounded-none"
                   />
                 </div>
 
