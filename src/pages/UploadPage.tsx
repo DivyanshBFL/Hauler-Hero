@@ -472,9 +472,9 @@ export function UploadPage() {
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
                         <div className=" gap-4">
-                           <div className="text-sm font-semibold" >Data Preview :</div>
+                          <div className="text-sm font-semibold" >Data Preview :</div>
                           <div className="bg-primary/10 text-blue-900 border border-blue-300 px-2 py-1 rounded-md w-full mt-2">
-                         
+
                             <span className='text-xs'>
                               Identified <span className="font-semibold">{sheet.headers.length} columns</span> and{' '}
                               <span className="font-semibold">{allRows.length} rows</span> in this uploaded file.
@@ -509,7 +509,7 @@ export function UploadPage() {
                                 {previewHeaders.map((header) => (
                                   <TableHead
                                     key={header}
-                                    className="px-3 py-2 text-left whitespace-nowrap "
+                                    className="px-3 py-2 text-left font-medium uppercase whitespace-nowrap"
                                   >
                                     {header}
                                   </TableHead>
@@ -553,15 +553,15 @@ export function UploadPage() {
         </Card>
 
         <Dialog open={showSheetSelector} onOpenChange={(open) => setShowSheetSelector(open)}>
-          <DialogContent className="fixed left-1/2 top-1/2 z-50 w-[95vw] max-w-4xl -translate-x-1/2 -translate-y-1/2 data-[state=open]:animate-none data-[state=closed]:animate-none p-0 gap-0">
-            <DialogHeader className='border-b p-4'>
+          <DialogContent className="fixed left-1/2 top-1/2 z-50 w-[95vw] max-w-4xl -translate-x-1/2 -translate-y-1/2 data-[state=open]:animate-none data-[state=closed]:animate-none">
+            <DialogHeader>
               <DialogTitle>Select Sheets To Join</DialogTitle>
               <DialogDescription>
                 Pick two different sheets and choose a join key for each.
               </DialogDescription>
             </DialogHeader>
-         
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Left Side */}
               <div className="rounded-lg border border-border bg-muted/20 p-4 space-y-3">
                 {/* <div className="text-sm font-semibold text-foreground">Primary Data</div> */}
@@ -620,7 +620,7 @@ export function UploadPage() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Related Column</label>
+                  <label className="text-sm font-medium text-foreground">Join Key</label>
                   <select
                     className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
                     value={rightKey}
@@ -634,11 +634,10 @@ export function UploadPage() {
                 </div>
               </div>
             </div>
-            <div className='w-full border-b'></div>
+
             <Button
               type="button"
               onClick={handleConfirmJoinSelection}
-              
               disabled={
                 !effectiveLeftSheet ||
                 !effectiveRightSheet ||
@@ -646,11 +645,10 @@ export function UploadPage() {
                 !isRightKeyValid ||
                 effectiveLeftSheet === effectiveRightSheet
               }
-              className="max-w-[300px] mx-auto my-4"
+              className="w-full"
             >
               Confirm Join Selection
             </Button>
-            
           </DialogContent>
         </Dialog>
       </div>
@@ -659,7 +657,7 @@ export function UploadPage() {
         <button
           onClick={handleNext}
           disabled={loading}
-          className="fixed right-4 top-1/2 -translate-y-1/2 z-30  rounded-full bg-primary/80 hover:bg-primary text-primary-foreground shadow-lg transition-all duration-200 disabled:opacity-50 p-0"
+          className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-primary/80 hover:bg-primary text-primary-foreground shadow-lg transition-all duration-200 disabled:opacity-50"
           title="Next: Field Mapping"
         >
           <ChevronRight className="h-6 w-6" />

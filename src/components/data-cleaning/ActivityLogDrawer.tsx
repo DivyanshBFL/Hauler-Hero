@@ -59,7 +59,7 @@ export default function ActivityLogDrawer({ open, loading, error, items, onClose
                                     <div className="min-w-0 flex-1">
                                         <p className="text-base font-semibold leading-6 text-foreground">{item.title}</p>
                                         {!!item.description && <p className="text-sm text-muted-foreground leading-5">{item.description}</p>}
-                                        <p className="text-xs text-muted-foreground mt-1">{item.timestamp}</p>
+                                        {/* <p className="text-xs text-muted-foreground mt-1">{item.timestamp}</p> */}
                                     </div>
 
                                     {item.actor === 'user' && <UserCircle2 className="h-5 w-5 text-muted-foreground" />}
