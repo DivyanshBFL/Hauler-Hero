@@ -85,27 +85,27 @@ const COLUMN_MENU_ITEMS: {
   label: string;
   icon: React.ReactNode;
 }[] = [
-  {
-    action: "replaceValues",
-    label: "Replace values",
-    icon: <Replace className="h-4 w-4" />,
-  },
-  {
-    action: "trimSpaces",
-    label: "Trim spaces",
-    icon: <Scissors className="h-4 w-4" />,
-  },
-  {
-    action: "truncateValues",
-    label: "Truncate values",
-    icon: <AlignLeft className="h-4 w-4" />,
-  },
-  {
-    action: "addPrefixOrSuffix",
-    label: "Add prefix or suffix",
-    icon: <PlusSquare className="h-4 w-4" />,
-  },
-];
+    {
+      action: "replaceValues",
+      label: "Replace values",
+      icon: <Replace className="h-4 w-4" />,
+    },
+    {
+      action: "trimSpaces",
+      label: "Trim spaces",
+      icon: <Scissors className="h-4 w-4" />,
+    },
+    {
+      action: "truncateValues",
+      label: "Truncate values",
+      icon: <AlignLeft className="h-4 w-4" />,
+    },
+    {
+      action: "addPrefixOrSuffix",
+      label: "Add prefix or suffix",
+      icon: <PlusSquare className="h-4 w-4" />,
+    },
+  ];
 
 function isCellMissing(value: unknown): boolean {
   if (value === null || value === undefined) return true;
@@ -641,10 +641,10 @@ export function DataCleaningPage() {
         const row =
           directRow && typeof directRow === "object"
             ? {
-                ...(mappedFromSource ?? {}),
-                ...directRow,
-                __rowIndex: rowIndex,
-              }
+              ...(mappedFromSource ?? {}),
+              ...directRow,
+              __rowIndex: rowIndex,
+            }
             : mappedFromSource;
 
         if (!row || typeof row !== "object") return;
@@ -704,8 +704,8 @@ export function DataCleaningPage() {
       const inferredColumns = normalizedColumns.length
         ? normalizedColumns
         : Object.keys(resultRows[0]?.row ?? {}).filter(
-            (c) => !c.startsWith("__"),
-          );
+          (c) => !c.startsWith("__"),
+        );
 
       return {
         rows: resultRows,
@@ -1809,15 +1809,15 @@ export function DataCleaningPage() {
           <CardHeader className="pb-3 px-4">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-start gap-4">
-                <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
-                  <ShieldAlert className="w-6 h-6 text-primary" />
+                <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
+                  <ShieldAlert className="w-4 h-4 text-primary" />
                 </div>
                 <div>
                   <CardTitle className=" text-sm font-normal">
                     Data Clean-up Workspace
                   </CardTitle>
-                  <div className="relative mt-1 inline-block">
-                    <CardDescription className="text-xs text-muted-foreground">
+                  <div className="">
+                    <CardDescription className="text-[11px] text-muted-foreground">
                       <span>
                         <button
                           type="button"
@@ -1911,29 +1911,15 @@ export function DataCleaningPage() {
                   <Redo2 className="h-4 w-4" />
                 </Button>
 
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-white border-black bg-black hover:text-white"
-                  disabled={!issues.length || analyzing || autoFixSubmitting}
-                  onClick={() => {
-                    setAutoFixError(null);
-                    setAutoFixConfirmOpen(true);
-                  }}
-                >
-                  <Sparkles className="mr-2 h-4 w-4 text-white fill-white animate-pulse" />
-                  Auto Cleanup
-                </Button>
                 <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>
                     <Button
                       size="sm"
                       variant="outline"
-                      className={`px-2 ${
-                        selectedIssueType !== "allIssues"
-                          ? "text-primary border-primary bg-primary/5"
-                          : ""
-                      }`}
+                      className={`px-2 ${selectedIssueType !== "allIssues"
+                        ? "text-primary border-primary bg-primary/5"
+                        : ""
+                        }`}
                       title="Filter by issue type"
                     >
                       <Filter className="h-4 w-4" />
@@ -2028,12 +2014,26 @@ export function DataCleaningPage() {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
+
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-white border-black bg-black hover:text-white"
+                  disabled={!issues.length || analyzing || autoFixSubmitting}
+                  onClick={() => {
+                    setAutoFixError(null);
+                    setAutoFixConfirmOpen(true);
+                  }}
+                >
+                  <Sparkles className="mr-2 h-4 w-4 text-white fill-white animate-pulse" />
+                  Auto Cleanup
+                </Button>
               </div>
             </div>
           </CardHeader>
 
           <CardContent className="p-0">
-            <div className="rounded-md border border-border overflow-hidden mt-2">
+            <div className="rounded-md border border-border overflow-hidden">
               <div
                 className="max-h-[500px] overflow-y-auto rounded-md"
                 onScroll={(e) => {
@@ -2054,7 +2054,7 @@ export function DataCleaningPage() {
                             className="font-normal relative px-2 py-[0.35rem] text-left whitespace-nowrap bg-gray-50"
                           >
                             <span
-                              className={`absolute left-0 right-0 top-0 h-1 transition-colors duration-200 mx-[1px] ${hasIssue ? "bg-red-400" : "bg-emerald-400"}`}
+                              className={`absolute left-0 right-0 top-0 h-0.5 transition-colors duration-200 mx-[1px] ${hasIssue ? "bg-red-400" : "bg-emerald-400"}`}
                             />
                             <div className="flex items-center gap-1 mt-1">
                               <span>{col}</span>
@@ -2101,8 +2101,8 @@ export function DataCleaningPage() {
                               selectedIssueType === "allIssues"
                                 ? cellIssues
                                 : cellIssues.filter(
-                                    (x) => x === selectedIssueType,
-                                  );
+                                  (x) => x === selectedIssueType,
+                                );
                             let hasCellIssue = visibleCellIssues.length > 0;
 
                             const cellKey = getCellKey(rowIndex, col);
@@ -2121,8 +2121,8 @@ export function DataCleaningPage() {
                                 title={
                                   hasCellIssue
                                     ? visibleCellIssues
-                                        .map(toIssueLabel)
-                                        .join(", ")
+                                      .map(toIssueLabel)
+                                      .join(", ")
                                     : undefined
                                 }
                                 onClick={() => {
@@ -2132,7 +2132,7 @@ export function DataCleaningPage() {
                                 }}
                               >
                                 {editingCell?.rowIndex === rowIndex &&
-                                editingCell?.column === col ? (
+                                  editingCell?.column === col ? (
                                   <input
                                     type="text"
                                     value={editedValue}
@@ -2352,7 +2352,7 @@ export function DataCleaningPage() {
                                 name={opt.key}
                                 checked={
                                   autoFixOptions[
-                                    opt.key as keyof typeof autoFixOptions
+                                  opt.key as keyof typeof autoFixOptions
                                   ] === true
                                 }
                                 onChange={() =>
@@ -2373,7 +2373,7 @@ export function DataCleaningPage() {
                                 name={opt.key}
                                 checked={
                                   autoFixOptions[
-                                    opt.key as keyof typeof autoFixOptions
+                                  opt.key as keyof typeof autoFixOptions
                                   ] === false
                                 }
                                 onChange={() =>
@@ -2429,10 +2429,10 @@ export function DataCleaningPage() {
                                   checked={
                                     (choice.value === "null" &&
                                       autoFixOptions[
-                                        opt.key as keyof typeof autoFixOptions
+                                      opt.key as keyof typeof autoFixOptions
                                       ] === null) ||
                                     autoFixOptions[
-                                      opt.key as keyof typeof autoFixOptions
+                                    opt.key as keyof typeof autoFixOptions
                                     ] === choice.value
                                   }
                                   onChange={() =>

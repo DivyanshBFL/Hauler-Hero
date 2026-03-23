@@ -401,7 +401,7 @@ export function DataPreviewPage() {
   return (
     <div className={PAGE_OUTER}>
       <div className={PAGE_CONTAINER}>
-        <div className="mb-4">
+        <div className="mb-2">
           <ProcessStepper />
         </div>
 
@@ -412,7 +412,7 @@ export function DataPreviewPage() {
                 <div className="h-8 w-8 rounded-md bg-primary/10 text-primary flex items-center justify-center shadow-sm">
                   <Eye className="w-4 h-4 text-primary" />
                 </div>
-                <div className="space-y-1">
+                <div className="">
                   <CardTitle className="text-sm font-normal">
                     Mapped Data Preview
                   </CardTitle>
@@ -432,7 +432,7 @@ export function DataPreviewPage() {
                   variant="outline"
                   onClick={handleDownloadExcel}
                   disabled={!currentRows.length}
-                  className="bg-muted text-gray-800 border-border text-xs py-2 px-2"
+                  className="font-normal text-xs border-primary text-primary hover:bg-primary/10 transition-colors hover:text-primary py-1"
                 >
                   <FileDown className="mr-2 h-4 w-4" />
                   Excel
@@ -441,7 +441,7 @@ export function DataPreviewPage() {
                   variant="outline"
                   onClick={handleDownloadMappingJSON}
                   disabled={!allEntityMappings[selectedEntity]?.length}
-                  className="bg-muted text-gray-800 border-border text-xs py-2 px-2"
+                  className="font-normal text-xs border-primary text-primary hover:bg-primary/10 transition-colors hover:text-primary py-1"
                 >
                   <Download className="mr-2 h-4 w-4" />
                   JSON
@@ -450,7 +450,7 @@ export function DataPreviewPage() {
             </div>
           </CardHeader>
 
-          <CardContent className="space-y-3 p-0 !mt-2">
+          <CardContent className="space-y-3 p-0">
             {/* ── Entity tabs ─────────────────────────────────── */}
             {availableTabs.length > 1 && (
               <div className="flex gap-1 border-b border-border">
@@ -458,11 +458,10 @@ export function DataPreviewPage() {
                   <button
                     key={entity}
                     onClick={() => setSelectedEntity(entity)}
-                    className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                      selectedEntity === entity
-                        ? "border-primary text-primary"
-                        : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`}
+                    className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${selectedEntity === entity
+                      ? "border-primary text-primary"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                      }`}
                   >
                     {entity}
                     <span className="ml-2 text-xs bg-muted rounded-full px-2 py-0.5">
@@ -516,13 +515,13 @@ export function DataPreviewPage() {
                 )}
               </div>
             </div>
-
+            {/* 
             {currentRows.length > 20 && (
               <p className="text-xs text-muted-foreground text-right">
                 Showing 20 of {currentRows.length} rows — all rows will be
                 included when processing
               </p>
-            )}
+            )} */}
           </CardContent>
 
           <div className="flex flex-col sm:flex-row justify-between gap-3 px-4 py-3 border-t bg-muted">

@@ -127,7 +127,7 @@ export function UploadPage() {
     const isCSV = fileType === "text/csv" || fileName.endsWith(".csv");
     const isXLSX =
       fileType ===
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
       fileName.endsWith(".xlsx");
 
     if (isCSV) {
@@ -198,6 +198,8 @@ export function UploadPage() {
     const worksheet = workbook.Sheets[sheetName];
     const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(worksheet, {
       defval: "",
+      raw: false,
+      // cellText: true
     });
     let headers = Object.keys(rows[0] || {});
 
@@ -205,6 +207,7 @@ export function UploadPage() {
       const matrix = XLSX.utils.sheet_to_json<string[]>(worksheet, {
         header: 1,
         defval: "",
+        raw: false,
       });
       headers = (matrix[0] || [])
         .map((value) => String(value).trim())
@@ -486,10 +489,9 @@ export function UploadPage() {
                   className={`
                     w-full max-w-3xl relative group flex flex-col items-center justify-center gap-3 p-6 
                     rounded-xl border-2 border-dashed transition-all duration-300 cursor-pointer
-                    ${
-                      isDragging
-                        ? "border-primary bg-primary/10 scale-[1.02] shadow-2xl"
-                        : "border-primary/40 bg-primary/[0.03] hover:border-primary/60 hover:bg-primary/[0.06]"
+                    ${isDragging
+                      ? "border-primary bg-primary/10 scale-[1.02] shadow-2xl"
+                      : "border-primary/40 bg-primary/[0.03] hover:border-primary/60 hover:bg-primary/[0.06]"
                     }
                   `}
                   onClick={openFilePicker}
@@ -551,7 +553,7 @@ export function UploadPage() {
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
                         <div className="gap-4">
-                          <div className="text-sm font-normal px-3">
+                          <div className="text-sm font-normal px-3 mt-[-10px]">
                             Data Preview :
                           </div>
                           <div className="bg-primary/10 text-blue-900 border border-blue-300 px-2 py-1 rounded-sm w-[98%] mt-2 mx-3">
@@ -624,7 +626,7 @@ export function UploadPage() {
                                     >
                                       {String(
                                         (row as Record<string, unknown>)?.[
-                                          header
+                                        header
                                         ] ?? "",
                                       )}
                                     </TableCell>

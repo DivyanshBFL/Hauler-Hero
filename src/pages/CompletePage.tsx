@@ -39,7 +39,7 @@ function MetricCard({
       className={`rounded-xl border p-6 flex flex-col justify-between shadow-sm transition-all hover:shadow-md h-40 ${className}`}
     >
       <div className="flex items-start justify-between">
-        <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">
+        <span className="text-md font-normal">
           {label}
         </span>
         <div className="p-2 rounded-lg bg-white/50">
@@ -149,19 +149,19 @@ export function CompletePage() {
     <div className={`${PAGE_OUTER} min-h-80`}>
       <div className={PAGE_CONTAINER}>
         <Card className="shadow-none border border-border bg-card animate-in overflow-hidden ">
-          <CardContent className="p-8 space-y-8 h-[60vh]">
+          <CardContent className="space-y-8 h-[80vh] !p-0">
             <div className="space-y-8">
               {/* TOP SECTION: Success Header */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-8">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center justify-center h-16 w-16 rounded-full border-2 border-green-500 bg-green-50 shadow-inner">
                     <Check className="h-8 w-8 text-green-600" />
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold text-slate-900">
+                    <h1 className="text-xl font-semibold text-green-600">
                       Success!
                     </h1>
-                    <p className="text-slate-500 font-medium">
+                    <p className="text-slate-500 font-normal text-md">
                       Data cleaning and processing completed successfully.
                     </p>
                     <div className="flex items-center gap-2 mt-1 text-xs text-slate-400">
@@ -172,10 +172,12 @@ export function CompletePage() {
                 </div>
               </div>
 
+              <hr className="border-border w-full" />
+
               {/* GRID SECTION: 3 per line with increased size */}
-              <section>
+              <section className="px-8">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400">
+                  <h2 className="text-xl font-normal text-slate-400">
                     Key Performance Metrics
                   </h2>
                 </div>

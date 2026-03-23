@@ -10,8 +10,8 @@ export function Footer() {
 
   return (
     <footer className="w-full border-t bg-zinc-900">
-      <div className="mx-auto w-full px-6 md:px-8 flex flex-col items-center gap-1 py-3">
-        <div className="flex items-center gap-6 text-xs text-zinc-400">
+      <div className="mx-auto w-full px-6 md:px-8 flex flex-col items-center py-3 mt-2">
+        {/* <div className="flex items-center gap-6 text-xs text-zinc-400">
           <a href="#" className="hover:text-white transition-colors">
             Privacy Policy
           </a>
@@ -21,7 +21,7 @@ export function Footer() {
           <a href="#" className="hover:text-white transition-colors">
             Support
           </a>
-        </div>
+        </div> */}
         <p className="text-xs text-zinc-400 text-center">
           © {new Date().getFullYear()} Hauler Hero. All rights reserved.
         </p>
