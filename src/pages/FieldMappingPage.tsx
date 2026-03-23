@@ -871,37 +871,37 @@ export function FieldMappingPage() {
             </div>
           </CardHeader>
 
-          <CardContent className="space-y-6">
-            <div className="rounded-lg border border-rose-100 bg-rose-50/70 mt-3">
+          <CardContent className="gap-4 ">
+                <div className="text-sm mt-4 font-semibold" >AI Auto-Mapping Summary :</div>
+            <div className="rounded-lg border mt-2 mb-4 bg-primary/10 text-blue-900">
               <div className="px-4 py-3 flex items-center justify-between gap-2">
-                <div className="text-xl" style={{ minWidth: "300px" }}>Target match error summary</div>
                 <div className="px-1 flex flex-wrap gap-1 text-xs" >
-                  <div className="flex items-center gap-2 text-rose-600">
-                    <span>Auto-mapped coverage</span>
+                  <div className="flex items-center gap-2 ">
+                    <span>Fields Auto-Mapped</span>
                     <span className={autoMappedCoverageClass}>
                       {autoMappedCoveragePct}% ({autoMappedCount}/{targetFieldsAll.length})
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 text-rose-600">
+                  <div className="flex items-center gap-2 ">
                     <span>Unmatched Columns</span>
-                    <span className="rounded-md bg-red-200 text-red-800 px-2 py-0.5 font-semibold">
+                    <span className="rounded-md  px-2 py-0.5 font-semibold">
                       {unmatchedColumnsCount}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 text-rose-600">
+                  {/* <div className="flex items-center gap-2 ">
                     <span>Data size overflow warning</span>
-                    <span className="rounded-md bg-red-200 text-red-800 px-2 py-0.5 font-semibold">
+                    <span className="rounded-md  px-2 py-0.5 font-semibold">
                       {dataSizeOverflowWarningCount}
                     </span>
-                  </div>
-                  <div className="flex items-center gap-2 text-rose-600">
+                  </div> */}
+                  {/* <div className="flex items-center gap-2 ">
                     <span>Data type mismatch</span>
-                    <span className="rounded-md bg-red-200 text-red-800 px-2 py-0.5 font-semibold">
+                    <span className="rounded-md  px-2 py-0.5 font-semibold">
                       {dataTypeMismatchCount}
                     </span>
-                  </div>
+                  </div> */}
                 </div>
-                <label className="inline-flex items-center gap-2 text-sm text-muted-foreground ml-auto" style={{ minWidth: "150px" }}>
+                {/* <label className="inline-flex items-center gap-2 text-sm text-muted-foreground ml-auto" style={{ minWidth: "150px" }}>
                   <input
                     type="checkbox"
                     checked={showOnlyErrors}
@@ -909,7 +909,7 @@ export function FieldMappingPage() {
                     className="h-4 w-4 rounded border-input"
                   />
                   Show only errors
-                </label>
+                </label> */}
               </div>
 
             </div>
@@ -928,9 +928,9 @@ export function FieldMappingPage() {
                     ref={flowPaneRef} className="rounded-xl border border-border bg-background overflow-hidden" style={{ background: 'white !important' }}>
                     <div className="grid grid-cols-2 gap-6 px-4 py-3">
                       <div className="space-y-2">
-                        <div className="flex items-center justify-between text-sm">
+                        <div className="flex items-center justify-start text-sm gap-2">
                           <span className="font-semibold text-foreground">
-                            Datasets ({selectedEntity || 'Source'})
+                            Datasets ({selectedEntity || 'Source'}) : 
                           </span>
                           <span className="text-muted-foreground">{sourceFieldsAll.length} Columns</span>
                         </div>
@@ -948,9 +948,22 @@ export function FieldMappingPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="font-semibold text-foreground">Target (Contacts)</span>
+                        <div className='flex justify-between'>
+                        <div className="flex items-center justify-start text-sm gap-2">
+                          <span className="font-semibold text-foreground">Target (Contacts) :</span>
                           <span className="text-muted-foreground">{targetFieldsAll.length} Columns</span>
+                        </div>
+                        <div>
+                          <label className="inline-flex items-center gap-2 text-sm text-muted-foreground ml-auto" style={{ minWidth: "150px" }}>
+                  <input
+                    type="checkbox"
+                    checked={showOnlyErrors}
+                    onChange={(e) => setShowOnlyErrors(e.target.checked)}
+                    className="h-4 w-4 rounded border-input"
+                  />
+                  Show only errors
+                </label>
+                        </div>
                         </div>
                         <div className="relative">
                           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -1116,10 +1129,11 @@ export function FieldMappingPage() {
             <Button
               onClick={handleNext}
               disabled={processing}
-              className="w-full sm:w-auto px-8 h-11 font-semibold order-1 sm:order-2"
+              variant='outline'
+              className="w-full sm:w-auto  border-primary text-primary font-semibold order-1 hover:bg-primary/10 transition-colors px-5 h-11 pr-3"
             >
               {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Next Step
+              Next
               <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>

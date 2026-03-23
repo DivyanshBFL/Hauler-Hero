@@ -376,7 +376,7 @@ export function UploadPage() {
           <CardHeader>
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-md border border-primary flex items-center justify-center shadow-sm">
+                <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
                   <Upload className="h-6 w-6 text-primary" />
                 </div>
                 <div>
@@ -403,7 +403,7 @@ export function UploadPage() {
             </div>
           </CardHeader>
 
-          <CardContent className="px-6 pt-0 pb-3 my-6">
+          <CardContent className="px-6 pt-0 pb-0 my-5">
             <div className="flex justify-center flex-col items-center">
               {!file && (
                 <div
@@ -411,7 +411,7 @@ export function UploadPage() {
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
                   className={`
-                    w-full max-w-3xl relative group flex flex-col items-center justify-center gap-6 p-12 
+                    w-full max-w-3xl relative group flex flex-col items-center justify-center gap-3 p-6 
                     rounded-3xl border-2 border-dashed transition-all duration-300 cursor-pointer
                     ${isDragging
                       ? 'border-primary bg-primary/10 scale-[1.02] shadow-2xl'
@@ -421,20 +421,20 @@ export function UploadPage() {
                   onClick={openFilePicker}
                 >
                   <div className="relative">
-                    <div className="h-20 w-20 rounded-full border-2 border-primary flex items-center justify-center shadow-md transform group-hover:scale-110 transition-transform duration-300">
-                      <Upload className="h-10 w-10 text-primary" />
+                    <div className="h-10 w-10 rounded-full flex items-center justify-center shadow-md transform group-hover:scale-110 transition-transform duration-300 bg-primary/10">
+                      <Upload className="h-6 w-6 text-primary" />
                     </div>
                     <div className="absolute -inset-4 bg-primary/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
 
                   <div className="text-center space-y-2">
-                    <h3 className="text-3xl font-normal text-foreground tracking-tight">Drop your file here</h3>
+                    <h3 className="text-xl font-normal text-foreground tracking-tight">Drop your file here</h3>
                     <p className="text-xs font-semibold text-muted-foreground tracking-widest uppercase opacity-60">OR CLICK TO BROWSE</p>
                   </div>
 
                   <Button
                     variant="outline"
-                    className="relative overflow-hidden px-10 h-14 border-primary text-primary hover:bg-primary/10 font-bold rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95"
+                    className="relative overflow-hidden px-3 h-10 border-primary text-primary hover:bg-primary/10 font-bold rounded-md shadow-lg shadow-primary/10 transition-all active:scale-95"
                   >
                     <div className="flex items-center gap-3">
                       <Upload className="h-5 w-5" />
@@ -455,7 +455,7 @@ export function UploadPage() {
 
             {sheets.length > 0 && (
               <>
-                <div className="gap-4 mt-6">
+                <div className="gap-4 mt-0">
                   {sheets.map((sheet, index) => {
                     const previewHeaders = sheet.headers ?? [];
                     const previewRows = allRows.slice(0, 20);
@@ -479,19 +479,30 @@ export function UploadPage() {
                               Identified <span className="font-semibold">{sheet.headers.length} columns</span> and{' '}
                               <span className="font-semibold">{allRows.length} rows</span> in this uploaded file.
                             </span>
+
+                          {isJoinRequired && joinSelection && (
+                            <span className="text-xs">
+                             Join configured: <span className="font-semibold">{joinSelection.leftSheet}</span>
+                            {' '}(<span className="font-semibold">{joinSelection.leftKey}</span>) {'->'}{' '}
+                            <span className="font-semibold">{joinSelection.rightSheet}</span>
+                            {' '}(<span className="font-semibold">{joinSelection.rightKey}</span>)
+                          </span>
+                          )}
+
+
                           </div>
                         </div>
 
-                        {isJoinRequired && joinSelection && (
+                        {/* {isJoinRequired && joinSelection && (
                           <div className="mt-3 rounded-md border border-blue-300 bg-primary/10 px-2 py-2 text-xs text-blue-900 ">
                             Join configured: <span className="font-semibold">{joinSelection.leftSheet}</span>
                             {' '}(<span className="font-semibold">{joinSelection.leftKey}</span>) {'->'}{' '}
                             <span className="font-semibold">{joinSelection.rightSheet}</span>
                             {' '}(<span className="font-semibold">{joinSelection.rightKey}</span>)
                           </div>
-                        )}
+                        )} */}
 
-                        <div className="mt-4 max-h-96 rounded-lg border border-border overflow-auto">
+                        <div className="mt-4 max-h-96 rounded-md border border-border overflow-auto">
                           <Table className="w-full min-w-[900px] ">
                             <TableHeader className=" font-bold text-sm">
                               <TableRow>
@@ -531,9 +542,9 @@ export function UploadPage() {
             )}
           </CardContent>
           <div className="flex justify-end px-6 py-3 border-t bg-muted">
-            <Button onClick={handleNext} disabled={loading || !canProceed} variant="outline" className="px-8 h-11 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors">
+            <Button onClick={handleNext} disabled={loading || !canProceed} variant="outline" className="px-5 h-11 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors ">
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Next Step
+              Next
               <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
@@ -553,9 +564,9 @@ export function UploadPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
               {/* Left Side */}
               <div className="rounded-lg border border-border bg-muted/20 p-4 space-y-3">
-                <div className="text-sm font-semibold text-foreground">Parent Data</div>
+                {/* <div className="text-sm font-semibold text-foreground">Primary Data</div> */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Sheet</label>
+                  <label className="text-sm font-medium text-foreground">Primary Sheet</label>
                   <select
                     className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
                     value={leftSheetName}
@@ -575,7 +586,7 @@ export function UploadPage() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Related Column</label>
+                  <label className="text-sm font-medium text-foreground">Column</label>
                   <select
                     className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
                     value={leftKey}
@@ -591,9 +602,9 @@ export function UploadPage() {
 
               {/* Right Side */}
               <div className="rounded-lg border border-border bg-muted/20 p-4 space-y-3">
-                <div className="text-sm font-semibold text-foreground">Child Data</div>
+                {/* <div className="text-sm font-semibold text-foreground">Seconday Data</div> */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Sheet</label>
+                  <label className="text-sm font-medium text-foreground">Reference Sheet</label>
                   <select
                     className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
                     value={rightSheetName}

@@ -1385,17 +1385,17 @@ export function DataCleaningPage() {
           <CardHeader className="pb-3">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-start gap-4">
-                <div className="h-12 w-12 rounded-md bg-primary flex items-center justify-center shadow-sm">
-                  <ShieldAlert className="w-6 h-6 text-primary-foreground" />
+                <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
+                  <ShieldAlert className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <CardTitle className="font-normal">Issue Grouped Review</CardTitle>
+                  <CardTitle className="font-normal">Data Clean-up Workspace</CardTitle>
                   <div className="relative mt-1 inline-block">
                     <CardDescription className="text-xs text-muted-foreground">
                       <span>
                         <button
                           type="button"
-                          className="ml-2 text-primary underline underline-offset-2 hover:text-primary/80"
+                          className="text-primary underline underline-offset-2 hover:text-primary/80"
                           onMouseEnter={() => setIssueSummaryOpen(true)}
                           onMouseLeave={() => setIssueSummaryOpen(false)}
                         >
@@ -1560,7 +1560,7 @@ export function DataCleaningPage() {
                     {filteredVisibleRows.map((row, idx) => {
                       const rowIndex = Number(row.__rowIndex ?? idx);
                       return (
-                        <TableRow key={`r-${rowIndex}`} className="odd:bg-background even:bg-primary/10">
+                        <TableRow key={`r-${rowIndex}`} className="">
                           {columns.map((col) => {
                             const cellIssues = rowIssueMap[rowIndex]?.[col] ?? [];
                             const visibleCellIssues =
@@ -1635,9 +1635,12 @@ export function DataCleaningPage() {
               </svg>
               Back
             </Button>
-            <Button onClick={handleContinue} disabled={submitting}>
+            <Button onClick={handleContinue} disabled={submitting}
+             variant='outline'
+              className="w-full sm:w-auto  border-primary text-primary font-semibold order-1 hover:bg-primary/10 transition-colors px-5 h-11 pr-3"
+            >
               {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Process Data
+              Next
               <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>

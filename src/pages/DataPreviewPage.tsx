@@ -344,15 +344,15 @@ export function DataPreviewPage() {
           <CardHeader className="">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-start gap-4">
-                <div className="h-12 w-12 rounded-md bg-primary flex items-center justify-center shadow-sm">
-                  <Table2 className="w-6 h-6 text-primary-foreground" />
+                <div className="h-10 w-10 rounded-md bg-primary/10 text-primary flex items-center justify-center shadow-sm">
+                  <Table2 className="w-6 h-6 text-primary" />
                 </div>
                 <div className="space-y-1">
                   <CardTitle className="">Mapped Data Preview</CardTitle>
                   <CardDescription className="mt-0">
-                    Showing first 20 rows per entity &mdash; all&nbsp;
+                    Showing first 20 rows &mdash; all&nbsp;
                     <span className="font-medium text-foreground">{totalRows}</span>
-                    &nbsp;mapped rows will be processed
+                    &nbsp;rows will be processed
                   </CardDescription>
                 </div>
               </div>
@@ -448,10 +448,11 @@ export function DataPreviewPage() {
             <Button
               onClick={handleNext}
               disabled={processing || !totalRows}
-              className="w-full sm:w-auto px-8 h-11 font-semibold"
+              variant='outline'
+              className="w-full sm:w-auto  border-primary text-primary font-semibold order-1 hover:bg-primary/10 transition-colors px-5 h-11 pr-3"
             >
               {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Review Issues
+              Next
               <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>

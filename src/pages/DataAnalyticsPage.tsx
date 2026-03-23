@@ -375,7 +375,9 @@ const DataAnalyticsPage = () => {
             </Button>
 
             <Button
-              className="px-8 h-11 font-semibold"
+             variant='outline'
+              className="w-full sm:w-auto  border-primary text-primary font-semibold order-1 hover:bg-primary/10 transition-colors px-5 h-11 pr-3"
+              
               onClick={() => {
                 const total = rows.length;
                 const updated = changedRowsCount;
@@ -394,7 +396,7 @@ const DataAnalyticsPage = () => {
                 navigate("/complete");
               }}
             >
-              Process Data
+              Next
               <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
