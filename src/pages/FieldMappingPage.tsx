@@ -864,7 +864,7 @@ export function FieldMappingPage() {
                 <CardTitle className="text-md font-normal">Map Your Fields</CardTitle>
                 <CardDescription className="text-xs ">
                   Drag from a source field handle (right) to a destination field handle (left) to create a mapping.
-                  Select a line and press Delete to remove. Target fields marked with * are required.
+                  Select a line and press Delete to remove. Target fields marked with <span className='text-red-400'>*</span> are required.
                 </CardDescription>
               </div>
             </div>
@@ -872,7 +872,7 @@ export function FieldMappingPage() {
 
           <CardContent className="gap-4 ">
             <div className="text-sm mt-4 font-semibold" >AI Auto-Mapping Summary :</div>
-            <div className="rounded-lg border mt-2 mb-4 bg-primary/10 text-blue-900">
+            <div className="rounded-lg border mt-2 mb-4 bg-primary/10 text-blue-900 border-blue-300">
               <div className="px-4 py-1 flex items-center justify-between gap-2">
                 <div className="px-1 flex flex-wrap gap-1 text-xs" >
                   <div className="flex items-center gap-2 ">
@@ -927,7 +927,7 @@ export function FieldMappingPage() {
                     ref={flowPaneRef} className="rounded-xl border border-border bg-background overflow-hidden" style={{ background: 'white !important' }}>
                     <div className="grid grid-cols-2 gap-6 px-4 py-3">
                       <div className="space-y-2">
-                        <div className="flex items-center justify-start text-sm gap-2">
+                        <div className="flex items-center justify-start text-sm gap-2 h-[25px]">
                           <span className="font-semibold text-foreground">
                             Datasets ({selectedEntity || 'Source'}) :
                           </span>
@@ -1027,7 +1027,7 @@ export function FieldMappingPage() {
                           style={{ background: 'transparent' }}
                         >
                           <Background gap={12} size={1} color="#e5e7eb" />
-                          <Panel position="top-left" className="m-2 text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded shadow">
+                          <Panel position="top-left" className="m-2 mx-4 text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded shadow">
                             {mappings.filter((m) => m.targetField !== 'Unmapped').length} mappings
                           </Panel>
                         </ReactFlow>
@@ -1144,7 +1144,7 @@ export function FieldMappingPage() {
       {/* Navigation Arrows */}
       <button
         onClick={() => navigate('/upload')}
-        className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-primary/80 hover:bg-primary text-primary-foreground shadow-lg transition-all duration-200"
+        className="fixed left-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-primary/10  text-primary border border-blue-300 transition-all duration-200"
         title="Previous: Data Preview"
       >
         <ChevronLeft className="h-6 w-6" />
@@ -1153,7 +1153,7 @@ export function FieldMappingPage() {
       <button
         onClick={handleNext}
         disabled={processing}
-        className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-primary/80 hover:bg-primary text-primary-foreground shadow-lg transition-all duration-200 disabled:opacity-50"
+        className="fixed right-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-primary/10  text-primary border border-blue-300 text-primary shadow-lg transition-all duration-200 disabled:opacity-50"
         title="Next: Data Analytics"
       >
         <ChevronRight className="h-6 w-6" />
