@@ -1563,7 +1563,7 @@ export function DataCleaningPage() {
                   }}
                 >
                   <Sparkles className="mr-2 h-4 w-4 text-blue-500 fill-blue-400 animate-blink" />
-                  Auto-fix all issues
+                  Auto Cleanup
                 </Button>
                 <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>
@@ -1824,7 +1824,7 @@ export function DataCleaningPage() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="h-12 px-6 border-b border-border bg-white flex items-center justify-between shrink-0">
-                <h3 className="text-md leading-none font-light text-foreground">Auto-fix Configuration</h3>
+                <h3 className="text-md leading-none font-light text-foreground">Data Cleanup Rules</h3>
                 <button
                   type="button"
                   disabled={autoFixSubmitting}
@@ -1840,10 +1840,10 @@ export function DataCleaningPage() {
                   <div className="grid grid-cols-1 gap-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
                       {[
-                        { key: 'datatype_fix', label: 'Datatype Fix' },
-                        { key: 'missing_value_fix', label: 'Missing Value Fix' },
-                        { key: 'field_length_fix', label: 'Field Length Fix' },
-                        { key: 'deduplication', label: 'Deduplication' },
+                        { key: 'datatype_fix', label: 'Fix Data Type Issues' },
+                        { key: 'missing_value_fix', label: 'Handle Missing Field Values' },
+                        { key: 'field_length_fix', label: 'Fix Field Length Violations' },
+                        { key: 'deduplication', label: 'Remove Duplicate Data Records' },
                       ].map((opt) => (
                         <div key={opt.key} className="space-y-2">
                           <label className="text-sm text-foreground">{opt.label}</label>
@@ -1875,8 +1875,8 @@ export function DataCleaningPage() {
 
                     <div className="space-y-6">
                       {[
-                        { key: 'phone_action', label: 'Phone Action' },
-                        { key: 'email_action', label: 'Email Action' },
+                        { key: 'phone_action', label: 'Select The Cleanup Action For Invalid Phone Number Entries' },
+                        { key: 'email_action', label: 'Define The Preferred Treatment For Invalid Email Address Entries' },
                       ].map((opt) => (
                         <div key={opt.key} className="space-y-3">
                           <label className="text-sm text-foreground">{opt.label}</label>
