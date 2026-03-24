@@ -432,7 +432,7 @@ export function UploadPage() {
                     <CardTitle className="text-sm font-normal">
                       Upload File
                     </CardTitle>
-                    {/* {file && (
+                    {/* {/* {file && (
                       <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-full text-xs font-medium animate-in fade-in slide-in-from-left-2">
                         <span>📄 {file.name}</span>
                         <X
@@ -450,6 +450,29 @@ export function UploadPage() {
                     processing workflow
                   </CardDescription>
                 </div>
+
+              </div>
+              <div className='float-right'>
+                {file && (
+                  <div className='flex gap-2'>
+                    <Button variant='outline'
+                      className="px-5 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors"
+                      onClick={() => { setShowSheetSelector(true) }}
+                    >
+                      Remap
+                    </Button>
+                    <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-sm text-xs font-medium animate-in fade-in slide-in-from-left-2">
+                      <span>📄 {file.name}</span>
+                      <X
+                        className="h-3 w-3 cursor-pointer hover:text-red-500 transition-colors"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          resetUploadState();
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="float-right">
                 {file && (
