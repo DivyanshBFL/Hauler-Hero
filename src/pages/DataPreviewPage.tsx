@@ -526,7 +526,7 @@ export function DataPreviewPage() {
             <Button
               variant="outline"
               onClick={() => navigate("/field-mapping")}
-              className="w-full sm:w-auto"
+              className='border-primary text-primary font-semibold hover:bg-primary/10 transition-colors'
             >
               <svg
                 className="mr-2 w-4 h-4"
