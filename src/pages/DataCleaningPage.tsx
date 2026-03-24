@@ -161,6 +161,7 @@ export function DataCleaningPage() {
   const [history, setHistory] = useState<Record<string, any>[][]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [serverRedoAvailable, setServerRedoAvailable] = useState(0);
+  const [serverUndoAvailable, setServerUndoAvailable] = useState(0);
 
   const [currentPage, setCurrentPage] = useState(0);
   const [fetchingPage, setFetchingPage] = useState(false);
@@ -322,7 +323,7 @@ export function DataCleaningPage() {
     setHistoryIndex((prev) => Math.min(prev + 1, MAX_HISTORY - 1));
   }, [historyIndex]);
 
-  const canUndo = historyIndex > 0;
+  const canUndo = historyIndex > 0 || serverUndoAvailable > 0;
   const canRedo = (historyIndex < history.length - 1) || serverRedoAvailable > 0;
 
   const availableIssueTypes = useMemo(() => {
@@ -398,6 +399,9 @@ export function DataCleaningPage() {
 
     if (typeof payload.redo_available === 'number') {
       setServerRedoAvailable(payload.redo_available);
+    }
+    if (typeof payload.step_count === 'number') {
+      setServerUndoAvailable(payload.step_count);
     }
 
     if (payload.issues) {
@@ -691,6 +695,9 @@ export function DataCleaningPage() {
       if (typeof payload.redo_available === 'number') {
         setServerRedoAvailable(payload.redo_available);
       }
+      if (typeof payload.step_count === 'number') {
+        setServerUndoAvailable(payload.step_count);
+      }
 
       const rows = payload.issues?.rows || [];
 
@@ -718,13 +725,20 @@ export function DataCleaningPage() {
   }, [processIssuesData]);
 
   const handleUndoStable = useCallback(async () => {
+    if (!canUndo) return;
     try {
       const sid = getActiveSessionId();
       if (sid) {
-        await api.rollback(sid, 1);
+        const response = await api.rollback(sid, 1);
         sessionStartRequestCache.delete(sid); // Clear cache on rollback
+        if (typeof response?.step_count === 'number') {
+          setServerUndoAvailable(response.step_count);
+        }
+        if (typeof response?.redo_available === 'number') {
+          setServerRedoAvailable(response.redo_available);
+        }
 
-        if (canUndo) {
+        if (historyIndex > 0) {
           const idx = historyIndex - 1;
           const rows = history[idx];
           setHistoryIndex(idx);
@@ -761,6 +775,9 @@ export function DataCleaningPage() {
         sessionStartRequestCache.delete(sid); // Clear cache on redo
         if (typeof response?.redo_available === 'number') {
           setServerRedoAvailable(response.redo_available);
+        }
+        if (typeof response?.step_count === 'number') {
+          setServerUndoAvailable(response.step_count);
         }
       }
 
@@ -1467,6 +1484,7 @@ export function DataCleaningPage() {
                 <Button
                   size="sm" variant="outline"
                   className="text-amber-600 border-amber-400 hover:bg-amber-50"
+                  disabled={!canUndo}
                   onClick={handleUndoStable}
                   title="Undo"
                 >
