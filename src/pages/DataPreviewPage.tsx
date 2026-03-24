@@ -415,7 +415,7 @@ export function DataPreviewPage() {
                     Mapped Data Preview
                   </CardTitle>
                   <CardDescription className="text-xs">
-                    Showing first 20 rows &mdash; all&nbsp;
+                    Showing first {totalRows > 20 ? 20 : totalRows} rows &mdash; all&nbsp;
                     <span className="font-medium text-foreground">
                       {totalRows}
                     </span>
@@ -455,11 +455,10 @@ export function DataPreviewPage() {
                   <button
                     key={entity}
                     onClick={() => setSelectedEntity(entity)}
-                    className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                      selectedEntity === entity
+                    className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${selectedEntity === entity
                         ? "border-primary text-primary"
                         : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`}
+                      }`}
                   >
                     {entity}
                     <span className="ml-2 text-xs bg-muted rounded-full px-2 py-0.5">

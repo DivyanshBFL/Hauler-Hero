@@ -429,9 +429,9 @@ export function FieldMappingPage() {
   );
 
   const autoMappedCoverageClass = useMemo(() => {
-    if (autoMappedCoveragePct > 60) return 'rounded-md bg-green-200 text-green-800 px-2 py-0.5 font-semibold';
-    if (autoMappedCoveragePct > 40) return 'rounded-md bg-yellow-200 text-yellow-800 px-2 py-0.5 font-semibold';
-    return 'rounded-md bg-red-200 text-red-800 px-2 py-0.5 font-semibold';
+    if (autoMappedCoveragePct > 60) return 'rounded-md px-2 py-0.5 font-semibold';
+    if (autoMappedCoveragePct > 40) return 'rounded-md px-2 py-0.5 font-semibold';
+    return 'rounded-md px-2 py-0.5 font-semibold';
   }, [autoMappedCoveragePct]);
 
   const unmatchedColumnsCount = useMemo(
@@ -871,7 +871,7 @@ export function FieldMappingPage() {
           </CardHeader>
 
           <CardContent className="gap-4 ">
-                <div className="text-sm mt-4 font-semibold" >AI Auto-Mapping Summary :</div>
+            <div className="text-sm mt-4 font-semibold" >AI Auto-Mapping Summary :</div>
             <div className="rounded-lg border mt-2 mb-4 bg-primary/10 text-blue-900">
               <div className="px-4 py-1 flex items-center justify-between gap-2">
                 <div className="px-1 flex flex-wrap gap-1 text-xs" >
@@ -929,7 +929,7 @@ export function FieldMappingPage() {
                       <div className="space-y-2">
                         <div className="flex items-center justify-start text-sm gap-2">
                           <span className="font-semibold text-foreground">
-                            Datasets ({selectedEntity || 'Source'}) : 
+                            Datasets ({selectedEntity || 'Source'}) :
                           </span>
                           <span className="text-muted-foreground">{sourceFieldsAll.length} Columns</span>
                         </div>
@@ -948,21 +948,21 @@ export function FieldMappingPage() {
 
                       <div className="space-y-2">
                         <div className='flex justify-between'>
-                        <div className="flex items-center justify-start text-sm gap-2">
-                          <span className="font-semibold text-foreground">Target (Contacts) :</span>
-                          <span className="text-muted-foreground">{targetFieldsAll.length} Columns</span>
-                        </div>
-                        <div>
-                          <label className="inline-flex items-center gap-2 text-sm text-muted-foreground ml-auto" style={{ minWidth: "150px" }}>
-                  <input
-                    type="checkbox"
-                    checked={showOnlyErrors}
-                    onChange={(e) => setShowOnlyErrors(e.target.checked)}
-                    className="h-4 w-4 rounded border-input"
-                  />
-                  Show only errors
-                </label>
-                        </div>
+                          <div className="flex items-center justify-start text-sm gap-2">
+                            <span className="font-semibold text-foreground">Target (Contacts) :</span>
+                            <span className="text-muted-foreground">{targetFieldsAll.length} Columns</span>
+                          </div>
+                          <div>
+                            <label className="inline-flex items-center gap-2 text-sm text-muted-foreground ml-auto" style={{ minWidth: "150px" }}>
+                              <input
+                                type="checkbox"
+                                checked={showOnlyErrors}
+                                onChange={(e) => setShowOnlyErrors(e.target.checked)}
+                                className="h-4 w-4 rounded border-input"
+                              />
+                              Show only errors
+                            </label>
+                          </div>
                         </div>
                         <div className="relative">
                           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
