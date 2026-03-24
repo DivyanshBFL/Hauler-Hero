@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ReactFlow,
@@ -160,7 +160,8 @@ function buildNodesAndEdges(
   sourceX: number,
   targetX: number,
   nodeWidth: number,
-  requiredTargetSet: Set<string>
+  requiredTargetSet: Set<string>,
+  onUnmap?: (fieldName: string) => void
 ): { nodes: Node[]; edges: Edge[] } {
   const nodes: Node[] = [];
   const active = mappings.filter((m) => m.targetField !== 'Unmapped');
@@ -185,14 +186,8 @@ function buildNodesAndEdges(
         draggable: showMissingSourceText,
       },
       style: {
-        // f9e4e4 this was previous red color but changed it to yellow after :
-        background: mapped ? '#f0fef4' : showMissingSourceText ? '#fcf9e6' : '#fcf9e6',
-        border: mapped
-          ? '1px solid #92ecb3'
-          : showMissingSourceText
-            ? '1px solid #f7eab8'
-            // f5c7c7 this was previous red color but changed it to yellow
-            : '1px solid #f7eab8',
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
         borderRadius: 8,
       },
       draggable: false,
@@ -216,14 +211,16 @@ function buildNodesAndEdges(
         ) : (
           label
         ),
+        fieldName: label,
         dataType: targetTypeMap[label],
         status: mapped ? 'mapped' : 'unmapped',
         nodeWidth,
         isWarning: !mapped,
+        onUnmap,
       },
       style: {
-        background: mapped ? '#f0fef4' : '#fcf9e6',
-        border: mapped ? '1px solid #92ecb3' : '1px solid #fee686',
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
         borderRadius: 8,
       },
       draggable: false,
@@ -442,11 +439,6 @@ export function FieldMappingPage() {
       sourceFieldsAll.filter((f) => !mappedSourceSet.has(f)).length,
     [sourceFieldsAll, mappedSourceSet]
   );
-  const dataTypeMismatchCount = mismatchPairs.length;
-  const dataSizeOverflowWarningCount = useMemo(
-    () => getSessionCount('dataSizeOverflowWarnings', 'dataSizeOverflowCount', 'overflowWarnings'),
-    []
-  );
 
   const sourceFields = useMemo(() => {
     let list = sourceFieldsAll;
@@ -485,6 +477,14 @@ export function FieldMappingPage() {
     return () => observer.disconnect();
   }, [chatCollapsed]);
 
+  const handleUnmapTarget = useCallback((targetField: string) => {
+    setEntityMappings((prev) => {
+      const current = prev[selectedEntity] ?? [];
+      const updated = current.filter((m) => m.targetField !== targetField);
+      return { ...prev, [selectedEntity]: updated };
+    });
+  }, [selectedEntity]);
+
   const nodeWidth = chatCollapsed ? 420 : 300;
   const flowCanvasWidth = Math.max(flowPaneWidth, nodeWidth * 2 + HORIZONTAL_COLUMN_MARGIN * 2 + 300);
   const sourceX = HORIZONTAL_COLUMN_MARGIN;
@@ -501,9 +501,10 @@ export function FieldMappingPage() {
         sourceX,
         targetX,
         nodeWidth,
-        requiredTargetSet
+        requiredTargetSet,
+        handleUnmapTarget
       ),
-    [orderedSource, orderedTarget, mappings, sourceTypeMap, targetTypeMap, sourceX, targetX, nodeWidth, requiredTargetSet]
+    [orderedSource, orderedTarget, mappings, sourceTypeMap, targetTypeMap, sourceX, targetX, nodeWidth, requiredTargetSet, handleUnmapTarget]
   );
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodesAndEdges.nodes);
@@ -753,7 +754,7 @@ export function FieldMappingPage() {
     };
   }, [isDraggingConnection]);
 
-  const onConnect: OnConnect = (connection: Connection) => {
+  const onConnect: OnConnect = useCallback((connection: Connection) => {
     setIsDraggingConnection(false);
     const sourceId = connection.source;
     const targetId = connection.target;
@@ -768,13 +769,13 @@ export function FieldMappingPage() {
       .concat([{ sourceField, targetField }]);
 
     setEntityMappings((prev) => ({ ...prev, [selectedEntity]: updated }));
-  };
+  }, [mappings, selectedEntity]);
 
-  const onEdgesDelete: OnEdgesDelete = (deleted) => {
+  const onEdgesDelete: OnEdgesDelete = useCallback((deleted) => {
     const toRemove = new Set(deleted.map((e) => e.id));
     const updated = mappings.filter((m) => !toRemove.has(`e-${m.sourceField}-${m.targetField}`));
     setEntityMappings((prev) => ({ ...prev, [selectedEntity]: updated }));
-  };
+  }, [mappings, selectedEntity]);
 
   const handleNext = async () => {
     setProcessing(true);
@@ -872,7 +873,7 @@ export function FieldMappingPage() {
           <CardContent className="gap-4 ">
                 <div className="text-sm mt-4 font-semibold" >AI Auto-Mapping Summary :</div>
             <div className="rounded-lg border mt-2 mb-4 bg-primary/10 text-blue-900">
-              <div className="px-4 py-3 flex items-center justify-between gap-2">
+              <div className="px-4 py-1 flex items-center justify-between gap-2">
                 <div className="px-1 flex flex-wrap gap-1 text-xs" >
                   <div className="flex items-center gap-2 ">
                     <span>Fields Auto-Mapped</span>

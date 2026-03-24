@@ -12,7 +12,6 @@ export type SourceFieldNodeData = {
 export type SourceFieldNodeType = Node<SourceFieldNodeData, 'sourceField'>;
 
 function SourceFieldNodeComponent({ data }: NodeProps<SourceFieldNodeType>) {
-  const isMapped = data.status === 'mapped';
   const width = data.nodeWidth ?? 220;
   const hideDataType = data.hideDataType === true;
   const hideMapping = data.draggable === true;
@@ -26,8 +25,7 @@ function SourceFieldNodeComponent({ data }: NodeProps<SourceFieldNodeType>) {
 
       {!hideDataType && (
         <span
-          className={`shrink-0 text-[11px] font-semibold uppercase px-2 py-0.5 rounded-md ${isMapped ? 'bg-emerald-200 text-emerald-800' : 'bg-yellow-200 text-yellow-800'
-            }`}
+          className="shrink-0 text-[11px] font-semibold uppercase px-2 py-0.5 rounded-md bg-slate-100 text-slate-600"
         >
           {data.dataType ?? 'TEXT'}
         </span>
