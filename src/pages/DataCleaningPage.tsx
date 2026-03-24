@@ -83,27 +83,27 @@ const COLUMN_MENU_ITEMS: {
   label: string;
   icon: React.ReactNode;
 }[] = [
-  {
-    action: "replaceValues",
-    label: "Replace values",
-    icon: <Replace className="h-4 w-4" />,
-  },
-  {
-    action: "trimSpaces",
-    label: "Trim spaces",
-    icon: <Scissors className="h-4 w-4" />,
-  },
-  {
-    action: "truncateValues",
-    label: "Truncate values",
-    icon: <AlignLeft className="h-4 w-4" />,
-  },
-  {
-    action: "addPrefixOrSuffix",
-    label: "Add prefix or suffix",
-    icon: <PlusSquare className="h-4 w-4" />,
-  },
-];
+    {
+      action: "replaceValues",
+      label: "Replace values",
+      icon: <Replace className="h-4 w-4" />,
+    },
+    {
+      action: "trimSpaces",
+      label: "Trim spaces",
+      icon: <Scissors className="h-4 w-4" />,
+    },
+    {
+      action: "truncateValues",
+      label: "Truncate values",
+      icon: <AlignLeft className="h-4 w-4" />,
+    },
+    {
+      action: "addPrefixOrSuffix",
+      label: "Add prefix or suffix",
+      icon: <PlusSquare className="h-4 w-4" />,
+    },
+  ];
 
 function isCellMissing(value: unknown): boolean {
   if (value === null || value === undefined) return true;
@@ -639,10 +639,10 @@ export function DataCleaningPage() {
         const row =
           directRow && typeof directRow === "object"
             ? {
-                ...(mappedFromSource ?? {}),
-                ...directRow,
-                __rowIndex: rowIndex,
-              }
+              ...(mappedFromSource ?? {}),
+              ...directRow,
+              __rowIndex: rowIndex,
+            }
             : mappedFromSource;
 
         if (!row || typeof row !== "object") return;
@@ -702,8 +702,8 @@ export function DataCleaningPage() {
       const inferredColumns = normalizedColumns.length
         ? normalizedColumns
         : Object.keys(resultRows[0]?.row ?? {}).filter(
-            (c) => !c.startsWith("__"),
-          );
+          (c) => !c.startsWith("__"),
+        );
 
       return {
         rows: resultRows,
@@ -1702,11 +1702,7 @@ export function DataCleaningPage() {
         edits.forEach((edit) => {
           cellsToMarkAsWorked.add(getCellKey(edit.row_index, edit.column));
         });
-<<<<<<< HEAD
-        setWorkedOnCells(prev => new Set([...prev, ...cellsToMarkAsWorked]));
-=======
         setWorkedOnCells((prev) => new Set([...prev, ...cellsToMarkAsWorked]));
->>>>>>> 4a4db1a4bf53e84e3b9bbcd07e0da80cfc80bca0
 
         if (!refreshedRows?.length) {
           await runIssueAnalysis(backendRows);
@@ -2072,8 +2068,8 @@ export function DataCleaningPage() {
                               selectedIssueType === "allIssues"
                                 ? cellIssues
                                 : cellIssues.filter(
-                                    (x) => x === selectedIssueType,
-                                  );
+                                  (x) => x === selectedIssueType,
+                                );
                             let hasCellIssue = visibleCellIssues.length > 0;
 
                             const cellKey = getCellKey(rowIndex, col);
@@ -2092,8 +2088,8 @@ export function DataCleaningPage() {
                                 title={
                                   hasCellIssue
                                     ? visibleCellIssues
-                                        .map(toIssueLabel)
-                                        .join(", ")
+                                      .map(toIssueLabel)
+                                      .join(", ")
                                     : undefined
                                 }
                                 onClick={() => {
@@ -2103,7 +2099,7 @@ export function DataCleaningPage() {
                                 }}
                               >
                                 {editingCell?.rowIndex === rowIndex &&
-                                editingCell?.column === col ? (
+                                  editingCell?.column === col ? (
                                   <input
                                     type="text"
                                     value={editedValue}
@@ -2175,15 +2171,10 @@ export function DataCleaningPage() {
               </svg>
               Back
             </Button>
-<<<<<<< HEAD
-            <Button onClick={handleNextClick} disabled={submitting}
-              variant='outline'
-=======
             <Button
               onClick={handleContinue}
               disabled={submitting}
               variant="outline"
->>>>>>> 4a4db1a4bf53e84e3b9bbcd07e0da80cfc80bca0
               className="w-full sm:w-auto  border-primary text-primary font-semibold order-1 hover:bg-primary/10 transition-colors px-5 pr-3"
             >
               {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -2325,7 +2316,7 @@ export function DataCleaningPage() {
                                 name={opt.key}
                                 checked={
                                   autoFixOptions[
-                                    opt.key as keyof typeof autoFixOptions
+                                  opt.key as keyof typeof autoFixOptions
                                   ] === true
                                 }
                                 onChange={() =>
@@ -2346,7 +2337,7 @@ export function DataCleaningPage() {
                                 name={opt.key}
                                 checked={
                                   autoFixOptions[
-                                    opt.key as keyof typeof autoFixOptions
+                                  opt.key as keyof typeof autoFixOptions
                                   ] === false
                                 }
                                 onChange={() =>
@@ -2402,10 +2393,10 @@ export function DataCleaningPage() {
                                   checked={
                                     (choice.value === "null" &&
                                       autoFixOptions[
-                                        opt.key as keyof typeof autoFixOptions
+                                      opt.key as keyof typeof autoFixOptions
                                       ] === null) ||
                                     autoFixOptions[
-                                      opt.key as keyof typeof autoFixOptions
+                                    opt.key as keyof typeof autoFixOptions
                                     ] === choice.value
                                   }
                                   onChange={() =>
@@ -2432,71 +2423,12 @@ export function DataCleaningPage() {
                   </div>
                 </div>
 
-<<<<<<< HEAD
-              <div className="shrink-0 border-t border-border bg-white p-4 flex items-center justify-between gap-2">
-                <Button
-                  variant="outline"
-                  disabled={autoFixSubmitting}
-                  onClick={closeAutoFixDrawer}
-                  className="h-10 px-5"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  disabled={autoFixSubmitting}
-                  onClick={() => void handleAutoFixAllIssues()}
-                  variant='outline'
-                  className='bg-white text-primary border-primary hover:bg-blue-100 '
-                >
-                  {autoFixSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                  Apply Fixes
-                </Button>
-              </div>
-            </div>
-          </div>
-        )
-      }
-
-      {
-        addressFixConfirmOpen && (
-          <div className="fixed inset-0 z-[70] flex items-center justify-center">
-            <div
-              className="absolute inset-0 bg-black/40"
-              onClick={() => {
-                if (addressFixSubmitting) return;
-                setAddressFixConfirmOpen(false);
-                setAddressFixError(null);
-              }}
-            />
-            <div className="relative z-10 w-full max-w-xl rounded-md border border-border bg-background shadow-2xl overflow-hidden">
-              <div className="py-4 border-b flex items-center justify-between">
-                <h3 className="flex items-center text-md leading-none font-light text-foreground px-4">
-                  <span className="mr-2"><MapPin className="h-4 w-4" /></span>
-                  <span>Auto-fix Addresses</span>
-                </h3>
-
-                <div className='px-4'>
-                  <X onClick={() => {
-                    setAddressFixConfirmOpen(false)
-                  }} />
-                </div>
-              </div>
-
-              <div className="p-6">
-                <p className="text-sm text-muted-foreground whitespace-pre-line">
-                  One-click cleanup that automatically fixes address issues in the dataset.
-                  {'\n'}All fixes are logged step-by-step. ✨
-                </p>
-                {addressFixError && (
-                  <p className="text-xs text-destructive mt-3">{addressFixError}</p>
-=======
                 {autoFixError && (
                   <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20">
                     <p className="text-xs text-destructive font-medium">
                       {autoFixError}
                     </p>
                   </div>
->>>>>>> 4a4db1a4bf53e84e3b9bbcd07e0da80cfc80bca0
                 )}
 
                 {autoFixSubmitting && (
@@ -2529,17 +2461,92 @@ export function DataCleaningPage() {
               <Button
                 disabled={autoFixSubmitting}
                 onClick={() => void handleAutoFixAllIssues()}
-                variant="outline"
-                className="bg-white text-primary border-primary "
+                variant='outline'
+                className='bg-white text-primary border-primary hover:bg-blue-100 '
               >
-                {autoFixSubmitting ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : null}
+                {autoFixSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 Apply Fixes
               </Button>
             </div>
           </div>
-<<<<<<< HEAD
+        </div>
+      )
+      }
+
+      {
+        addressFixConfirmOpen && (
+          <div className="fixed inset-0 z-[70] flex items-center justify-center">
+            <div
+              className="absolute inset-0 bg-black/40"
+              onClick={() => {
+                if (addressFixSubmitting) return;
+                setAddressFixConfirmOpen(false);
+                setAddressFixError(null);
+              }}
+            />
+            <div className="relative z-10 w-full max-w-xl rounded-md border border-border bg-background shadow-2xl overflow-hidden">
+              <div className="py-4 border-b flex items-center justify-between">
+                <h3 className="flex items-center text-md leading-none font-light text-foreground px-4">
+                  <span className="mr-2"><MapPin className="h-4 w-4" /></span>
+                  <span>Auto-fix Addresses</span>
+                </h3>
+
+                <div className="px-4">
+                  <X
+                    onClick={() => {
+                      setAddressFixConfirmOpen(false);
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="p-6">
+                <p className="text-sm text-muted-foreground whitespace-pre-line">
+                  One-click cleanup that automatically fixes address issues in the
+                  dataset.
+                  {"\n"}All fixes are logged step-by-step. ✨
+                </p>
+                {addressFixError && (
+                  <p className="text-xs text-destructive mt-3">
+                    {addressFixError}
+                  </p>
+                )}
+                {addressFixSubmitting && (
+                  <div className="mt-4 w-full">
+                    <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-sky-400 transition-all duration-300"
+                        style={{ width: `${progress}%` }}
+                      />
+                    </div>
+
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {progress < 100
+                        ? `Processing auto-fix... ${progress}%`
+                        : "Processed successfully ✅"}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="p-4 border-t flex items-center justify-between gap-2">
+                <Button
+                  variant="outline"
+                  className="px-6 "
+                  onClick={() => {
+                    setAddressFixConfirmOpen(false);
+                    setAddressFixError(null);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button onClick={() => void handleProceedFixAddresses()} disabled={addressFixSubmitting} variant="outline" className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors ">
+                  {addressFixSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Proceed
+                </Button>
+              </div>
+            </div>
+          </div>
         )
       }
 
@@ -2591,91 +2598,6 @@ export function DataCleaningPage() {
           </div>
         )
       }
-=======
-        </div>
-      )}
-
-      {addressFixConfirmOpen && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center">
-          <div
-            className="absolute inset-0 bg-black/40"
-            onClick={() => {
-              if (addressFixSubmitting) return;
-              setAddressFixConfirmOpen(false);
-              setAddressFixError(null);
-            }}
-          />
-          <div className="relative z-10 w-full max-w-xl rounded-md border border-border bg-background shadow-2xl overflow-hidden">
-            <div className="py-4 border-b flex items-center justify-between">
-              <h3 className="text-md leading-none font-light text-foreground px-4">
-                Auto-fix Addresses
-              </h3>
-
-              <div className="px-4">
-                <X
-                  onClick={() => {
-                    setAddressFixConfirmOpen(false);
-                  }}
-                />
-              </div>
-            </div>
-
-            <div className="p-6">
-              <p className="text-sm text-muted-foreground whitespace-pre-line">
-                One-click cleanup that automatically fixes address issues in the
-                dataset.
-                {"\n"}All fixes are logged step-by-step. ✨
-              </p>
-              {addressFixError && (
-                <p className="text-xs text-destructive mt-3">
-                  {addressFixError}
-                </p>
-              )}
-              {addressFixSubmitting && (
-                <div className="mt-4 w-full">
-                  <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-sky-400 transition-all duration-300"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {progress < 100
-                      ? `Processing auto-fix... ${progress}%`
-                      : "Processed successfully ✅"}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            <div className="p-4 border-t flex items-center justify-between gap-2">
-              <Button
-                variant="outline"
-                className="px-6 "
-                onClick={() => {
-                  setAddressFixConfirmOpen(false);
-                  setAddressFixError(null);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={() => void handleProceedFixAddresses()}
-                disabled={addressFixSubmitting}
-                variant="outline"
-                className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
-              >
-                {addressFixSubmitting && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Proceed
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
->>>>>>> 4a4db1a4bf53e84e3b9bbcd07e0da80cfc80bca0
       {/* Navigation Arrows */}
       <button
         onClick={() => navigate("/data-preview")}
