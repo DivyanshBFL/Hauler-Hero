@@ -367,7 +367,7 @@ export function UploadPage() {
   const filteredRightKeys = rightSheetHeaders;
 
   return (
-    <div className={`${PAGE_OUTER} min-h-32`}>
+    <div className={`${PAGE_OUTER} !min-h-0`}>
       <div className={PAGE_CONTAINER}>
         <div className="mb-4">
           <ProcessStepper />
@@ -461,7 +461,7 @@ export function UploadPage() {
                   >
                     <div className="flex items-center gap-3">
                       <Upload className="h-5 w-5" />
-                      CHOOSE FILE (CSV OR XLSX)
+                      Choose File (CSV Or XLSX)
                     </div>
                   </Button>
 
@@ -527,12 +527,12 @@ export function UploadPage() {
 
                         <div className="mt-4 max-h-96 rounded-md border border-border overflow-auto">
                           <Table className="w-full min-w-[900px] ">
-                            <TableHeader className=" font-bold text-sm">
+                            <TableHeader className=" font-bold text-sm ">
                               <TableRow>
                                 {previewHeaders.map((header) => (
                                   <TableHead
                                     key={header}
-                                    className="px-3 py-2 text-left font-medium  whitespace-nowrap"
+                                    className="px-3 py-2 text-left font-medium  whitespace-nowrap bg-gray-50"
                                   >
                                     {header}
                                   </TableHead>
