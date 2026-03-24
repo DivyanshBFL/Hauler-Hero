@@ -1608,9 +1608,9 @@ export function DataCleaningPage() {
                   <DropdownMenuContent align="end" sideOffset={8} className="w-52">
                     <DropdownMenuItem
                       onClick={() => void handleOpenActivityLog()}
-                      className="cursor-pointer text-blue-700 focus:text-blue-700 focus:bg-blue-50 data-[highlighted]:bg-blue-50"
+                      className="cursor-pointer focus:text-blue-700 focus:bg-blue-50 data-[highlighted]:bg-blue-50"
                     >
-                      <FileClock className="mr-2 h-4 w-4 text-blue-500" />
+                      <FileClock className="mr-2 h-4 w-4" />
                       Activity Log
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -1623,9 +1623,9 @@ export function DataCleaningPage() {
                         setPreviewOpen(false);
                         setDrawer('dedupe');
                       }}
-                      className="cursor-pointer text-blue-700 focus:text-blue-700 focus:bg-blue-50 data-[highlighted]:bg-blue-50"
+                      className="cursor-pointer focus:text-blue-700 focus:bg-blue-50 data-[highlighted]:bg-blue-50"
                     >
-                      <Copy className="mr-2 h-4 w-4 text-blue-500" />
+                      <Copy className="mr-2 h-4 w-4" />
                       Deduplicate
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -1634,9 +1634,9 @@ export function DataCleaningPage() {
                         setAutoFixError(null);
                         setAddressFixConfirmOpen(true);
                       }}
-                      className="cursor-pointer text-blue-700 focus:text-blue-700 focus:bg-blue-50 data-[highlighted]:bg-blue-50"
+                      className="cursor-pointer focus:text-blue-700 focus:bg-blue-50 data-[highlighted]:bg-blue-50"
                     >
-                      <MapPin className="mr-2 h-4 w-4 text-blue-500" />
+                      <MapPin className="mr-2 h-4 w-4" />
                       Fix Addresses
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -1999,7 +1999,10 @@ export function DataCleaningPage() {
             />
             <div className="relative z-10 w-full max-w-xl rounded-md border border-border bg-background shadow-2xl overflow-hidden">
               <div className="py-4 border-b flex items-center justify-between">
-                <h3 className="text-md leading-none font-light text-foreground px-4">Auto-fix Addresses</h3>
+                <h3 className="flex items-center text-md leading-none font-light text-foreground px-4">
+                  <span className="mr-2"><MapPin className="h-4 w-4" /></span>
+                  <span>Auto-fix Addresses</span>
+                </h3>
 
                 <div className='px-4'>
                   <X onClick={() => {

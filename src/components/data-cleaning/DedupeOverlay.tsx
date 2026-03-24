@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Loader2, Plus, X } from 'lucide-react';
+import { Copy, Loader2, Plus, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { DedupeCondition, DedupeMode, DedupeMethod, DedupeKeepStrategy, DrawerType, KeepRemove, PreviewRow } from './types';
 
@@ -156,8 +156,9 @@ export default function DedupeOverlay(props: Props) {
             {renderDrawer && (
                 <div className={`absolute right-0 top-0 h-full w-full max-w-[560px] bg-white border-l border-border shadow-2xl z-10 transition-transform duration-300 ease-in-out ${drawerVisible ? 'translate-x-0' : 'translate-x-full'}`}>
                     <div className="h-12 px-6 border-b border-border bg-white flex items-center justify-between">
-                        <h2 className="text-md leading-none font-light text-foreground">
-                            {lastDrawer === 'dedupe' ? (dedupeMode === 'column' ? 'Deduplicate' : 'Deduplicate') : 'Fix Addresses'}
+                        <h2 className="flex items-center text-md leading-none font-light text-foreground">
+                            <span className="mr-2"><Copy className="h-4 w-4" /></span>
+                            <span>{lastDrawer === 'dedupe' ? (dedupeMode === 'column' ? 'Deduplicate' : 'Deduplicate') : 'Fix Addresses'}</span>
                         </h2>
                         <button onClick={() => setDrawer(null)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
                     </div>
@@ -311,22 +312,22 @@ export default function DedupeOverlay(props: Props) {
                                 )}
 
                                 <div className="absolute bottom-0 left-0 right-0 border-t border-border bg-white p-4 flex justify-between gap-2">
-                                <Button
-                                            variant="outline"
-                                            onClick={() => { setDrawer(null); setPreviewOpen(false); }}
-                                            disabled={previewLoading || applyDedupLoading}
-                                        >Cancel</Button>
-                                   
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => { setDrawer(null); setPreviewOpen(false); }}
+                                        disabled={previewLoading || applyDedupLoading}
+                                    >Cancel</Button>
+
 
                                     <div className='flex gap-2'>
-                                    <Button variant="outline"
-                                        onClick={() => void onRemoveDuplicates()}
-                                        disabled={previewLoading || applyDedupLoading}
-                                        className='border-red-400 text-red-400'
-                                    >
-                                        {applyDedupLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                        Remove Duplicates
-                                    </Button>
+                                        <Button variant="outline"
+                                            onClick={() => void onRemoveDuplicates()}
+                                            disabled={previewLoading || applyDedupLoading}
+                                            className='border-red-400 text-red-400'
+                                        >
+                                            {applyDedupLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                            Remove Duplicates
+                                        </Button>
                                         <Button
                                             variant='outline'
                                             onClick={() => void onBuildPreview()}
