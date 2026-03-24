@@ -1195,7 +1195,7 @@ export function FieldMappingPage() {
                       <div className="space-y-2">
                         <div className="flex items-center justify-start text-sm gap-2">
                           <span className="font-semibold text-foreground">
-                            Source Schema :
+                            Datasets ({selectedEntity || 'Source'}) :
                           </span>
                           <span className="text-muted-foreground">
                             {sourceFieldsAll.length} Columns{" "}
@@ -1357,8 +1357,8 @@ export function FieldMappingPage() {
                               <div
                                 key={message.id}
                                 className={`rounded-md px-3 py-2 text-xs ${message.role === "assistant"
-                                    ? "bg-muted text-foreground"
-                                    : "bg-primary text-primary-foreground ml-auto max-w-[90%]"
+                                  ? "bg-muted text-foreground"
+                                  : "bg-primary text-primary-foreground ml-auto max-w-[90%]"
                                   }`}
                               >
                                 {message.text}
