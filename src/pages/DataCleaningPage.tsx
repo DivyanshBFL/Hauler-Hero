@@ -27,7 +27,10 @@ import {
   Redo2,
   ChevronLeft,
   ChevronRight,
-  ShieldAlert
+  ShieldAlert,
+  FileClock,
+  Cross,
+  X
 } from 'lucide-react';
 import { PAGE_OUTER, PAGE_CONTAINER } from '@/constants/layout';
 import ProcessStepper from '@/components/ProcessStepper';
@@ -1511,6 +1514,7 @@ export function DataCleaningPage() {
                   className="text-blue-700 border-blue-300 hover:bg-blue-50"
                   onClick={() => void handleOpenActivityLog()}
                 >
+                  <FileClock className="mr-2 h-4 w-4 text-blue-500" />
                   Activity Log
                 </Button>
 
@@ -1592,7 +1596,7 @@ export function DataCleaningPage() {
                       {columns.map((col) => {
                         const hasIssue = (issueByColumn[col] ?? 0) > 0;
                         return (
-                          <TableHead key={col} className="font-semibold relative px-2 py-3 text-left whitespace-nowrap">
+                          <TableHead key={col} className="font-normal relative px-2 py-3 text-left whitespace-nowrap bg-gray-50">
                             <span className={`absolute left-0 right-0 top-0 h-1 transition-colors duration-200 mx-[1px] ${hasIssue ? 'bg-red-400' : 'bg-emerald-400'}`} />
                             <div className="flex items-center gap-1 mt-1">
                               <span>{col}</span>
@@ -1625,12 +1629,12 @@ export function DataCleaningPage() {
                             const cellKey = getCellKey(rowIndex, col);
                             const isWorkedOn = workedOnCells.has(cellKey);
                             const isMissingValue = isCellMissing(row[col]);
-                            const bgClass = isWorkedOn ? 'bg-yellow-100' : (hasCellIssue || isMissingValue) ? 'bg-red-100' : '';
+                            const bgClass = isWorkedOn ? 'bg-yellow-100' : (hasCellIssue || isMissingValue) ? 'bg-red-50' : '';
 
                             return (
                               <TableCell
                                 key={`c-${rowIndex}-${col}`}
-                                className={`px-3 py-2 whitespace-nowrap ${bgClass} ${hasCellIssue ? 'cursor-pointer bg-clip-content' : ''}`}
+                                className={`px-1 py-2 whitespace-nowrap ${bgClass} ${hasCellIssue ? 'cursor-pointer bg-clip-content' : ''}`}
                                 title={hasCellIssue ? visibleCellIssues.map(toIssueLabel).join(', ') : undefined}
                                 onClick={() => {
                                   if (!hasCellIssue) return;
@@ -1690,7 +1694,7 @@ export function DataCleaningPage() {
             </Button>
             <Button onClick={handleContinue} disabled={submitting}
               variant='outline'
-              className="w-full sm:w-auto  border-primary text-primary font-semibold order-1 hover:bg-primary/10 transition-colors px-5 h-11 pr-3"
+              className="w-full sm:w-auto  border-primary text-primary font-semibold order-1 hover:bg-primary/10 transition-colors px-5 pr-3"
             >
               {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Next
@@ -1892,9 +1896,15 @@ export function DataCleaningPage() {
                 setAddressFixError(null);
               }}
             />
-            <div className="relative z-10 w-full max-w-xl rounded-xl border border-border bg-background shadow-2xl overflow-hidden">
-              <div className="p-6 border-b">
-                <h3 className="text-xl leading-none font-light text-foreground">Auto-fix Addresses</h3>
+            <div className="relative z-10 w-full max-w-xl rounded-md border border-border bg-background shadow-2xl overflow-hidden">
+              <div className="py-4 border-b flex items-center justify-between">
+                <h3 className="text-md leading-none font-light text-foreground px-4">Auto-fix Addresses</h3>
+
+                <div className='px-4'>
+                  <X onClick={()=>{
+                    setAddressFixConfirmOpen(false)
+                  }} />
+                </div>
               </div>
 
               <div className="p-6">
@@ -1923,10 +1933,10 @@ export function DataCleaningPage() {
                 )}
               </div>
 
-              <div className="p-6 border-t flex items-center justify-end gap-2">
+              <div className="p-4 border-t flex items-center justify-end gap-2">
                 <Button
                   variant="outline"
-                  className="px-6 h-11"
+                  className="px-6 "
                   onClick={() => {
                     setAddressFixConfirmOpen(false);
                     setAddressFixError(null);
@@ -1934,7 +1944,7 @@ export function DataCleaningPage() {
                 >
                   Cancel
                 </Button>
-                <Button onClick={() => void handleProceedFixAddresses()} disabled={addressFixSubmitting} variant="outline" className="px-5 h-11 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors ">
+                <Button onClick={() => void handleProceedFixAddresses()} disabled={addressFixSubmitting} variant="outline" className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors ">
                   {addressFixSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Proceed
                 </Button>
@@ -1946,7 +1956,7 @@ export function DataCleaningPage() {
       {/* Navigation Arrows */}
       <button
         onClick={() => navigate('/data-preview')}
-        className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-primary/80 hover:bg-primary text-primary-foreground shadow-lg transition-all duration-200"
+        className="fixed left-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-primary/10  text-primary border border-blue-300 transition-all duration-200"
         title="Previous: Data Preview"
       >
         <ChevronLeft className="h-6 w-6" />
@@ -1955,7 +1965,7 @@ export function DataCleaningPage() {
       <button
         onClick={handleContinue}
         disabled={submitting}
-        className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-primary/80 hover:bg-primary text-primary-foreground shadow-lg transition-all duration-200 disabled:opacity-50"
+        className="fixed right-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-primary/10  text-primary border border-blue-300 text-primary shadow-lg transition-all duration-200 disabled:opacity-50"
         title="Next: Data Analytics"
       >
         <ChevronRight className="h-6 w-6" />

@@ -18,10 +18,10 @@ export default function ActivityLogDrawer({ open, loading, error, items, onClose
                 className="absolute right-0 top-0 h-full w-full max-w-[760px] bg-white border-l border-border shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className="h-16 px-6 border-b border-border bg-white flex items-center justify-between">
-                    <h2 className="text-xl leading-none font-light text-foreground">Activity Log</h2>
+                <div className="h-12 px-6 border-b border-border bg-white flex items-center justify-between">
+                    <h2 className="text-md leading-none font-light text-foreground">Activity Log</h2>
                     <button onClick={onClose} className="text-foreground/80 hover:text-foreground">
-                        <X className="h-6 w-6" />
+                        <X className="h-4 w-4" />
                     </button>
                 </div>
                 <div className="p-6 space-y-4 overflow-y-auto h-[calc(100%-64px)]">
@@ -70,7 +70,7 @@ export default function ActivityLogDrawer({ open, loading, error, items, onClose
                     })}
 
                     {!items.length && !loading && !error && (
-                        <div className="rounded-xl bg-white border border-[#d7dbe1] p-6 text-sm text-muted-foreground">
+                        <div className="rounded-md bg-white border border-[#d7dbe1] p-6 text-sm text-muted-foreground">
                             No activity yet.
                         </div>
                     )}

@@ -240,7 +240,7 @@ const DataAnalyticsPage = () => {
                   <CardTitle className="text-sm font-normal">Entity Changes Preview</CardTitle>
                   <CardDescription className="text-xs text-muted-foreground">
                     Data preview of the cleaned data
-                    <span className="inline-flex items-center ml-3 px-3 py-1 text-xs font-medium bg-muted rounded-full border">
+                    <span className="inline-flex items-center ml-3 px-3 py-1 text-xs font-medium bg-muted rounded-md border">
                       Changed rows: {changedRowsCount} | Changed cells: {changedCellsCount}
                     </span>
                   </CardDescription>
@@ -256,18 +256,21 @@ const DataAnalyticsPage = () => {
                 />
                 <Button
                   variant={filterMode === "ALL" ? "default" : "outline"}
+                  className={filterMode === "ALL"? "text-white":"border-primary text-primary font-semibold  hover:bg-primary/10 transition-colors"}
                   onClick={() => setFilterMode("ALL")}
                 >
                   All
                 </Button>
                 <Button
                   variant={filterMode === "CHANGED" ? "default" : "outline"}
+                  className={filterMode === "CHANGED"? "text-white":"border-primary text-primary font-semibold  hover:bg-primary/10 transition-colors"}
                   onClick={() => setFilterMode("CHANGED")}
                 >
                   Changed only
                 </Button>
                 <Button
                   variant={filterMode === "UNCHANGED" ? "default" : "outline"}
+                  className={filterMode === "UNCHANGED"? "text-white":"border-primary text-primary font-semibold  hover:bg-primary/10 transition-colors"}
                   onClick={() => setFilterMode("UNCHANGED")}
                 >
                   Unchanged
@@ -283,7 +286,7 @@ const DataAnalyticsPage = () => {
                   <TableHeader className="sticky top-0 z-10 bg-muted">
                     <TableRow>
                       {headers.map((col) => (
-                        <TableHead key={col} className="font-semibold px-3 py-2 text-left whitespace-nowrap">
+                        <TableHead key={col} className="font-normal bg-gray-100 px-3 py-2 text-left whitespace-nowrap">
                           {col}
                         </TableHead>
                       ))}
@@ -299,7 +302,7 @@ const DataAnalyticsPage = () => {
                             ? "bg-red-50 text-red-600"
                             : isChanged
                               ? "bg-amber-50/40"
-                              : "odd:bg-background even:bg-primary/10"
+                              : ""
                         }
                       >
                         {headers.map((col) => {
@@ -406,7 +409,7 @@ const DataAnalyticsPage = () => {
       {/* Navigation Arrows */}
       <button
         onClick={() => navigate('/data-cleaning')}
-        className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-primary/80 hover:bg-primary text-primary-foreground shadow-lg transition-all duration-200"
+        className="fixed left-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-primary/10  text-primary border border-blue-300 transition-all duration-200"
         title="Previous: Data Cleaning"
       >
         <ChevronLeft className="h-6 w-6" />
@@ -430,7 +433,7 @@ const DataAnalyticsPage = () => {
           sessionStorage.setItem(IMPORT_STATS_KEY, JSON.stringify(stats));
           navigate('/complete');
         }}
-        className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-primary/80 hover:bg-primary text-primary-foreground shadow-lg transition-all duration-200"
+        className="fixed right-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-primary/10  text-primary border border-blue-300 text-primary shadow-lg transition-all duration-200 disabled:opacity-50"
         title="Next: Complete"
       >
         <ChevronRight className="h-6 w-6" />

@@ -126,11 +126,11 @@ export default function DedupeOverlay(props: Props) {
 
             {drawer && (
                 <div className="absolute right-0 top-0 h-full w-full max-w-[560px] bg-white border-l border-border shadow-2xl z-10">
-                    <div className="h-16 px-6 border-b border-border bg-white flex items-center justify-between">
-                        <h2 className="text-xl leading-none font-light text-foreground">
+                    <div className="h-12 px-6 border-b border-border bg-white flex items-center justify-between">
+                        <h2 className="text-md leading-none font-light text-foreground">
                             {drawer === 'dedupe' ? (dedupeMode === 'column' ? 'Deduplicate column-wise' : 'Deduplicate row-wise') : 'Fix Addresses'}
                         </h2>
-                        <button onClick={() => setDrawer(null)} className="text-muted-foreground hover:text-foreground"><X className="h-6 w-6" /></button>
+                        <button onClick={() => setDrawer(null)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
                     </div>
 
                     <div className="p-6 space-y-4 text-sm">
@@ -157,7 +157,7 @@ export default function DedupeOverlay(props: Props) {
                                 </div>
 
                                 {dedupeMode === 'column' && (
-                                    <div className="border border-border rounded-lg p-3 space-y-2">
+                                    <div className=" rounded-lg  space-y-2">
                                         <div className="flex flex-wrap gap-2 mb-3">
                                             {dedupeColumns.map((c) => (
                                                 <span key={c} className="inline-flex items-center gap-2 px-3 py-1 rounded bg-muted text-sm">
