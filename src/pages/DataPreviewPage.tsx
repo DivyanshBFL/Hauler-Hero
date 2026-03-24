@@ -470,7 +470,7 @@ export function DataPreviewPage() {
             )}
 
             {/* ── Table ────────────────────────────────────────── */}
-            <div className="border border-border rounded-xl overflow-hidden shadow-sm bg-card">
+            <div className="border border-border rounded-sm overflow-hidden shadow-sm bg-card mt-4">
               <div className="max-h-[60vh] overflow-auto">
                 {previewRows.length > 0 ? (
                   <Table className="w-full text-sm">
@@ -479,7 +479,7 @@ export function DataPreviewPage() {
                         {currentHeaders.map((h) => (
                           <TableHead
                             key={h}
-                            className="font-semibold px-3 py-2 text-muted-foreground bg-muted whitespace-nowrap"
+                            className="px-3 py-2 text-left font-medium  whitespace-nowrap bg-gray-50"
                           >
                             {h}
                           </TableHead>
@@ -490,7 +490,7 @@ export function DataPreviewPage() {
                       {previewRows.map((row, rowIndex) => (
                         <TableRow
                           key={rowIndex}
-                          className="odd:bg-background even:bg-primary/10 hover:bg-muted/50 transition-colors"
+                          className="hover:bg-muted/50 transition-colors"
                         >
                           {currentHeaders.map((h) => (
                             <TableCell
@@ -521,7 +521,7 @@ export function DataPreviewPage() {
             )}
           </CardContent>
 
-          <div className="flex flex-col sm:flex-row justify-between gap-3 px-6 py-3 border-t bg-muted">
+          <div className="flex flex-col sm:flex-row justify-between gap-3 px-5 py-3 border-t bg-muted">
             <Button
               variant="outline"
               onClick={() => navigate("/field-mapping")}
@@ -546,7 +546,7 @@ export function DataPreviewPage() {
               onClick={handleNext}
               disabled={processing || !totalRows}
               variant="outline"
-              className="w-full sm:w-auto  border-primary text-primary font-semibold order-1 hover:bg-primary/10 transition-colors px-5 h-11 pr-3"
+              className="w-full sm:w-auto  border-primary text-primary font-semibold order-1 hover:bg-primary/10 transition-colors px-5 pr-3"
             >
               {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Next
@@ -570,7 +570,7 @@ export function DataPreviewPage() {
       {/* Navigation Arrows */}
       <button
         onClick={() => navigate("/upload")}
-        className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-primary/80 hover:bg-primary text-primary-foreground shadow-lg transition-all duration-200"
+        className="fixed left-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-primary/10  text-primary border border-blue-300 transition-all duration-200"
         title="Previous: Upload"
       >
         <ChevronLeft className="h-6 w-6" />
@@ -579,7 +579,7 @@ export function DataPreviewPage() {
       <button
         onClick={handleNext}
         disabled={processing}
-        className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-primary/80 hover:bg-primary text-primary-foreground shadow-lg transition-all duration-200 disabled:opacity-50"
+      className="fixed right-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-primary/10  text-primary border border-blue-300 text-primary shadow-lg transition-all duration-200 disabled:opacity-50"
         title="Next: Data Cleaning"
       >
         <ChevronRight className="h-6 w-6" />

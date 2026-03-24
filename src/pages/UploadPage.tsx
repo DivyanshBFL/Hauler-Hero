@@ -565,7 +565,7 @@ export function UploadPage() {
             )}
           </CardContent>
           <div className="flex justify-end px-6 py-3 border-t bg-muted">
-            <Button onClick={handleNext} disabled={loading || !canProceed} variant="outline" className="px-5  pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors ">
+            <Button onClick={handleNext} disabled={loading || !canProceed} variant="outline" className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors">
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Next
               <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

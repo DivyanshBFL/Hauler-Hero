@@ -871,19 +871,20 @@ export function FieldMappingPage() {
           </CardHeader>
 
           <CardContent className="gap-4 ">
-            <div className="text-sm mt-4 font-semibold" >AI Auto-Mapping Summary :</div>
+            {/* <div className="text-sm mt-4 font-semibold" >AI Auto-Mapping Summary :</div> */}
             <div className="rounded-lg border mt-2 mb-4 bg-primary/10 text-blue-900 border-blue-300">
               <div className="px-4 py-1 flex items-center justify-between gap-2">
-                <div className="px-1 flex flex-wrap gap-1 text-xs" >
-                  <div className="flex items-center gap-2 ">
-                    <span>Fields Auto-Mapped</span>
+                <div className="px-1 flex flex-wrap  items-center gap-1 text-xs" >
+                    <span className='font-semibold'>Summary:</span>
+                  <div className="flex items-center gap-0 ">
+                    <span>Fields Auto-Mapped:</span>
                     <span className={autoMappedCoverageClass}>
                       {autoMappedCoveragePct}% ({autoMappedCount}/{targetFieldsAll.length})
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 ">
-                    <span>Unmatched Columns</span>
-                    <span className="rounded-md  px-2 py-0.5 font-semibold">
+                  <div className="flex items-center gap-0 ">
+                    <span>Unmatched Columns:</span>
+                    <span className="rounded-md px-1 py-0.5 font-semibold">
                       {unmatchedColumnsCount}
                     </span>
                   </div>
@@ -929,7 +930,7 @@ export function FieldMappingPage() {
                       <div className="space-y-2">
                         <div className="flex items-center justify-start text-sm gap-2 h-[25px]">
                           <span className="font-semibold text-foreground">
-                            Datasets ({selectedEntity || 'Source'}) :
+                            Source Schema :
                           </span>
                           <span className="text-muted-foreground">{sourceFieldsAll.length} Columns</span>
                         </div>
@@ -949,7 +950,7 @@ export function FieldMappingPage() {
                       <div className="space-y-2">
                         <div className='flex justify-between'>
                           <div className="flex items-center justify-start text-sm gap-2">
-                            <span className="font-semibold text-foreground">Target (Contacts) :</span>
+                            <span className="font-semibold text-foreground">Target Schema :</span>
                             <span className="text-muted-foreground">{targetFieldsAll.length} Columns</span>
                           </div>
                           <div>
@@ -1129,7 +1130,7 @@ export function FieldMappingPage() {
               onClick={handleNext}
               disabled={processing}
               variant='outline'
-              className="w-full sm:w-auto  border-primary text-primary font-semibold order-1 hover:bg-primary/10 transition-colors px-5 h-11 pr-3"
+              className="w-full sm:w-auto  border-primary text-primary font-semibold order-1 hover:bg-primary/10 transition-colors px-5 pr-3"
             >
               {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Next
