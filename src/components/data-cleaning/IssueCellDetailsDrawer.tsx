@@ -473,11 +473,10 @@ export default function IssueCellDetailsDrawer({
                           <div key={s.operation}>
                             {/* Suggestion button */}
                             <button
-                              className={`w-full flex items-center justify-between px-3 py-2 border rounded-md text-xs text-left transition-colors ${
-                                activeOperation === s.operation
+                              className={`w-full flex items-center justify-between px-3 py-2 border rounded-md text-xs text-left transition-colors ${activeOperation === s.operation
                                   ? "border-primary bg-primary/5"
                                   : "border-border hover:bg-muted"
-                              }`}
+                                }`}
                               onClick={() => handleSelectOperation(s)}
                             >
                               <span className="flex items-center gap-2">
@@ -488,11 +487,10 @@ export default function IssueCellDetailsDrawer({
                                 <Check className="h-3.5 w-3.5 text-emerald-600" />
                               ) : (
                                 <ChevronDown
-                                  className={`h-3.5 w-3.5 text-muted-foreground transition-transform ${
-                                    activeOperation === s.operation
+                                  className={`h-3.5 w-3.5 text-muted-foreground transition-transform ${activeOperation === s.operation
                                       ? "rotate-180"
                                       : "-rotate-90"
-                                  }`}
+                                    }`}
                                 />
                               )}
                             </button>
@@ -541,13 +539,13 @@ export default function IssueCellDetailsDrawer({
                                       columnProfile.fill_suggestions,
                                     )
                                       ? columnProfile.fill_suggestions.find(
-                                          (fs) => fs.strategy === form.strategy,
-                                        )
+                                        (fs) => fs.strategy === form.strategy,
+                                      )
                                       : undefined;
                                     const requiresValue = strategyObj
                                       ? strategyObj.requires_value
                                       : form.strategy === "constant" ||
-                                        !form.strategy;
+                                      !form.strategy;
 
                                     return (
                                       <div className="space-y-2">
