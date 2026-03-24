@@ -187,14 +187,8 @@ function buildNodesAndEdges(
         draggable: showMissingSourceText,
       },
       style: {
-        // f9e4e4 this was previous red color but changed it to yellow after :
-        background: mapped ? '#f0fef4' : showMissingSourceText ? '#fcf9e6' : '#fcf9e6',
-        border: mapped
-          ? '1px solid #92ecb3'
-          : showMissingSourceText
-            ? '1px solid #f7eab8'
-            // f5c7c7 this was previous red color but changed it to yellow
-            : '1px solid #f7eab8',
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
         borderRadius: 8,
       },
       draggable: false,
@@ -226,8 +220,8 @@ function buildNodesAndEdges(
         onUnmap: onUnmapTarget,
       },
       style: {
-        background: mapped ? '#f0fef4' : '#fcf9e6',
-        border: mapped ? '1px solid #92ecb3' : '1px solid #fee686',
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
         borderRadius: 8,
       },
       draggable: false,
@@ -1073,17 +1067,17 @@ export function FieldMappingPage() {
                           style={{ background: 'transparent' }}
                         >
                           <Background gap={10} size={1} color="#e5e7eb" />
-                           <div>
-                            <label className="inline-flex items-center gap-2 text-sm text-muted-foreground ml-5" style={{ minWidth: "150px" }}>
+                           <Panel position='top-left' className='m-4'>
+                            <label className="inline-flex items-center gap-2 text-sm text-foreground cursor-pointer" style={{ minWidth: "150px" }}>
                               <input
                                 type="checkbox"
                                 checked={showOnlyErrors}
                                 onChange={(e) => setShowOnlyErrors(e.target.checked)}
-                                className="h-4 w-4 rounded border-input"
+                                className="h-4 w-4 rounded border-input cursor-pointer accent-primary"
                               />
                               Show only unmapped
                             </label>
-                          </div>
+                           </Panel>
                           {/* <Panel position="top-left" className="m-2 mx-4 text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded shadow">
                             {mappings.filter((m) => m.targetField !== 'Unmapped').length} mappings
                           </Panel> */}
