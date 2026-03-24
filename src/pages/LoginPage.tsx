@@ -165,7 +165,7 @@ export function LoginPage() {
                       onChange={(e) => setPassword(e.target.value)}
                       required
                       disabled={loading}
-                      className="h-11 pr-10 transition-all duration-200 rounded-none"
+                      className="h-11 pr-10 transition-all duration-200 focus:ring-2 focus:ring-ring rounded-none"
                     />
                     <button
                       type="button"
