@@ -1,55 +1,69 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { api } from '@/services/api';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Eye, EyeOff, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { api } from "@/services/api";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Loader2,
+  Eye,
+  EyeOff,
+  Quote,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 export function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
       const user = await api.login({ email, password });
       login(user);
-      const sessionId = sessionStorage.getItem('session_id');
+      const sessionId = sessionStorage.getItem("session_id");
       if (sessionId) {
         try {
           const status = await api.getSessionStatus(sessionId);
-          const stage = (status.stage ?? '').toLowerCase();
-          if (stage === 'none') {
-            navigate('/upload');
+          const stage = (status.stage ?? "").toLowerCase();
+          if (stage === "none") {
+            navigate("/upload");
             return;
           }
-          if (stage === 'uploaded' || stage === 'joined') {
-            navigate('/field-mapping');
+          if (stage === "uploaded" || stage === "joined") {
+            navigate("/field-mapping");
             return;
           }
-          if (stage === 'mapped' || stage === 'cleaning') {
-            navigate(`/data-cleaning?session_id=${encodeURIComponent(sessionId)}`);
+          if (stage === "mapped" || stage === "cleaning") {
+            navigate(
+              `/data-cleaning?session_id=${encodeURIComponent(sessionId)}`,
+            );
             return;
           }
         } catch {
           // session not found or status unavailable — fall through to upload
         }
       }
-      navigate('/upload');
+      navigate("/upload");
     } catch {
-      setError('Invalid email or password');
+      setError("Invalid email or password");
     } finally {
       setLoading(false);
     }
@@ -100,11 +114,14 @@ export function LoginPage() {
 
         {/* Right login panel (restored card + previous font styling) */}
         <section className="relative flex items-center justify-center p-6 md:p-12 bg-background">
-
           <div className="w-full max-w-md">
             <CardHeader className="space-y-3 pb-6 border-none">
               <div className="flex justify-center">
-                <img src="/images/logo.png" alt="Hauler Hero" className="h-12 w-auto" />
+                <img
+                  src="/images/logo.png"
+                  alt="Hauler Hero"
+                  className="h-12 w-auto"
+                />
               </div>
               {/* <CardTitle className="h4 text-center text-foreground font-bold">
                 Welcome Back
@@ -114,10 +131,15 @@ export function LoginPage() {
               </CardDescription>
             </CardHeader>
 
-            <CardContent className='flex justify-center'>
-              <form onSubmit={handleSubmit} className="space-y-5 flex-1 max-w-[400px] border-1 shadow-lg rounded-md p-4">
+            <CardContent className="flex justify-center">
+              <form
+                onSubmit={handleSubmit}
+                className="space-y-5 flex-1 max-w-[400px] border-1 shadow-lg rounded-md p-4"
+              >
                 <div className="space-y-2 ">
-                  <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+                  <Label htmlFor="email" className="text-sm font-medium">
+                    Email
+                  </Label>
                   <Input
                     id="email"
                     type="email"
@@ -131,11 +153,13 @@ export function LoginPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                  <Label htmlFor="password" className="text-sm font-medium">
+                    Password
+                  </Label>
                   <div className="relative">
                     <Input
                       id="password"
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -145,11 +169,17 @@ export function LoginPage() {
                     />
                     <button
                       type="button"
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
                       onClick={() => setShowPassword((v) => !v)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                     >
-                      {showPassword ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                      {showPassword ? (
+                        <Eye className="h-4 w-4" />
+                      ) : (
+                        <EyeOff className="h-4 w-4" />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -164,7 +194,7 @@ export function LoginPage() {
                     />
                     Remember me
                   </label>
-                  <a href="#" className="text-primary hover:underline">Forgot password?</a>
+                  {/* <a href="#" className="text-primary hover:underline">Forgot password?</a> */}
                 </div>
 
                 {error && (
@@ -173,7 +203,11 @@ export function LoginPage() {
                   </div>
                 )}
 
-                <Button type="submit" className="w-full h-11 font-semibold hover:scale-x-[1.02]" disabled={loading}>
+                <Button
+                  type="submit"
+                  className="w-full h-11 font-semibold hover:scale-x-[1.02]"
+                  disabled={loading}
+                >
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Sign In
                 </Button>

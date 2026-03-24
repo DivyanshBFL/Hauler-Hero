@@ -1269,6 +1269,7 @@ export function FieldMappingPage() {
                       />
                       Show Unmapped
                     </label>
+                    <hr className="w-full mb-1 shadow-lg" />
                     <ScrollArea
                       ref={scrollAreaRef}
                       className="w-full [&_[data-radix-scroll-area-viewport]]:overflow-x-hidden [&_[data-radix-scroll-area-viewport]]:overflow-y-auto"

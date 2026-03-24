@@ -261,7 +261,7 @@ const DataAnalyticsPage = () => {
           <CardHeader className="pb-4 px-4">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-start gap-4">
-                <div className="h-12 w-12 flex items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm">
+                <div className="h-12 w-12 flex items-center justify-center rounded-md bg-primary/10 text-primary shadow-sm">
                   <ChartNoAxesCombined className="text-primary" />
                 </div>
                 <div className="space-y-1">

@@ -45,6 +45,7 @@ import {
   EllipsisVertical,
   Cross,
   X,
+  CircleAlert,
 } from "lucide-react";
 import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
 import ProcessStepper from "@/components/ProcessStepper";
@@ -83,27 +84,27 @@ const COLUMN_MENU_ITEMS: {
   label: string;
   icon: React.ReactNode;
 }[] = [
-    {
-      action: "replaceValues",
-      label: "Replace values",
-      icon: <Replace className="h-4 w-4" />,
-    },
-    {
-      action: "trimSpaces",
-      label: "Trim spaces",
-      icon: <Scissors className="h-4 w-4" />,
-    },
-    {
-      action: "truncateValues",
-      label: "Truncate values",
-      icon: <AlignLeft className="h-4 w-4" />,
-    },
-    {
-      action: "addPrefixOrSuffix",
-      label: "Add prefix or suffix",
-      icon: <PlusSquare className="h-4 w-4" />,
-    },
-  ];
+  {
+    action: "replaceValues",
+    label: "Replace values",
+    icon: <Replace className="h-4 w-4" />,
+  },
+  {
+    action: "trimSpaces",
+    label: "Trim spaces",
+    icon: <Scissors className="h-4 w-4" />,
+  },
+  {
+    action: "truncateValues",
+    label: "Truncate values",
+    icon: <AlignLeft className="h-4 w-4" />,
+  },
+  {
+    action: "addPrefixOrSuffix",
+    label: "Add prefix or suffix",
+    icon: <PlusSquare className="h-4 w-4" />,
+  },
+];
 
 function isCellMissing(value: unknown): boolean {
   if (value === null || value === undefined) return true;
@@ -639,10 +640,10 @@ export function DataCleaningPage() {
         const row =
           directRow && typeof directRow === "object"
             ? {
-              ...(mappedFromSource ?? {}),
-              ...directRow,
-              __rowIndex: rowIndex,
-            }
+                ...(mappedFromSource ?? {}),
+                ...directRow,
+                __rowIndex: rowIndex,
+              }
             : mappedFromSource;
 
         if (!row || typeof row !== "object") return;
@@ -702,8 +703,8 @@ export function DataCleaningPage() {
       const inferredColumns = normalizedColumns.length
         ? normalizedColumns
         : Object.keys(resultRows[0]?.row ?? {}).filter(
-          (c) => !c.startsWith("__"),
-        );
+            (c) => !c.startsWith("__"),
+          );
 
       return {
         rows: resultRows,
@@ -2068,8 +2069,8 @@ export function DataCleaningPage() {
                               selectedIssueType === "allIssues"
                                 ? cellIssues
                                 : cellIssues.filter(
-                                  (x) => x === selectedIssueType,
-                                );
+                                    (x) => x === selectedIssueType,
+                                  );
                             let hasCellIssue = visibleCellIssues.length > 0;
 
                             const cellKey = getCellKey(rowIndex, col);
@@ -2088,8 +2089,8 @@ export function DataCleaningPage() {
                                 title={
                                   hasCellIssue
                                     ? visibleCellIssues
-                                      .map(toIssueLabel)
-                                      .join(", ")
+                                        .map(toIssueLabel)
+                                        .join(", ")
                                     : undefined
                                 }
                                 onClick={() => {
@@ -2099,7 +2100,7 @@ export function DataCleaningPage() {
                                 }}
                               >
                                 {editingCell?.rowIndex === rowIndex &&
-                                  editingCell?.column === col ? (
+                                editingCell?.column === col ? (
                                   <input
                                     type="text"
                                     value={editedValue}
@@ -2273,7 +2274,7 @@ export function DataCleaningPage() {
             className={`absolute right-0 top-0 z-10 h-full w-full max-w-[560px] bg-white border-l border-border shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${autoFixDrawerVisible ? "translate-x-0" : "translate-x-full"}`}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="h-12 px-6 border-b border-border bg-white flex items-center justify-end shrink-0">
+            <div className="h-12 px-6 border-b border-border bg-white flex items-center justify-between shrink-0">
               <h3 className="flex items-center gap-2 text-md leading-none font-light text-foreground">
                 <Sparkles className="h-4 w-4" />
                 Data Cleanup Rules
@@ -2319,7 +2320,7 @@ export function DataCleaningPage() {
                                 name={opt.key}
                                 checked={
                                   autoFixOptions[
-                                  opt.key as keyof typeof autoFixOptions
+                                    opt.key as keyof typeof autoFixOptions
                                   ] === true
                                 }
                                 onChange={() =>
@@ -2340,7 +2341,7 @@ export function DataCleaningPage() {
                                 name={opt.key}
                                 checked={
                                   autoFixOptions[
-                                  opt.key as keyof typeof autoFixOptions
+                                    opt.key as keyof typeof autoFixOptions
                                   ] === false
                                 }
                                 onChange={() =>
@@ -2396,10 +2397,10 @@ export function DataCleaningPage() {
                                   checked={
                                     (choice.value === "null" &&
                                       autoFixOptions[
-                                      opt.key as keyof typeof autoFixOptions
+                                        opt.key as keyof typeof autoFixOptions
                                       ] === null) ||
                                     autoFixOptions[
-                                    opt.key as keyof typeof autoFixOptions
+                                      opt.key as keyof typeof autoFixOptions
                                     ] === choice.value
                                   }
                                   onChange={() =>
@@ -2452,7 +2453,7 @@ export function DataCleaningPage() {
               </div>
             </div>
 
-            <div className="shrink-0 border-t border-border bg-white p-4 flex items-center justify-between gap-2">
+            <div className="shrink-0 border-t border-border bg-white p-4 flex items-center justify-end gap-2">
               <Button
                 variant="outline"
                 disabled={autoFixSubmitting}
@@ -2509,7 +2510,8 @@ export function DataCleaningPage() {
               <p className="text-sm text-muted-foreground whitespace-pre-line">
                 One-click cleanup that automatically fixes address issues in the
                 dataset.
-                {"\n"}All fixes are logged step-by-step. ✨
+                {"\n"}All fixes are logged step-by-step.
+                <Sparkles className="mr-2 h-4 w-4 text-blue-500 fill-blue-400 animate-blink inline" />
               </p>
               {addressFixError && (
                 <p className="text-xs text-destructive mt-3">
@@ -2545,15 +2547,21 @@ export function DataCleaningPage() {
               >
                 Cancel
               </Button>
-              <Button onClick={() => void handleProceedFixAddresses()} disabled={addressFixSubmitting} variant="outline" className="px-5 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors ">
-                {addressFixSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Button
+                onClick={() => void handleProceedFixAddresses()}
+                disabled={addressFixSubmitting}
+                variant="outline"
+                className="px-5 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
+              >
+                {addressFixSubmitting && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 Proceed
               </Button>
             </div>
           </div>
         </div>
-      )
-      }
+      )}
 
       {proceedConfirmOpen && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center">
@@ -2566,7 +2574,8 @@ export function DataCleaningPage() {
           />
           <div className="relative z-10 w-full max-w-xl rounded-md border border-border bg-background shadow-2xl overflow-hidden">
             <div className="py-4 border-b flex items-center justify-between">
-              <h3 className="text-md leading-none font-light text-foreground px-4">
+              <h3 className="text-md leading-none font-light text-foreground px-4 flex gap-2 items-center">
+                <CircleAlert className="inline " />
                 Outstanding Issues Alert
               </h3>
 
@@ -2584,7 +2593,9 @@ export function DataCleaningPage() {
             <div className="p-6">
               <p className="text-sm text-muted-foreground whitespace-pre-line">
                 Some data anomalies were not resolved. Proceeding may result in
-                inconsistencies. Do you want to Proceed?
+                inconsistencies. <br />
+                <br />
+                Do you want to Proceed?
               </p>
             </div>
 
@@ -2603,7 +2614,7 @@ export function DataCleaningPage() {
                 onClick={() => void handleContinue()}
                 disabled={submitting}
                 variant="outline"
-                className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
+                className="px-5 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
               >
                 {submitting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
