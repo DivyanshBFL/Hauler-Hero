@@ -906,8 +906,8 @@ export function FieldMappingPage() {
               <div>
                 <CardTitle className="text-md font-normal">Map Your Fields</CardTitle>
                 <CardDescription className="text-xs ">
-                  Drag from a source field handle (right) to a destination field handle (left) to create a mapping.
-                  Select a line and press Delete to remove. Target fields marked with * are required.
+                  Drag from a source field handle (left) to a destination field handle (right) to create a mapping.
+                  Select a line and press Delete to remove. Target fields marked with <span className='text-red-400'>*</span> are required.
                 </CardDescription>
               </div>
             </div>
@@ -924,9 +924,9 @@ export function FieldMappingPage() {
                       {autoMappedCoveragePct}% ({autoMappedCount}/{targetFieldsAll.length})
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 ">
-                    <span>Unmatched Columns</span>
-                    <span className="rounded-md  px-2 py-0.5 font-semibold">
+                  <div className="flex items-center gap-0 ">
+                    <span>Unmapped Columns:</span>
+                    <span className="rounded-md px-1 py-0.5 font-semibold">
                       {unmatchedColumnsCount}
                     </span>
                   </div>
@@ -974,7 +974,8 @@ export function FieldMappingPage() {
                           <span className="font-semibold text-foreground">
                             Datasets ({selectedEntity || 'Source'}) :
                           </span>
-                          <span className="text-muted-foreground">{sourceFieldsAll.length} Columns</span>
+                          <span className="text-muted-foreground">
+                            {sourceFieldsAll.length} Columns </span>
                         </div>
                         <div className="relative">
                           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -992,10 +993,10 @@ export function FieldMappingPage() {
                       <div className="space-y-2">
                         <div className='flex justify-between'>
                           <div className="flex items-center justify-start text-sm gap-2">
-                            <span className="font-semibold text-foreground">Target (Contacts) :</span>
-                            <span className="text-muted-foreground">{targetFieldsAll.length} Columns</span>
+                            <span className="font-semibold text-foreground">Target Schema :</span>
+                            <span className="text-muted-foreground">{mappings.filter((m) => m.targetField !== 'Unmapped').length}/{targetFieldsAll.length} Columns Mapped</span>
                           </div>
-                          <div>
+                          {/* <div>
                             <label className="inline-flex items-center gap-2 text-sm text-muted-foreground ml-auto" style={{ minWidth: "150px" }}>
                               <input
                                 type="checkbox"
@@ -1003,9 +1004,9 @@ export function FieldMappingPage() {
                                 onChange={(e) => setShowOnlyErrors(e.target.checked)}
                                 className="h-4 w-4 rounded border-input"
                               />
-                              Show only errors
+                              Show only unmapped
                             </label>
-                          </div>
+                          </div> */}
                         </div>
                         <div className="relative">
                           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -1048,7 +1049,7 @@ export function FieldMappingPage() {
                           onPaneClick={() => setSelectedEdgeId(null)}
                           onConnectStart={() => setIsDraggingConnection(true)}
                           onConnectEnd={() => setIsDraggingConnection(false)}
-                          deleteKeyCode={['Backspace', 'Delete']} // allow keyboard delete for selected line
+                          deleteKeyCode={['Backspace', 'Delete']} 
                           isValidConnection={() => true}
                           nodeTypes={NODE_TYPES}
                           zoomOnScroll={false}
@@ -1071,10 +1072,21 @@ export function FieldMappingPage() {
                           fitView
                           style={{ background: 'transparent' }}
                         >
-                          <Background gap={12} size={1} color="#e5e7eb" />
-                          <Panel position="top-left" className="m-2 text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded shadow">
+                          <Background gap={10} size={1} color="#e5e7eb" />
+                           <div>
+                            <label className="inline-flex items-center gap-2 text-sm text-muted-foreground ml-5" style={{ minWidth: "150px" }}>
+                              <input
+                                type="checkbox"
+                                checked={showOnlyErrors}
+                                onChange={(e) => setShowOnlyErrors(e.target.checked)}
+                                className="h-4 w-4 rounded border-input"
+                              />
+                              Show only unmapped
+                            </label>
+                          </div>
+                          {/* <Panel position="top-left" className="m-2 mx-4 text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded shadow">
                             {mappings.filter((m) => m.targetField !== 'Unmapped').length} mappings
-                          </Panel>
+                          </Panel> */}
                         </ReactFlow>
                       </div>
                     </ScrollArea>
@@ -1162,7 +1174,7 @@ export function FieldMappingPage() {
             <Button
               variant="outline"
               onClick={() => navigate('/upload')}
-              className="w-full sm:w-auto order-2 sm:order-1"
+              className="w-full sm:w-auto order-2 sm:order-1 hover:bg-primary/10 border-primary text-primary"
             >
               <svg className="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />

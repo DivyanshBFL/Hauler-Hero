@@ -24,6 +24,7 @@ import {
   ChevronRight,
   Table2,
   FileDown,
+  ScanEye,
 } from "lucide-react";
 import jsPDF from "jspdf";
 import * as XLSX from "xlsx";
@@ -408,7 +409,7 @@ export function DataPreviewPage() {
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-start gap-4">
                 <div className="h-10 w-10 rounded-md bg-primary/10 text-primary flex items-center justify-center shadow-sm">
-                  <Table2 className="w-6 h-6 text-primary" />
+                  <ScanEye className="w-6 h-6 text-primary" />
                 </div>
                 <div className="space-y-1">
                   <CardTitle className="text-sm font-normal">

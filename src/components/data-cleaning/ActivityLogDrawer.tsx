@@ -15,7 +15,7 @@ export default function ActivityLogDrawer({ open, loading, error, items, onClose
     return (
         <div className="fixed inset-0 z-[80] bg-black/20" onClick={onClose}>
             <div
-                className="absolute right-0 top-0 h-full w-full max-w-[760px] bg-white border-l border-border shadow-2xl"
+                className="absolute right-0 top-0 h-full w-full max-w-[560px] bg-white border-l border-border shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="h-12 px-6 border-b border-border bg-white flex items-center justify-between">
@@ -50,15 +50,15 @@ export default function ActivityLogDrawer({ open, loading, error, items, onClose
                                 'bg-emerald-500';
 
                         return (
-                            <div key={item.id} className="rounded-xl bg-white border border-[#d7dbe1] shadow-sm px-5 py-4">
+                            <div key={item.id} className="rounded-md bg-white border border-[#d7dbe1] shadow-sm px-3 py-2">
                                 <div className="flex items-center gap-4">
-                                    <div className={'h-12 w-12 rounded-full flex items-center justify-center ' + leadingBg}>
+                                    <div className={'h-10 w-10 rounded-full flex items-center justify-center ' + leadingBg}>
                                         {leadingIcon}
                                     </div>
 
                                     <div className="min-w-0 flex-1">
-                                        <p className="text-base font-semibold leading-6 text-foreground">{item.title}</p>
-                                        {!!item.description && <p className="text-sm text-muted-foreground leading-5">{item.description}</p>}
+                                        <p className="text-sm font-normal leading-6 text-foreground">{item.title}</p>
+                                        {!!item.description && <p className="text-xs text-muted-foreground leading-5">{item.description}</p>}
                                         {/* <p className="text-xs text-muted-foreground mt-1">{item.timestamp}</p> */}
                                     </div>
 

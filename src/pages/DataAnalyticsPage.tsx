@@ -371,7 +371,9 @@ const DataAnalyticsPage = () => {
 
           </CardContent>
           <div className="flex flex-col sm:flex-row justify-between px-6 py-3 border-t bg-muted">
-            <Button variant="outline" onClick={() => navigate("/data-cleaning")}>
+            <Button variant="outline" 
+            className='border-primary text-primary font-semibold hover:bg-primary/10 transition-colors'
+            onClick={() => navigate("/data-cleaning")}>
               <svg className="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
@@ -379,7 +381,7 @@ const DataAnalyticsPage = () => {
             </Button>
 
             <Button
-              variant="outline" className="px-5 h-11 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
+              variant="outline" className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
               onClick={() => {
                 const total = rows.length;
                 const updated = changedRowsCount;
