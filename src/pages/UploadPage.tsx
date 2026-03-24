@@ -435,7 +435,7 @@ export function UploadPage() {
                   onDrop={handleDrop}
                   className={`
                     w-full max-w-3xl relative group flex flex-col items-center justify-center gap-3 p-6 
-                    rounded-3xl border-2 border-dashed transition-all duration-300 cursor-pointer
+                    rounded-xl border-2 border-dashed transition-all duration-300 cursor-pointer
                     ${isDragging
                       ? 'border-primary bg-primary/10 scale-[1.02] shadow-2xl'
                       : 'border-primary/40 bg-primary/[0.03] hover:border-primary/60 hover:bg-primary/[0.06]'
@@ -576,7 +576,7 @@ export function UploadPage() {
         </Card>
 
         <Dialog open={showSheetSelector} onOpenChange={(open) => setShowSheetSelector(open)}>
-          <DialogContent className="fixed left-1/2 top-1/2 z-50 w-[95vw] max-w-4xl -translate-x-1/2 -translate-y-1/2 data-[state=open]:animate-none data-[state=closed]:animate-none p-0">
+          <DialogContent className="w-[95vw] max-w-4xl p-0 !animate-none !duration-0 overflow-hidden">
             <DialogHeader className='border-b p-4'>
               <DialogTitle>Select Sheets To Join</DialogTitle>
               <DialogDescription>
@@ -681,7 +681,7 @@ export function UploadPage() {
         <button
           onClick={handleNext}
           disabled={loading}
-          className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-primary/80 hover:bg-primary text-primary-foreground shadow-lg transition-all duration-200 disabled:opacity-50"
+          className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-primary/10 text-primary transition-all duration-200 disabled:opacity-50"
           title="Next: Field Mapping"
         >
           <ChevronRight className="h-6 w-6" />

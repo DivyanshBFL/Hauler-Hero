@@ -379,7 +379,7 @@ const DataAnalyticsPage = () => {
             </Button>
 
             <Button
-              variant="outline" className="px-5 h-11 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
+              variant="outline" className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
               onClick={() => {
                 const total = rows.length;
                 const updated = changedRowsCount;
