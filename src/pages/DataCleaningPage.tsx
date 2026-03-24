@@ -236,6 +236,8 @@ export function DataCleaningPage() {
   const [addressFixSubmitting, setAddressFixSubmitting] = useState(false);
   const [addressFixError, setAddressFixError] = useState<string | null>(null);
 
+  const [proceedConfirmOpen, setProceedConfirmOpen] = useState(false);
+
   const [progress, setProgress] = useState(0);
   const [autoFixOptions, setAutoFixOptions] = useState({
     datatype_fix: true,
@@ -933,6 +935,7 @@ export function DataCleaningPage() {
 
   const handleContinue = async () => {
     setSubmitting(true);
+    setProceedConfirmOpen(false);
     try {
       sessionStorage.setItem(CLEANED_DATA_KEY, JSON.stringify(allRows));
 
@@ -965,6 +968,32 @@ export function DataCleaningPage() {
       showApiErrorToast(error, 'Failed to submit edits');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleNextClick = () => {
+    let hasIssues = false;
+    for (const row of allRows) {
+      const rowIndex = Number(row.__rowIndex);
+      for (const col of columns) {
+        const cellIssues = rowIssueMap[rowIndex]?.[col] ?? [];
+        const hasCellIssue = cellIssues.length > 0;
+        const isMissingValue = isCellMissing(row[col]);
+        const cellKey = getCellKey(rowIndex, col);
+        const isWorkedOn = workedOnCells.has(cellKey);
+
+        if (!isWorkedOn && (hasCellIssue || isMissingValue)) {
+          hasIssues = true;
+          break;
+        }
+      }
+      if (hasIssues) break;
+    }
+
+    if (hasIssues) {
+      setProceedConfirmOpen(true);
+    } else {
+      void handleContinue();
     }
   };
 
@@ -1406,7 +1435,7 @@ export function DataCleaningPage() {
           cellsToMarkAsWorked.add(getCellKey(edit.row_index, edit.column));
         });
         setWorkedOnCells(prev => new Set([...prev, ...cellsToMarkAsWorked]));
-        
+
         if (!refreshedRows?.length) {
           await runIssueAnalysis(backendRows);
         }
@@ -1441,7 +1470,7 @@ export function DataCleaningPage() {
           actor: 'user',
           actionLabel: 'Column operation applied',
         });
-        
+
         if (!refreshedRows?.length) {
           await runIssueAnalysis(backendRows);
         }
@@ -1757,7 +1786,7 @@ export function DataCleaningPage() {
               </svg>
               Back
             </Button>
-            <Button onClick={handleContinue} disabled={submitting}
+            <Button onClick={handleNextClick} disabled={submitting}
               variant='outline'
               className="w-full sm:w-auto  border-primary text-primary font-semibold order-1 hover:bg-primary/10 transition-colors px-5 pr-3"
             >
@@ -2025,6 +2054,55 @@ export function DataCleaningPage() {
           </div>
         )
       }
+
+      {
+        proceedConfirmOpen && (
+          <div className="fixed inset-0 z-[70] flex items-center justify-center">
+            <div
+              className="absolute inset-0 bg-black/40"
+              onClick={() => {
+                if (submitting) return;
+                setProceedConfirmOpen(false);
+              }}
+            />
+            <div className="relative z-10 w-full max-w-xl rounded-md border border-border bg-background shadow-2xl overflow-hidden">
+              <div className="py-4 border-b flex items-center justify-between">
+                <h3 className="text-md leading-none font-light text-foreground px-4">Outstanding Issues Alert</h3>
+
+                <div className='px-4'>
+                  <X className="cursor-pointer" onClick={() => {
+                    if (submitting) return;
+                    setProceedConfirmOpen(false);
+                  }} />
+                </div>
+              </div>
+
+              <div className="p-6">
+                <p className="text-sm text-muted-foreground whitespace-pre-line">
+                  Some data anomalies were not resolved. Proceeding may result in inconsistencies. Do you want to Proceed?
+                </p>
+              </div>
+
+              <div className="p-4 border-t flex items-center justify-end gap-2">
+                <Button
+                  variant="outline"
+                  className="px-6 "
+                  disabled={submitting}
+                  onClick={() => {
+                    setProceedConfirmOpen(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button onClick={() => void handleContinue()} disabled={submitting} variant="outline" className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors ">
+                  {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Proceed
+                </Button>
+              </div>
+            </div>
+          </div>
+        )
+      }
       {/* Navigation Arrows */}
       <button
         onClick={() => navigate('/data-preview')}
@@ -2035,9 +2113,9 @@ export function DataCleaningPage() {
       </button>
 
       <button
-        onClick={handleContinue}
+        onClick={handleNextClick}
         disabled={submitting}
-       className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
+        className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
         title="Next: Data Analytics"
       >
         <ChevronRight className="h-6 w-6" />
