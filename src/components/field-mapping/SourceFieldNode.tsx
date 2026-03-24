@@ -31,7 +31,7 @@ function SourceFieldNodeComponent({ data }: NodeProps<SourceFieldNodeType>) {
         </span>
       )}
       {!hideMapping && (
-        <Handle type="source" position={Position.Right} className="!w-3 !h-3 !border-2 !border-primary !bg-background" />
+        <Handle type="source" position={Position.Right} className="!w-3 !h-3 !border-2 !border-[#c5c5c5] !bg-background" />
       )}
     </div>
   );

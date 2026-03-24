@@ -33,13 +33,19 @@ type ColumnProfileSuggestionGroup = {
     suggestions: ColumnProfileSuggestion[];
 };
 
+type ColumnProfileFillSuggestion = {
+    strategy: string;
+    label: string;
+    requires_value?: boolean;
+};
+
 type ColumnProfile = {
     column: string;
     target_field?: string;
     dtype_detected?: string;
     dtype_expected?: string;
     stats?: ColumnProfileStats;
-    fill_suggestions?: Record<string, any>;
+    fill_suggestions?: ColumnProfileFillSuggestion[];
     suggestions?: ColumnProfileSuggestionGroup[];
 };
 
@@ -49,7 +55,7 @@ type OperationFormState = {
     // change_case
     case?: 'upper' | 'lower' | 'title' | 'camel';
     // fill_empty
-    strategy?: 'constant' | 'mode' | 'median';
+    strategy?: string;
     value?: string;
     // add_prefix_suffix
     prefix?: string;
@@ -81,10 +87,13 @@ function buildOperationPayload(operation: string, form: OperationFormState): Rec
     switch (operation) {
         case 'trim_whitespace': return {};
         case 'change_case': return { case: form.case ?? 'title' };
-        case 'fill_empty':
-            return form.strategy === 'constant'
-                ? { strategy: 'constant', value: form.value ?? '' }
-                : { strategy: form.strategy ?? 'mode' };
+        case 'fill_empty': {
+            const base = { strategy: form.strategy ?? 'mode' };
+            if (form.value !== undefined && form.value !== '') {
+                return { ...base, value: form.value };
+            }
+            return base;
+        }
         case 'add_prefix_suffix': return { prefix: form.prefix ?? '', suffix: form.suffix ?? '' };
         case 'replace': return { find: form.find ?? '', replace: form.replace ?? '', use_regex: form.use_regex ?? false };
         case 'split': return { delimiter: form.delimiter ?? ' ', new_column_name: form.new_column_name ?? '' };
@@ -94,10 +103,15 @@ function buildOperationPayload(operation: string, form: OperationFormState): Rec
     }
 }
 
-function hasRequiredParams(operation: string, form: OperationFormState): boolean {
+function hasRequiredParams(operation: string, form: OperationFormState, profile?: ColumnProfile | null): boolean {
     switch (operation) {
-        case 'fill_empty':
-            return form.strategy === 'constant' ? (form.value?.trim().length ?? 0) > 0 : true;
+        case 'fill_empty': {
+            const strategyObj = Array.isArray(profile?.fill_suggestions) 
+                ? profile?.fill_suggestions.find(fs => fs.strategy === form.strategy)
+                : undefined;
+            const requiresValue = strategyObj ? strategyObj.requires_value : form.strategy === 'constant';
+            return requiresValue ? (form.value?.trim().length ?? 0) > 0 : true;
+        }
         case 'add_prefix_suffix':
             return (form.prefix?.trim().length ?? 0) > 0 || (form.suffix?.trim().length ?? 0) > 0;
         case 'replace':
@@ -167,8 +181,12 @@ export default function IssueCellDetailsDrawer({ panel, sessionId, onClose, onOp
         // Pre-fill sensible defaults
         const defaults: OperationFormState = {};
         if (op.operation === 'fill_empty') {
-            defaults.strategy = 'constant';
-            defaults.value = String(columnProfile?.fill_suggestions?.mode ?? '');
+            if (Array.isArray(columnProfile?.fill_suggestions) && columnProfile?.fill_suggestions.length > 0) {
+                defaults.strategy = columnProfile.fill_suggestions[0].strategy;
+            } else {
+                defaults.strategy = 'constant';
+            }
+            defaults.value = '';
         } else if (op.operation === 'change_case') {
             defaults.case = 'title';
         } else if (op.operation === 'split') {
@@ -356,21 +374,33 @@ export default function IssueCellDetailsDrawer({ panel, sessionId, onClose, onOp
                                                             )}
 
                                                             {/* fill_empty */}
-                                                            {s.operation === 'fill_empty' && (
+                                                            {s.operation === 'fill_empty' && (() => {
+                                                                const strategyObj = Array.isArray(columnProfile.fill_suggestions) 
+                                                                    ? columnProfile.fill_suggestions.find(fs => fs.strategy === form.strategy)
+                                                                    : undefined;
+                                                                const requiresValue = strategyObj ? strategyObj.requires_value : (form.strategy === 'constant' || !form.strategy);
+                                                                
+                                                                return (
                                                                 <div className="space-y-2">
                                                                     <div className="space-y-1">
                                                                         <label className="text-xs text-muted-foreground">Strategy</label>
                                                                         <select
                                                                             className="w-full h-8 rounded-md border border-input bg-background px-2 text-xs"
-                                                                            value={form.strategy ?? 'constant'}
-                                                                            onChange={(e) => setForm((f) => ({ ...f, strategy: e.target.value as OperationFormState['strategy'] }))}
+                                                                            value={form.strategy ?? ''}
+                                                                            onChange={(e) => setForm((f) => ({ ...f, strategy: e.target.value }))}
                                                                         >
-                                                                            <option value="constant">Constant value</option>
-                                                                            <option value="mode">Mode (most frequent)</option>
-                                                                            <option value="median">Median</option>
+                                                                            {Array.isArray(columnProfile.fill_suggestions) ? columnProfile.fill_suggestions.map(fs => (
+                                                                                <option key={fs.strategy} value={fs.strategy}>{fs.label}</option>
+                                                                            )) : (
+                                                                                <>
+                                                                                    <option value="constant">Constant value</option>
+                                                                                    <option value="mode">Mode (most frequent)</option>
+                                                                                    <option value="median">Median</option>
+                                                                                </>
+                                                                            )}
                                                                         </select>
                                                                     </div>
-                                                                    {(form.strategy === 'constant' || !form.strategy) && (
+                                                                    {requiresValue && (
                                                                         <div className="space-y-1">
                                                                             <label className="text-xs text-muted-foreground">Fill value</label>
                                                                             <Input
@@ -383,7 +413,8 @@ export default function IssueCellDetailsDrawer({ panel, sessionId, onClose, onOp
                                                                         </div>
                                                                     )}
                                                                 </div>
-                                                            )}
+                                                                );
+                                                            })()}
 
                                                             {/* add_prefix_suffix */}
                                                             {s.operation === 'add_prefix_suffix' && (
@@ -512,7 +543,7 @@ export default function IssueCellDetailsDrawer({ panel, sessionId, onClose, onOp
                                                                 <Button
                                                                     size="sm"
                                                                     className="h-7 text-xs px-3"
-                                                                    disabled={applying || !hasRequiredParams(s.operation, form)}
+                                                                    disabled={applying || !hasRequiredParams(s.operation, form, columnProfile)}
                                                                     onClick={() => void handleApplyOperation()}
                                                                 >
                                                                     {applying && <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />}

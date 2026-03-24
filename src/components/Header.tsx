@@ -1,8 +1,13 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { ThemeToggle } from '@/components/ThemeToggle';
-import { LogOut } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { LogOut, User } from 'lucide-react';
 
 export function Header() {
 
@@ -34,15 +39,33 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* <ThemeToggle /> */}
-          <Button
-            variant="outline" // Changed from "default" to "outline"
-            onClick={handleLogout}
-            className="font-semibold bg-white text-primary border-primary hover:bg-primary/50 hover:text-white"
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            <span className="hidden sm:inline">Logout</span>
-          </Button>
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="rounded-full bg-white text-primary"
+                aria-label="Open user menu"
+              >
+                <User className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              side="bottom"
+              align="end"
+              sideOffset={10}
+              collisionPadding={16}
+              className="w-44 max-w-[calc(100vw-1rem)]"
+            >
+              <DropdownMenuItem
+                onClick={handleLogout}
+                className="cursor-pointer text-primary focus:text-primary"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>

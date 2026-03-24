@@ -242,7 +242,7 @@ function buildNodesAndEdges(
         type: 'default',
         pathOptions: { curvature: 0.5 },
         style: {
-          stroke: isSelected ? 'hsl(222, 84%, 36%)' : 'hsl(211, 88%, 52%)',
+          stroke: '#c5c5c5',
           strokeWidth: isSelected ? 4 : 2.5,
         },
         zIndex: isSelected ? 1000 : 1,
@@ -908,23 +908,23 @@ export function FieldMappingPage() {
           </CardHeader>
 
           <CardContent className="gap-4 ">
-            <div className="text-sm mt-4 font-semibold" >AI Auto-Mapping Summary :</div>
+            {/* <div className="text-sm mt-4 font-semibold" >AI Auto-Mapping Summary :</div> */}
             <div className="rounded-lg border mt-2 mb-4 bg-primary/10 text-blue-900">
               <div className="px-4 py-3 flex items-center justify-between gap-2">
                 <div className="px-1 flex items-center flex-wrap gap-1 text-xs" >
                   <span className='font-bold'>Summary:</span>
                   <div className="flex items-center gap-1 ">
-                    <span>Fields Auto-Mapped:</span>
-                    <span >
+                    <span>Auto-Mapped With AI:</span>
+                    <b>
                       {autoMappedCoveragePct}% ({autoMappedCount}/{targetFieldsAll.length})
-                    </span>
+                    </b>
                   </div>
-                  <div className="flex items-center gap-0 ">
+                  {/* <div className="flex items-center gap-0 ">
                     <span>Unmapped Columns:</span>
                     <span className="rounded-md px-1 py-0.5 font-semibold">
                       {unmatchedColumnsCount}
                     </span>
-                  </div>
+                  </div> */}
                   {/* <div className="flex items-center gap-2 ">
                     <span>Data size overflow warning</span>
                     <span className="rounded-md  px-2 py-0.5 font-semibold">
@@ -967,7 +967,7 @@ export function FieldMappingPage() {
                       <div className="space-y-2">
                         <div className="flex items-center justify-start text-sm gap-2">
                           <span className="font-semibold text-foreground">
-                            Datasets ({selectedEntity || 'Source'}) :
+                            Source Schema :
                           </span>
                           <span className="text-muted-foreground">
                             {sourceFieldsAll.length} Columns </span>
@@ -1017,14 +1017,14 @@ export function FieldMappingPage() {
                       </div>
                     </div>
                     <label className="inline-flex items-center gap-2 text-sm text-foreground cursor-pointer ml-4" style={{ minWidth: "150px" }}>
-                              <input
-                                type="checkbox"
-                                checked={showOnlyErrors}
-                                onChange={(e) => setShowOnlyErrors(e.target.checked)}
-                                className="h-4 w-4 rounded border-input cursor-pointer accent-primary"
-                              />
-                              Show only unmapped
-                            </label>
+                      <input
+                        type="checkbox"
+                        checked={showOnlyErrors}
+                        onChange={(e) => setShowOnlyErrors(e.target.checked)}
+                        className="h-4 w-4 rounded border-input cursor-pointer accent-primary"
+                      />
+                      Show only unmapped
+                    </label>
                     <ScrollArea
                       ref={scrollAreaRef}
                       className="w-full [&_[data-radix-scroll-area-viewport]]:overflow-x-hidden [&_[data-radix-scroll-area-viewport]]:overflow-y-auto"
@@ -1052,7 +1052,7 @@ export function FieldMappingPage() {
                           onPaneClick={() => setSelectedEdgeId(null)}
                           onConnectStart={() => setIsDraggingConnection(true)}
                           onConnectEnd={() => setIsDraggingConnection(false)}
-                          deleteKeyCode={['Backspace', 'Delete']} 
+                          deleteKeyCode={['Backspace', 'Delete']}
                           isValidConnection={() => true}
                           nodeTypes={NODE_TYPES}
                           zoomOnScroll={false}
@@ -1071,11 +1071,11 @@ export function FieldMappingPage() {
                             type: 'default',
                             deletable: true,
                           }}
-                           proOptions={{ hideAttribution: true }}
-                           defaultViewport={{ x: 0, y: 0, zoom: 1 }}
-                           fitView={false}
-                           style={{ background: 'transparent' }}
-                         >
+                          proOptions={{ hideAttribution: true }}
+                          defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+                          fitView={false}
+                          style={{ background: 'transparent' }}
+                        >
                           <Background gap={8} size={1} color="#e5e7eb" />
                           {/* <Panel position="top-left" className="m-2 mx-4 text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded shadow">
                             {mappings.filter((m) => m.targetField !== 'Unmapped').length} mappings
@@ -1164,10 +1164,12 @@ export function FieldMappingPage() {
 
           </CardContent>
           <div className="flex flex-col sm:flex-row justify-between gap-3 px-6 py-3 border-t bg-muted">
+
+
             <Button
               variant="outline"
               onClick={() => navigate('/upload')}
-              className="className='border-primary text-primary font-semibold hover:bg-primary/10 transition-colors'"
+              className="border-primary text-primary font-semibold hover:bg-primary/10 transition-colors"
             >
               <svg className="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -1187,6 +1189,8 @@ export function FieldMappingPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </Button>
+
+
           </div>
 
         </Card>
