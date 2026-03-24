@@ -909,8 +909,8 @@ export function FieldMappingPage() {
 
           <CardContent className="gap-4 ">
             {/* <div className="text-sm mt-4 font-semibold" >AI Auto-Mapping Summary :</div> */}
-            <div className="rounded-lg border mt-2 mb-4 bg-primary/10 text-blue-900">
-              <div className="px-4 py-3 flex items-center justify-between gap-2">
+            <div className="rounded-lg border mt-2 mb-4 bg-primary/10 text-blue-900 border-blue-300">
+              <div className="px-4 py-2 flex items-center justify-between gap-2">
                 <div className="px-1 flex items-center flex-wrap gap-1 text-xs" >
                   <span className='font-bold'>Summary:</span>
                   <div className="flex items-center gap-1 ">
@@ -1072,7 +1072,7 @@ export function FieldMappingPage() {
                             deletable: true,
                           }}
                           proOptions={{ hideAttribution: true }}
-                          defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+                          defaultViewport={{ x: 0, y: 0, zoom: 0 }}
                           fitView={false}
                           style={{ background: 'transparent' }}
                         >
