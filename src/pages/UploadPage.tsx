@@ -550,7 +550,7 @@ export function UploadPage() {
                         className="group "
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
-                        <div className=" gap-4">
+                        <div className="gap-4">
                           <div className="text-sm font-semibold">
                             Data Preview :
                           </div>

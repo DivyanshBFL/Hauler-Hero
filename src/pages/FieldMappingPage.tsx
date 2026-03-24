@@ -1137,7 +1137,7 @@ export function FieldMappingPage() {
                 <div className="px-1 flex items-center flex-wrap gap-1 text-xs">
                   <span className="font-bold">Summary:</span>
                   <div className="flex items-center gap-1 ">
-                    <span>Auto-Mapped With AI:</span>
+                    <span>AI Mapped Percentage:</span>
                     <b>
                       {autoMappedCoveragePct}% ({autoMappedCount}/
                       {targetFieldsAll.length})

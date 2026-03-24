@@ -1903,14 +1903,14 @@ export function DataCleaningPage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="text-blue-700 border-blue-300 hover:bg-blue-50"
+                  className="text-white border-black bg-black hover:text-white"
                   disabled={!issues.length || analyzing || autoFixSubmitting}
                   onClick={() => {
                     setAutoFixError(null);
                     setAutoFixConfirmOpen(true);
                   }}
                 >
-                  <Sparkles className="mr-2 h-4 w-4 text-blue-500 fill-blue-400 animate-blink" />
+                  <Sparkles className="mr-2 h-4 w-4 text-white fill-white animate-pulse" />
                   Auto Cleanup
                 </Button>
                 <DropdownMenu modal={false}>
@@ -2085,7 +2085,7 @@ export function DataCleaningPage() {
                             return (
                               <TableCell
                                 key={`c-${rowIndex}-${col}`}
-                                className={`px-1 py-2 whitespace-nowrap ${bgClass} ${hasCellIssue ? "cursor-pointer bg-clip-content" : ""}`}
+                                className={`px-1 py-2 whitespace-nowrap ${bgClass} ${hasCellIssue ? "cursor-pointer bg-clip-content" : "bg-clip-content"}`}
                                 title={
                                   hasCellIssue
                                     ? visibleCellIssues

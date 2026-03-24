@@ -53,13 +53,22 @@ export default function ProcessStepper() {
   const { pathname } = useLocation();
 
   const currentStepIndex = steps.findIndex((s) => pathname.startsWith(s.path));
-  const currentStep = currentStepIndex === -1 && pathname.startsWith("/data-preview") ? 1 : (currentStepIndex === -1 ? 0 : currentStepIndex);
+  const currentStep =
+    currentStepIndex === -1 && pathname.startsWith("/data-preview")
+      ? 1
+      : currentStepIndex === -1
+        ? 0
+        : currentStepIndex;
 
   return (
     <div className="grid md:grid-cols-4 gap-3">
       {steps.map((step, i) => {
         const state =
-          i < currentStep ? "completed" : i === currentStep ? "active" : "upcoming";
+          i < currentStep
+            ? "completed"
+            : i === currentStep
+              ? "active"
+              : "upcoming";
 
         const styles = {
           completed: {
@@ -86,8 +95,9 @@ export default function ProcessStepper() {
           <button
             key={step.path}
             onClick={() => i <= currentStep && navigate(step.path)}
-            className={`w-full p-2 rounded-lg border text-left transition-all duration-300 ${styles.card} ${state === "active" ? "scale-[1.02]" : "hover:border-primary/50"
-              }`}
+            className={`w-full p-2 rounded-lg border text-left transition-all duration-300 ${styles.card} ${
+              state === "active" ? "" : "hover:border-primary/50"
+            }`}
           >
             <div className="flex items-center gap-1.5">
               <span
@@ -101,10 +111,14 @@ export default function ProcessStepper() {
               </span>
 
               <div className="min-w-0">
-                <p className={`font-bold text-sm leading-tight ${styles.title}`}>
+                <p
+                  className={`font-bold text-sm leading-tight ${styles.title}`}
+                >
                   {step.title}
                 </p>
-                <p className={`text-[11px] mt-0.5 font-medium truncate ${styles.subtitle}`}>
+                <p
+                  className={`text-[11px] mt-0.5 font-medium truncate ${styles.subtitle}`}
+                >
                   {step.subtitle}
                 </p>
               </div>

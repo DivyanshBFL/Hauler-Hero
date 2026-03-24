@@ -181,6 +181,24 @@ export default function IssueCellDetailsDrawer({
     new Set(),
   );
 
+  // Slide-in / slide-out animation state
+  const isOpen = panel !== null;
+  const [mounted, setMounted] = useState(isOpen);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setVisible(false);
+      setMounted(true);
+      const timeoutId = window.setTimeout(() => setVisible(true), 10);
+      return () => window.clearTimeout(timeoutId);
+    }
+
+    setVisible(false);
+    const timeoutId = window.setTimeout(() => setMounted(false), 300);
+    return () => window.clearTimeout(timeoutId);
+  }, [isOpen]);
+
   // Reset form/state whenever a new panel opens
   useEffect(() => {
     setActiveOperation(null);
@@ -211,7 +229,7 @@ export default function IssueCellDetailsDrawer({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [panel?.column, sessionId]);
 
-  if (!panel) return null;
+  if (!mounted) return null;
 
   const handleSelectOperation = (op: ColumnProfileSuggestion) => {
     if (activeOperation === op.operation) {
@@ -246,7 +264,7 @@ export default function IssueCellDetailsDrawer({
   };
 
   const handleApplyOperation = async () => {
-    if (!activeOperation || !sessionId) return;
+    if (!activeOperation || !sessionId || !panel) return;
     setApplying(true);
     setOperationError(null);
     setOperationResult(null);
@@ -279,10 +297,10 @@ export default function IssueCellDetailsDrawer({
   };
 
   return (
-    <div className="fixed inset-0 z-50">
-      <div className="absolute inset-0 bg-black/20" />
+    <div className={`fixed inset-0 z-50 transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0'}`}>
+      <div className="absolute inset-0 bg-black/20" onClick={onClose} />
       <div
-        className="absolute right-0 top-0 h-full w-full max-w-[440px] bg-white border-l border-border shadow-2xl flex flex-col"
+        className={`absolute right-0 top-0 h-full w-full max-w-[440px] bg-white border-l border-border shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${visible ? 'translate-x-0' : 'translate-x-full'}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -325,7 +343,7 @@ export default function IssueCellDetailsDrawer({
               <div className="border-border">
                 <div className="grid grid-cols-2 gap-y-1.5">
                   <p className="text-xs text-muted-foreground">Name</p>
-                  <p className="text-xs font-medium">{panel.column}</p>
+                  <p className="text-xs font-medium">{panel?.column}</p>
                   {columnProfile.dtype_detected && (
                     <>
                       <p className="text-xs text-muted-foreground">
@@ -487,7 +505,7 @@ export default function IssueCellDetailsDrawer({
                                   <p className="text-xs text-muted-foreground">
                                     Trims leading and trailing whitespace from
                                     all values in{" "}
-                                    <strong>{panel.column}</strong>.
+                                    <strong>{panel?.column}</strong>.
                                   </p>
                                 )}
 
@@ -715,7 +733,7 @@ export default function IssueCellDetailsDrawer({
                                       </label>
                                       <Input
                                         className="h-8 text-xs"
-                                        placeholder={`e.g. ${panel.column}_part2`}
+                                        placeholder={`e.g. ${panel?.column}_part2`}
                                         value={form.new_column_name ?? ""}
                                         onChange={(e) =>
                                           setForm((f) => ({
@@ -737,7 +755,7 @@ export default function IssueCellDetailsDrawer({
                                     <Input
                                       autoFocus
                                       className="h-8 text-xs"
-                                      placeholder={`e.g. ${panel.column}_backup`}
+                                      placeholder={`e.g. ${panel?.column}_backup`}
                                       value={form.dup_column_name ?? ""}
                                       onChange={(e) =>
                                         setForm((f) => ({
@@ -753,7 +771,7 @@ export default function IssueCellDetailsDrawer({
                                 {s.operation === "delete_column" && (
                                   <p className="text-xs text-destructive">
                                     This will permanently delete the{" "}
-                                    <strong>{panel.column}</strong> column from
+                                    <strong>{panel?.column}</strong> column from
                                     the session.
                                   </p>
                                 )}
@@ -810,6 +828,16 @@ export default function IssueCellDetailsDrawer({
                 )}
             </>
           )}
+        </div>
+
+        {/* Footer */}
+        <div className="shrink-0 border-t border-border bg-white p-4 flex items-center justify-end">
+          <Button
+            variant="outline"
+            onClick={onClose}
+          >
+            Cancel
+          </Button>
         </div>
       </div>
     </div>

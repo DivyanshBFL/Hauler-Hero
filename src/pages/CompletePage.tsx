@@ -14,6 +14,8 @@ import {
   Download,
   UploadCloud,
   Loader2,
+  BrushCleaning,
+  ListChecks,
 } from "lucide-react";
 import { getDefaultImportStats, type ImportStats } from "@/types/importStats";
 import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
@@ -188,14 +190,14 @@ export function CompletePage() {
                   <MetricCard
                     label="Auto-mapped Coverage"
                     value={`${s.mapped_data.cols_pct}%`}
-                    icon={PlusCircle}
+                    icon={ListChecks}
                     subtext={`${s.mapped_data.mapped_cols} of ${s.mapped_data.total_cols} columns matched`}
                     className="bg-lime-50 border-lime-100"
                   />
                   <MetricCard
                     label="Data Cleaned"
                     value={s.updated.pct + "%"}
-                    icon={Activity}
+                    icon={BrushCleaning}
                     subtext={`${s.updated.fields} of ${s.updated.total_fields} issues resolved.`}
                     className="bg-violet-50 border-violet-100"
                   />
