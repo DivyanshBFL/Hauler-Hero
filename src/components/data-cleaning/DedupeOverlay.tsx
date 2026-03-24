@@ -323,7 +323,7 @@ export default function DedupeOverlay(props: Props) {
                                         <Button variant="outline"
                                             onClick={() => void onRemoveDuplicates()}
                                             disabled={previewLoading || applyDedupLoading}
-                                            className='border-red-400 text-red-400'
+                                            className='border-red-400 text-red-400 hover:text-red-400 hover:bg-red-100'
                                         >
                                             {applyDedupLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                             Remove Duplicates
@@ -332,7 +332,7 @@ export default function DedupeOverlay(props: Props) {
                                             variant='outline'
                                             onClick={() => void onBuildPreview()}
                                             disabled={previewLoading || applyDedupLoading}
-                                            className='bg-white text-primary border-primary '
+                                            className='bg-white text-primary border-primary hover:bg-blue-100 '
                                         >
                                             {previewLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                             Preview

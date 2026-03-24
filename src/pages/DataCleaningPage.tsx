@@ -1975,7 +1975,7 @@ export function DataCleaningPage() {
                   disabled={autoFixSubmitting}
                   onClick={() => void handleAutoFixAllIssues()}
                   variant='outline'
-                  className='bg-white text-primary border-primary '
+                  className='bg-white text-primary border-primary hover:bg-blue-100 '
                 >
                   {autoFixSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                   Apply Fixes
