@@ -367,7 +367,7 @@ export function UploadPage() {
   const filteredRightKeys = rightSheetHeaders;
 
   return (
-    <div className={PAGE_OUTER}>
+    <div className={`${PAGE_OUTER} min-h-32`}>
       <div className={PAGE_CONTAINER}>
         <div className="mb-4">
           <ProcessStepper />
