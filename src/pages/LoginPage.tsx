@@ -67,7 +67,7 @@ export function LoginPage() {
           <div className="absolute inset-0 bg-black/35" />
 
           <div className="absolute bottom-10 left-10 right-10 text-white">
-            <Quote className="mb-4 h-8 w-8 scale-x-[-1] fill-white stroke-0" />
+            {/* <Quote className="mb-4 h-8 w-8 scale-x-[-1] fill-white stroke-0" />
             <p className="max-w-3xl text-md font-light">
               Hauler Hero has made our lives more efficient and significantly less complicated. Since switching to Hauler Hero,
               my time to send our monthly or quarterly bills has been cut in half.
@@ -77,7 +77,7 @@ export function LoginPage() {
               <p className="text-white/90">Co-Owner - Carolina Trash & Septic
 
               </p>
-            </div>
+            </div> */}
 
             {/* <div className="flex justify-end gap-3">
               <button
@@ -115,7 +115,7 @@ export function LoginPage() {
             </CardHeader>
 
             <CardContent className='flex justify-center'>
-              <form onSubmit={handleSubmit} className="space-y-5 flex-1 max-w-[350px] border-2 rounded-md p-4">
+              <form onSubmit={handleSubmit} className="space-y-5 flex-1 max-w-[350px] border-1 shadow-lg rounded-md p-4">
                 <div className="space-y-2 ">
                   <Label htmlFor="email" className="text-sm font-medium">Email</Label>
                   <Input

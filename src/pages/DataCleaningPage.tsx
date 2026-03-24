@@ -1547,7 +1547,7 @@ export function DataCleaningPage() {
             <div className="flex flex-col md:flex-row gap-2 pt-2">
               <div className="relative flex-1 max-w-md">
                 <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <Input placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-8" />
+                <Input placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-9" />
               </div>
               <div className="flex gap-2 ml-auto">
                 <select
