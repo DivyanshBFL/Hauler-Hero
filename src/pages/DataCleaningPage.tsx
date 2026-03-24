@@ -940,12 +940,19 @@ export function DataCleaningPage() {
       if (!sid) throw new Error('Missing session id for activity log');
 
       const payload = await api.getActivityLog(sid);
-      const steps = Array.isArray(payload?.steps) ? payload.steps : [];
+      const steps = Array.isArray(payload?.activity) ? payload.activity : (Array.isArray(payload?.steps) ? payload.steps : []);
+
+      if (typeof payload?.total_applied === 'number') {
+        setServerUndoAvailable(payload.total_applied);
+      }
+      if (typeof payload?.redo_available === 'number') {
+        setServerRedoAvailable(payload.redo_available);
+      }
 
       const mapped: ActivityLogItem[] = steps.map((step: any, idx: number) => {
         const issueTypeRaw = String(step?.issue_type ?? 'issue');
         const issueType = toIssueLabel(toCamelCaseIssue(issueTypeRaw));
-        const column = String(step?.column ?? 'unknown_column');
+        const column = step?.column ? String(step.column) : 'Multiple columns';
         const action = String(step?.action ?? 'manual').toLowerCase();
         const rowsAffected = Number(step?.rows_affected ?? 0);
 
@@ -953,9 +960,9 @@ export function DataCleaningPage() {
           id: Number(step?.step ?? idx + 1),
           kind: 'action',
           actor: action === 'auto' ? 'ai' : 'user',
-          title: `${issueType} - ${column}`,
+          title: `${issueType}${column !== 'Multiple columns' ? ` - ${column}` : ''}`,
           description: `${action === 'auto' ? 'Auto' : 'Manual'} action on ${rowsAffected} row(s)`,
-          timestamp: new Date().toLocaleString(),
+          // timestamp: new Date().toLocaleString(),
         };
       });
 
