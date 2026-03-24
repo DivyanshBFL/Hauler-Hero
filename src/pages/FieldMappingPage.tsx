@@ -1179,7 +1179,7 @@ export function FieldMappingPage() {
               onClick={handleNext}
               disabled={processing}
               variant='outline'
-              className="w-full sm:w-auto  border-primary text-primary font-semibold order-1 hover:bg-primary/10 transition-colors px-5 h-11 pr-3"
+              className="w-full sm:w-auto  border-primary text-primary font-semibold order-1 hover:bg-primary/10 transition-colors px-5 pr-3"
             >
               {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Next
@@ -1194,7 +1194,7 @@ export function FieldMappingPage() {
       {/* Navigation Arrows */}
       <button
         onClick={() => navigate('/upload')}
-        className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-primary/80 hover:bg-primary text-primary-foreground shadow-lg transition-all duration-200"
+        className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
         title="Previous: Data Preview"
       >
         <ChevronLeft className="h-6 w-6" />
@@ -1203,7 +1203,7 @@ export function FieldMappingPage() {
       <button
         onClick={handleNext}
         disabled={processing}
-        className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-primary/80 hover:bg-primary text-primary-foreground shadow-lg transition-all duration-200 disabled:opacity-50"
+        className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
         title="Next: Data Analytics"
       >
         <ChevronRight className="h-6 w-6" />
