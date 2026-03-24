@@ -2273,7 +2273,7 @@ export function DataCleaningPage() {
             className={`absolute right-0 top-0 z-10 h-full w-full max-w-[560px] bg-white border-l border-border shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${autoFixDrawerVisible ? "translate-x-0" : "translate-x-full"}`}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="h-12 px-6 border-b border-border bg-white flex items-center justify-between shrink-0">
+            <div className="h-12 px-6 border-b border-border bg-white flex items-center justify-end shrink-0">
               <h3 className="flex items-center gap-2 text-md leading-none font-light text-foreground">
                 <Sparkles className="h-4 w-4" />
                 Data Cleanup Rules
