@@ -157,7 +157,7 @@ export default function DedupeOverlay(props: Props) {
                 <div className={`absolute right-0 top-0 h-full w-full max-w-[560px] bg-white border-l border-border shadow-2xl z-10 transition-transform duration-300 ease-in-out ${drawerVisible ? 'translate-x-0' : 'translate-x-full'}`}>
                     <div className="h-12 px-6 border-b border-border bg-white flex items-center justify-between">
                         <h2 className="text-md leading-none font-light text-foreground">
-                            {lastDrawer === 'dedupe' ? (dedupeMode === 'column' ? 'Deduplicate column-wise' : 'Deduplicate row-wise') : 'Fix Addresses'}
+                            {lastDrawer === 'dedupe' ? (dedupeMode === 'column' ? 'Deduplicate' : 'Deduplicate') : 'Fix Addresses'}
                         </h2>
                         <button onClick={() => setDrawer(null)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
                     </div>
@@ -293,7 +293,7 @@ export default function DedupeOverlay(props: Props) {
                                     </div>
                                 </div>
 
-                                {dedupeMethod === 'automatic' && duplicateIndicatorCount > 0 && (
+                                {dedupeMethod === 'automatic' && dedupeMode === 'column' && duplicateIndicatorCount > 0 && (
                                     <div className="mt-4">
                                         <p className="text-sm font-medium mb-2">Keep strategy</p>
                                         <div className="flex flex-wrap gap-4 text-sm mt-2">
