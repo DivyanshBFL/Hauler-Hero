@@ -681,7 +681,7 @@ export function UploadPage() {
         <button
           onClick={handleNext}
           disabled={loading}
-          className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-primary/10 text-primary transition-all duration-200 disabled:opacity-50"
+           className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
           title="Next: Field Mapping"
         >
           <ChevronRight className="h-6 w-6" />

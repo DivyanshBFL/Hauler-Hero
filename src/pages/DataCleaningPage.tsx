@@ -2028,7 +2028,7 @@ export function DataCleaningPage() {
       {/* Navigation Arrows */}
       <button
         onClick={() => navigate('/data-preview')}
-        className="fixed left-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-primary/10  text-primary border border-blue-300 transition-all duration-200"
+        className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
         title="Previous: Data Preview"
       >
         <ChevronLeft className="h-6 w-6" />
@@ -2037,7 +2037,7 @@ export function DataCleaningPage() {
       <button
         onClick={handleContinue}
         disabled={submitting}
-        className="fixed right-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-primary/10  text-primary border border-blue-300 text-primary shadow-lg transition-all duration-200 disabled:opacity-50"
+       className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
         title="Next: Data Analytics"
       >
         <ChevronRight className="h-6 w-6" />

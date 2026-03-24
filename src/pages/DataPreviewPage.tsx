@@ -571,7 +571,7 @@ export function DataPreviewPage() {
       {/* Navigation Arrows */}
       <button
         onClick={() => navigate("/upload")}
-        className="fixed left-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-primary/10  text-primary border border-blue-300 transition-all duration-200"
+       className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
         title="Previous: Upload"
       >
         <ChevronLeft className="h-6 w-6" />
@@ -580,7 +580,7 @@ export function DataPreviewPage() {
       <button
         onClick={handleNext}
         disabled={processing}
-      className="fixed right-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-primary/10  text-primary border border-blue-300 text-primary shadow-lg transition-all duration-200 disabled:opacity-50"
+      className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
         title="Next: Data Cleaning"
       >
         <ChevronRight className="h-6 w-6" />
