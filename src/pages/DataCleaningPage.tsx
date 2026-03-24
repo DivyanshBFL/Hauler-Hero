@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
@@ -29,6 +36,7 @@ import {
   ChevronRight,
   ShieldAlert,
   FileClock,
+  EllipsisVertical,
   Cross,
   X
 } from 'lucide-react';
@@ -1528,7 +1536,6 @@ export function DataCleaningPage() {
               <div className="flex items-center gap-2">
                 <Button
                   size="sm" variant="outline"
-                  className="text-amber-600 border-amber-400 hover:bg-amber-50"
                   disabled={!canUndo}
                   onClick={handleUndoStable}
                   title="Undo"
@@ -1543,15 +1550,7 @@ export function DataCleaningPage() {
                 >
                   <Redo2 className="h-4 w-4" />
                 </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-blue-700 border-blue-300 hover:bg-blue-50"
-                  onClick={() => void handleOpenActivityLog()}
-                >
-                  <FileClock className="mr-2 h-4 w-4 text-blue-500" />
-                  Activity Log
-                </Button>
+
 
                 <Button
                   size="sm"
@@ -1566,6 +1565,55 @@ export function DataCleaningPage() {
                   <Sparkles className="mr-2 h-4 w-4 text-blue-500 fill-blue-400 animate-blink" />
                   Auto-fix all issues
                 </Button>
+                <DropdownMenu modal={false}>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-blue-700 border-blue-300 hover:bg-blue-50 px-2"
+                      aria-label="Open quick actions"
+                    >
+                      <EllipsisVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" sideOffset={8} className="w-52">
+                    <DropdownMenuItem
+                      onClick={() => void handleOpenActivityLog()}
+                      className="cursor-pointer text-blue-700 focus:text-blue-700 focus:bg-blue-50 data-[highlighted]:bg-blue-50"
+                    >
+                      <FileClock className="mr-2 h-4 w-4 text-blue-500" />
+                      Activity Log
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setPreviewDuplicateCount(0);
+                        setDedupeError(null);
+                        setPreviewRows([]);
+                        setPreviewColumns([]);
+                        setPreviewOpen(false);
+                        setDrawer('dedupe');
+                      }}
+                      className="cursor-pointer text-blue-700 focus:text-blue-700 focus:bg-blue-50 data-[highlighted]:bg-blue-50"
+                    >
+                      <Copy className="mr-2 h-4 w-4 text-blue-500" />
+                      Deduplicate
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setAutoFixError(null);
+                        setAddressFixConfirmOpen(true);
+                      }}
+                      className="cursor-pointer text-blue-700 focus:text-blue-700 focus:bg-blue-50 data-[highlighted]:bg-blue-50"
+                    >
+                      <MapPin className="mr-2 h-4 w-4 text-blue-500" />
+                      Fix Addresses
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+
               </div>
             </div>
 
@@ -1594,27 +1642,7 @@ export function DataCleaningPage() {
                     </option>
                   ))}
                 </select>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-blue-700 border-blue-300 hover:bg-blue-50"
-                  onClick={() => {
-                    setPreviewDuplicateCount(0);
-                    setDedupeError(null);
-                    setPreviewRows([]);
-                    setPreviewColumns([]);
-                    setPreviewOpen(false);
-                    setDrawer('dedupe');
-                  }}
-                >
-                  <Copy className="mr-2 h-4 w-4" /> Deduplicate
-                </Button>
-                <Button size="sm" variant="outline" className="text-blue-700 border-blue-300 hover:bg-blue-50" onClick={() => {
-                  setAutoFixError(null);
-                  setAddressFixConfirmOpen(true);
-                }}>
-                  <MapPin className="mr-2 h-4 w-4" /> Fix Addresses
-                </Button>
+
               </div>
             </div>
             <div className="rounded-md border border-border overflow-hidden mt-4">
@@ -1810,7 +1838,7 @@ export function DataCleaningPage() {
               <div className="flex-1 overflow-y-auto pt-4 px-6">
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 gap-y-6">
-                    <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
                       {[
                         { key: 'datatype_fix', label: 'Datatype Fix' },
                         { key: 'missing_value_fix', label: 'Missing Value Fix' },
@@ -1818,7 +1846,7 @@ export function DataCleaningPage() {
                         { key: 'deduplication', label: 'Deduplication' },
                       ].map((opt) => (
                         <div key={opt.key} className="space-y-2">
-                          <label className="text-md text-foreground">{opt.label}</label>
+                          <label className="text-sm text-foreground">{opt.label}</label>
                           <div className="flex gap-4">
                             <label className="flex items-center gap-2 cursor-pointer group">
                               <input
@@ -1851,7 +1879,7 @@ export function DataCleaningPage() {
                         { key: 'email_action', label: 'Email Action' },
                       ].map((opt) => (
                         <div key={opt.key} className="space-y-3">
-                          <label className="text-md text-foreground">{opt.label}</label>
+                          <label className="text-sm text-foreground">{opt.label}</label>
                           <div className="flex flex-row flex-wrap gap-4">
                             {[
                               { value: 'standardize', label: 'Standardize' },
@@ -1905,7 +1933,7 @@ export function DataCleaningPage() {
                 </div>
               </div>
 
-              <div className="shrink-0 border-t border-border bg-white p-4 flex items-center justify-end gap-2">
+              <div className="shrink-0 border-t border-border bg-white p-4 flex items-center justify-between gap-2">
                 <Button
                   variant="outline"
                   disabled={autoFixSubmitting}
@@ -1977,7 +2005,7 @@ export function DataCleaningPage() {
                 )}
               </div>
 
-              <div className="p-4 border-t flex items-center justify-end gap-2">
+              <div className="p-4 border-t flex items-center justify-between gap-2">
                 <Button
                   variant="outline"
                   className="px-6 "

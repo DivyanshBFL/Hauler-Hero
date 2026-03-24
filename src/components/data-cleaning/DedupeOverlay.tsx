@@ -173,10 +173,10 @@ export default function DedupeOverlay(props: Props) {
 
                                 <div className="flex items-center gap-4">
                                     <label className="inline-flex items-center gap-2 text-sm">
-                                        <input type="radio" checked={dedupeMode === 'column'} onChange={() => setDedupeMode('column')} /> Column wise
+                                        <input className="accent-blue-600 focus:ring-blue-500" type="radio" checked={dedupeMode === 'column'} onChange={() => setDedupeMode('column')} /> Column wise
                                     </label>
                                     <label className="inline-flex items-center gap-2 text-sm">
-                                        <input type="radio" checked={dedupeMode === 'row'} onChange={() => setDedupeMode('row')} /> Row wise
+                                        <input className="accent-blue-600 focus:ring-blue-500" type="radio" checked={dedupeMode === 'row'} onChange={() => setDedupeMode('row')} /> Row wise
                                     </label>
                                     {duplicateIndicatorCount > 0 && (
                                         <div className="ml-auto text-red-500 bg-red-50 border border-red-100 rounded-md px-3 py-1.5 text-sm font-medium">
@@ -311,6 +311,14 @@ export default function DedupeOverlay(props: Props) {
                                 )}
 
                                 <div className="absolute bottom-0 left-0 right-0 border-t border-border bg-white p-4 flex justify-between gap-2">
+                                <Button
+                                            variant="outline"
+                                            onClick={() => { setDrawer(null); setPreviewOpen(false); }}
+                                            disabled={previewLoading || applyDedupLoading}
+                                        >Cancel</Button>
+                                   
+
+                                    <div className='flex gap-2'>
                                     <Button variant="outline"
                                         onClick={() => void onRemoveDuplicates()}
                                         disabled={previewLoading || applyDedupLoading}
@@ -319,13 +327,6 @@ export default function DedupeOverlay(props: Props) {
                                         {applyDedupLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                         Remove Duplicates
                                     </Button>
-
-                                    <div className='flex gap-2'>
-                                        <Button
-                                            variant="outline"
-                                            onClick={() => { setDrawer(null); setPreviewOpen(false); }}
-                                            disabled={previewLoading || applyDedupLoading}
-                                        >Cancel</Button>
                                         <Button
                                             variant='outline'
                                             onClick={() => void onBuildPreview()}
