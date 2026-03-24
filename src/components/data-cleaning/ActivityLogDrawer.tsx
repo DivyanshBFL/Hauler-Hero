@@ -15,11 +15,11 @@ export default function ActivityLogDrawer({ open, loading, error, items, onClose
     return (
         <div className="fixed inset-0 z-[80] bg-black/20" onClick={onClose}>
             <div
-                className="absolute right-0 top-0 h-full w-full max-w-[760px] bg-[#f3f4f6] border-l border-border shadow-2xl"
+                className="absolute right-0 top-0 h-full w-full max-w-[760px] bg-white border-l border-border shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className="h-16 px-6 border-b border-border bg-[#ededed] flex items-center justify-between">
-                    <h2 className="text-2xl leading-none font-semibold text-foreground">Activity Log</h2>
+                <div className="h-16 px-6 border-b border-border bg-white flex items-center justify-between">
+                    <h2 className="text-xl leading-none font-light text-foreground">Activity Log</h2>
                     <button onClick={onClose} className="text-foreground/80 hover:text-foreground">
                         <X className="h-6 w-6" />
                     </button>

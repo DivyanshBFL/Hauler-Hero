@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ChevronDown, Type, X, Loader2 } from 'lucide-react';
 import type { IssueCellPanel } from './types';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { api } from '@/services/api';
 
 // ----------- Column Profile types -----------
@@ -197,12 +197,12 @@ export default function IssueCellDetailsDrawer({ panel, sessionId, onClose, onOp
         <div className="fixed inset-0 z-50">
             <div className="absolute inset-0 bg-black/20" onClick={onClose} />
             <div
-                className="absolute right-0 top-0 h-full w-full max-w-[440px] bg-background border-l border-border shadow-2xl flex flex-col"
+                className="absolute right-0 top-0 h-full w-full max-w-[440px] bg-white border-l border-border shadow-2xl flex flex-col"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
-                <div className="h-14 px-5 border-b border-border flex items-center justify-between shrink-0">
-                    <h3 className="text-base font-normal text-foreground">Column details</h3>
+                <div className="h-14 px-5 border-b border-border bg-white flex items-center justify-between shrink-0">
+                    <h2 className="text-xl leading-none font-light text-foreground">Column details</h2>
                     <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
                         <X className="h-4 w-4" />
                     </button>
@@ -217,7 +217,6 @@ export default function IssueCellDetailsDrawer({ panel, sessionId, onClose, onOp
                         <p className="text-xs font-medium">{panel.value || '—'}</p>
                         <p className="text-xs text-muted-foreground">Issues</p>
                         <p className="text-xs font-medium"> {panel.issueTypes.length ? panel.issueTypes.map(toIssueLabel).join(', ') : '—'} </p>
-                        {console.log(panel, "panel")}
                     </div>
 
                     {/* Loading */}

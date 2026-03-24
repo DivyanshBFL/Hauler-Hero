@@ -1664,7 +1664,7 @@ export function DataCleaningPage() {
               Back
             </Button>
             <Button onClick={handleContinue} disabled={submitting}
-             variant='outline'
+              variant='outline'
               className="w-full sm:w-auto  border-primary text-primary font-semibold order-1 hover:bg-primary/10 transition-colors px-5 h-11 pr-3"
             >
               {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -1729,7 +1729,7 @@ export function DataCleaningPage() {
               }}
             />
             <div className="relative z-10 w-full max-w-2xl rounded-xl border border-border bg-background p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
-              <h3 className="text-xl font-semibold mb-6 text-foreground border-b pb-3">Auto-fix Configuration</h3>
+              <h3 className="text-xl leading-none font-light text-foreground mb-6 border-b pb-3">Auto-fix Configuration</h3>
 
               <div className="space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8">
@@ -1742,7 +1742,7 @@ export function DataCleaningPage() {
                       { key: 'deduplication', label: 'Deduplication' },
                     ].map((opt) => (
                       <div key={opt.key} className="space-y-2">
-                        <label className="text-sm font-semibold text-foreground">{opt.label}</label>
+                        <label className="text-md text-foreground">{opt.label}</label>
                         <div className="flex gap-4">
                           <label className="flex items-center gap-2 cursor-pointer group">
                             <input
@@ -1776,7 +1776,7 @@ export function DataCleaningPage() {
                       { key: 'email_action', label: 'Email Action' },
                     ].map((opt) => (
                       <div key={opt.key} className="space-y-3">
-                        <label className="text-sm font-semibold text-foreground">{opt.label}</label>
+                        <label className="text-md text-foreground">{opt.label}</label>
                         <div className="flex flex-col gap-2.5">
                           {[
                             { value: 'standardize', label: 'Standardize' },
@@ -1841,9 +1841,10 @@ export function DataCleaningPage() {
                     Cancel
                   </Button>
                   <Button
+                    variant='outline'
                     disabled={autoFixSubmitting}
                     onClick={() => void handleAutoFixAllIssues()}
-                    className="min-w-[120px] bg-primary hover:bg-primary/90 shadow-sm"
+                    className="min-w-[120px] font-semibold border-primary text-primary hover:bg-primary/10 transition-colors"
                   >
                     {autoFixSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                     Apply Fixes
@@ -1868,7 +1869,7 @@ export function DataCleaningPage() {
             />
             <div className="relative z-10 w-full max-w-xl rounded-xl border border-border bg-background shadow-2xl overflow-hidden">
               <div className="p-6 border-b">
-                <h3 className="text-base font-semibold">Auto-fix Addresses</h3>
+                <h3 className="text-xl leading-none font-light text-foreground">Auto-fix Addresses</h3>
               </div>
 
               <div className="p-6">
