@@ -372,7 +372,7 @@ export function UploadPage() {
         <div className="mb-4">
           <ProcessStepper />
         </div>
-        <Card className="shadow-lg border border-border bg-card animate-in">
+        <Card className="shadow-none border border-border bg-card animate-in">
           <CardHeader>
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-3">

@@ -69,7 +69,7 @@ export default function ProcessStepper() {
             subtitle: "text-slate-400",
           },
           active: {
-            card: "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/20",
+            card: "bg-primary border-primary text-primary-foreground shadow-xs shadow-primary/20",
             icon: "bg-transparent text-primary-foreground border-white/50 !border-2",
             title: "text-white",
             subtitle: "text-primary-foreground/90",
@@ -86,7 +86,7 @@ export default function ProcessStepper() {
           <button
             key={step.path}
             onClick={() => i <= currentStep && navigate(step.path)}
-            className={`w-full p-3 rounded-lg border text-left transition-all duration-300 ${styles.card} ${state === "active" ? "scale-[1.02]" : "hover:border-primary/50"
+            className={`w-full p-2 rounded-lg border text-left transition-all duration-300 ${styles.card} ${state === "active" ? "scale-[1.02]" : "hover:border-primary/50"
               }`}
           >
             <div className="flex items-center gap-1.5">
