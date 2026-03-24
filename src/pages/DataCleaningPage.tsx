@@ -1804,7 +1804,7 @@ export function DataCleaningPage() {
         </div>
 
         <Card className="shadow-lg border border-border bg-card">
-          <CardHeader className="pb-3">
+          <CardHeader className="pb-3 px-4">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-start gap-4">
                 <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
@@ -1967,7 +1967,7 @@ export function DataCleaningPage() {
             </div>
           </CardHeader>
 
-          <CardContent>
+          <CardContent className="px-4">
             <div className="flex flex-col md:flex-row gap-2 pt-2">
               <div className="relative flex-1 max-w-md">
                 <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -2000,7 +2000,7 @@ export function DataCleaningPage() {
                 </select>
               </div>
             </div>
-            <div className="rounded-md border border-border overflow-hidden mt-4">
+            <div className="rounded-md border border-border overflow-hidden mt-2">
               <div
                 className="max-h-[500px] overflow-y-auto rounded-md"
                 onScroll={(e) => {
@@ -2150,7 +2150,7 @@ export function DataCleaningPage() {
               </div>
             </div>
           </CardContent>
-          <div className="flex flex-col sm:flex-row justify-between px-6 py-3 border-t bg-muted">
+          <div className="flex flex-col sm:flex-row justify-between px-4 py-3 border-t bg-muted">
             <Button
               variant="outline"
               className="border-primary text-primary font-semibold hover:bg-primary/10 transition-colors"
