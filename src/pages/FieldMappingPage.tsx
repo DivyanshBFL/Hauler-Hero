@@ -387,7 +387,7 @@ function buildCorrectionPayload(
         sourceField,
         previousTargetField,
         updatedTargetField: null,
-        action: "DELETE",
+        action: "UPDATE",
       });
       return;
     }
@@ -1111,7 +1111,7 @@ export function FieldMappingPage() {
           <ProcessStepper />
         </div>
         <Card className="shadow-lg border border-border bg-card animate-in">
-          <CardHeader className="pb-4">
+          <CardHeader className="px-4">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
                 <GitMerge className="w-6 h-6 text-primary" />
@@ -1130,9 +1130,9 @@ export function FieldMappingPage() {
             </div>
           </CardHeader>
 
-          <CardContent className="gap-4 ">
+          <CardContent className="gap-4 px-4 ">
             {/* <div className="text-sm mt-4 font-semibold" >AI Auto-Mapping Summary :</div> */}
-            <div className="rounded-lg border mt-2 mb-2 bg-primary/10 text-blue-900 border-blue-300">
+            <div className="rounded-md border mt-2 mb-2 bg-primary/10 text-blue-900 border-blue-300">
               <div className="px-4 py-2 flex items-center justify-between gap-2">
                 <div className="px-1 flex items-center flex-wrap gap-1 text-xs">
                   <span className="font-bold">Summary:</span>
@@ -1414,7 +1414,7 @@ export function FieldMappingPage() {
               )} */}
             </div>
           </CardContent>
-          <div className="flex flex-col sm:flex-row justify-between gap-3 px-6 py-3 border-t bg-muted">
+          <div className="flex flex-col sm:flex-row justify-between gap-3 px-4 py-3 border-t bg-muted">
             <Button
               variant="outline"
               onClick={() => navigate("/upload")}

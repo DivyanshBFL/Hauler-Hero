@@ -1,9 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, ChevronLeft, ChevronRight, ChartNoAxesCombined, Search } from "lucide-react";
+import {
+  Loader2,
+  ChevronLeft,
+  ChevronRight,
+  ChartNoAxesCombined,
+  Search,
+} from "lucide-react";
 import { IMPORT_STATS_KEY, type ImportStats } from "@/types/importStats";
 import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
 import ProcessStepper from "@/components/ProcessStepper";
@@ -67,7 +79,9 @@ const DataAnalyticsPage = () => {
         }
 
         const payload = await api.previewCleaned(sid);
-        const apiRows: PreviewRow[] = Array.isArray(payload?.rows) ? payload.rows : [];
+        const apiRows: PreviewRow[] = Array.isArray(payload?.rows)
+          ? payload.rows
+          : [];
 
         if (!apiRows.length) {
           navigate("/data-cleaning");
@@ -75,28 +89,42 @@ const DataAnalyticsPage = () => {
         }
 
         const dataCols = Object.keys(apiRows[0]?.data ?? {}).filter(
-          (h) => h !== "row_id" && h !== "_row_id" && h.toLowerCase() !== "attribution"
+          (h) =>
+            h !== "row_id" &&
+            h !== "_row_id" &&
+            h.toLowerCase() !== "attribution",
         );
 
         const cols = [...dataCols, "Attribution"];
 
         if (!cancelled) {
-          const deletedRows = (Array.isArray(payload?.deleted_rows) ? payload.deleted_rows : []).map((dr: any) => {
+          const deletedRows = (
+            Array.isArray(payload?.deleted_rows) ? payload.deleted_rows : []
+          ).map((dr: any) => {
             const normalizedData: Record<string, PreviewCell> = {};
-            if (dr.data && typeof dr.data === 'object') {
-              Object.keys(dr.data).forEach(key => {
+            if (dr.data && typeof dr.data === "object") {
+              Object.keys(dr.data).forEach((key) => {
                 const val = dr.data[key];
-                if (val && typeof val === 'object' && 'value' in val && ('old_value' in val || 'changed' in val)) {
+                if (
+                  val &&
+                  typeof val === "object" &&
+                  "value" in val &&
+                  ("old_value" in val || "changed" in val)
+                ) {
                   normalizedData[key] = val;
                 } else {
-                  normalizedData[key] = { value: null, old_value: val, changed: true };
+                  normalizedData[key] = {
+                    value: null,
+                    old_value: val,
+                    changed: true,
+                  };
                 }
               });
             }
             return {
               ...dr,
               is_deleted: true,
-              data: normalizedData
+              data: normalizedData,
             };
           });
 
@@ -120,7 +148,6 @@ const DataAnalyticsPage = () => {
     };
   }, [location.search, navigate]);
 
-
   const isDeletedRow = (row: PreviewRow): boolean => {
     // Check for explicit flags from API
     if (row.is_deleted === true || (row as any).deleted === true) return true;
@@ -142,9 +169,11 @@ const DataAnalyticsPage = () => {
     return cells.every(
       (c) =>
         c.changed === true &&
-        (c.value === null || c.value === undefined || displayValue(c.value) === "") &&
+        (c.value === null ||
+          c.value === undefined ||
+          displayValue(c.value) === "") &&
         c.old_value !== null &&
-        c.old_value !== undefined
+        c.old_value !== undefined,
     );
   };
 
@@ -178,7 +207,7 @@ const DataAnalyticsPage = () => {
         const cur = displayValue(cell?.value).toLowerCase();
         const old = displayValue(cell?.old_value).toLowerCase();
         return cur.includes(q) || old.includes(q);
-      })
+      }),
     );
   }, [rowDiffMeta, search, headers]);
 
@@ -200,12 +229,12 @@ const DataAnalyticsPage = () => {
 
   const changedRowsCount = useMemo(
     () => rowDiffMeta.filter((r) => r.isChanged).length,
-    [rowDiffMeta]
+    [rowDiffMeta],
   );
 
   const changedCellsCount = useMemo(
     () => rowDiffMeta.reduce((sum, r) => sum + r.changedCells, 0),
-    [rowDiffMeta]
+    [rowDiffMeta],
   );
 
   if (loading) {
@@ -213,7 +242,9 @@ const DataAnalyticsPage = () => {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
-          <p className="mt-4 text-muted-foreground">Loading analytics data...</p>
+          <p className="mt-4 text-muted-foreground">
+            Loading analytics data...
+          </p>
         </div>
       </div>
     );
@@ -227,24 +258,23 @@ const DataAnalyticsPage = () => {
         </div>
 
         <Card className="shadow-lg border border-border bg-card">
-          <CardHeader className="pb-4">
+          <CardHeader className="pb-4 px-4">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-
               <div className="flex items-start gap-4">
-                
                 <div className="h-12 w-12 flex items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm">
-                <ChartNoAxesCombined className="text-primary" />
-                 
+                  <ChartNoAxesCombined className="text-primary" />
                 </div>
                 <div className="space-y-1">
-                  <CardTitle className="text-sm font-normal">Entity Changes Preview</CardTitle>
+                  <CardTitle className="text-sm font-normal">
+                    Entity Changes Preview
+                  </CardTitle>
                   <CardDescription className="text-xs text-muted-foreground">
                     Data preview of the cleaned data
                     <span className="inline-flex items-center ml-3 px-3 py-1 text-xs font-medium bg-primary/10 rounded-md borderbg-primary/10 text-blue-900 border border-blue-300 ">
-                      Changed rows: {changedRowsCount} | Changed cells: {changedCellsCount}
+                      Changed rows: {changedRowsCount} | Changed cells:{" "}
+                      {changedCellsCount}
                     </span>
                   </CardDescription>
-
                 </div>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -259,21 +289,33 @@ const DataAnalyticsPage = () => {
                 </div>
                 <Button
                   variant={filterMode === "ALL" ? "default" : "outline"}
-                  className={filterMode === "ALL"? "text-white":"border-primary text-primary font-semibold  hover:bg-primary/10 transition-colors"}
+                  className={
+                    filterMode === "ALL"
+                      ? "text-white"
+                      : "border-primary text-primary font-semibold  hover:bg-primary/10 transition-colors"
+                  }
                   onClick={() => setFilterMode("ALL")}
                 >
                   All
                 </Button>
                 <Button
                   variant={filterMode === "CHANGED" ? "default" : "outline"}
-                  className={filterMode === "CHANGED"? "text-white":"border-primary text-primary font-semibold  hover:bg-primary/10 transition-colors"}
+                  className={
+                    filterMode === "CHANGED"
+                      ? "text-white"
+                      : "border-primary text-primary font-semibold  hover:bg-primary/10 transition-colors"
+                  }
                   onClick={() => setFilterMode("CHANGED")}
                 >
                   Changed
                 </Button>
                 <Button
                   variant={filterMode === "UNCHANGED" ? "default" : "outline"}
-                  className={filterMode === "UNCHANGED"? "text-white":"border-primary text-primary font-semibold  hover:bg-primary/10 transition-colors"}
+                  className={
+                    filterMode === "UNCHANGED"
+                      ? "text-white"
+                      : "border-primary text-primary font-semibold  hover:bg-primary/10 transition-colors"
+                  }
                   onClick={() => setFilterMode("UNCHANGED")}
                 >
                   Unchanged
@@ -282,14 +324,17 @@ const DataAnalyticsPage = () => {
             </div>
           </CardHeader>
 
-          <CardContent>
+          <CardContent className="px-4">
             <div className="rounded-md border border-border overflow-hidden mt-4">
               <div className="max-h-[520px] min-h-[40vh] overflow-y-auto border rounded-md">
                 <Table className="w-full text-sm">
                   <TableHeader className="sticky top-0 z-10 bg-muted">
                     <TableRow>
                       {headers.map((col) => (
-                        <TableHead key={col} className="font-normal bg-gray-100 px-3 py-2 text-left whitespace-nowrap">
+                        <TableHead
+                          key={col}
+                          className="font-normal bg-gray-100 px-3 py-2 text-left whitespace-nowrap"
+                        >
                           {col}
                         </TableHead>
                       ))}
@@ -316,10 +361,14 @@ const DataAnalyticsPage = () => {
                           const changed = Boolean(cell?.changed);
 
                           if (isAttr) {
-                            const attrRaw = row.attribution || (row.data as any)?.attribution || (row.data as any)?.["Attribution"];
-                            const attrValue = typeof attrRaw === 'object' && attrRaw !== null 
-                              ? (attrRaw.value || attrRaw.old_value || "—")
-                              : (attrRaw || "—");
+                            const attrRaw =
+                              row.attribution ||
+                              (row.data as any)?.attribution ||
+                              (row.data as any)?.["Attribution"];
+                            const attrValue =
+                              typeof attrRaw === "object" && attrRaw !== null
+                                ? attrRaw.value || attrRaw.old_value || "—"
+                                : attrRaw || "—";
 
                             return (
                               <TableCell
@@ -344,11 +393,18 @@ const DataAnalyticsPage = () => {
                           }
 
                           return (
-                            <TableCell key={`${row.row_id}-${col}`} className="px-3 py-2 whitespace-nowrap align-top">
+                            <TableCell
+                              key={`${row.row_id}-${col}`}
+                              className="px-3 py-2 whitespace-nowrap align-top"
+                            >
                               {changed ? (
                                 <div className="inline-flex items-center gap-2 leading-tight">
-                                  <span className="text-red-500 line-through">{oldVal || "—"}</span>
-                                  <span className="font-bold text-green-700">{newVal || "—"}</span>
+                                  <span className="text-red-500 line-through">
+                                    {oldVal || "—"}
+                                  </span>
+                                  <span className="font-bold text-green-700">
+                                    {newVal || "—"}
+                                  </span>
                                 </div>
                               ) : (
                                 <span>{newVal || "—"}</span>
@@ -361,7 +417,10 @@ const DataAnalyticsPage = () => {
 
                     {!visibleRows.length && (
                       <TableRow>
-                        <TableCell colSpan={Math.max(headers.length, 1)} className="px-4 py-6 text-center text-muted-foreground">
+                        <TableCell
+                          colSpan={Math.max(headers.length, 1)}
+                          className="px-4 py-6 text-center text-muted-foreground"
+                        >
                           No rows found.
                         </TableCell>
                       </TableRow>
@@ -370,21 +429,32 @@ const DataAnalyticsPage = () => {
                 </Table>
               </div>
             </div>
-
-
           </CardContent>
-          <div className="flex flex-col sm:flex-row justify-between px-6 py-3 border-t bg-muted">
-            <Button variant="outline" 
-            className='border-primary text-primary font-semibold hover:bg-primary/10 transition-colors'
-            onClick={() => navigate("/data-cleaning")}>
-              <svg className="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          <div className="flex flex-col sm:flex-row justify-between px-4 py-3 border-t bg-muted">
+            <Button
+              variant="outline"
+              className="border-primary text-primary font-semibold hover:bg-primary/10 transition-colors"
+              onClick={() => navigate("/data-cleaning")}
+            >
+              <svg
+                className="mr-2 w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
               Back
             </Button>
 
             <Button
-              variant="outline" className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
+              variant="outline"
+              className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
               onClick={() => {
                 const total = rows.length;
                 const updated = changedRowsCount;
@@ -404,8 +474,18 @@ const DataAnalyticsPage = () => {
               }}
             >
               Next
-              <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="ml-2 w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </Button>
           </div>
@@ -413,7 +493,7 @@ const DataAnalyticsPage = () => {
       </div>
       {/* Navigation Arrows */}
       <button
-        onClick={() => navigate('/data-cleaning')}
+        onClick={() => navigate("/data-cleaning")}
         className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
         title="Previous: Data Cleaning"
       >
@@ -436,14 +516,14 @@ const DataAnalyticsPage = () => {
             timestamp: new Date().toISOString(),
           };
           sessionStorage.setItem(IMPORT_STATS_KEY, JSON.stringify(stats));
-          navigate('/complete');
+          navigate("/complete");
         }}
         className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
         title="Next: Complete"
       >
         <ChevronRight className="h-6 w-6" />
       </button>
-    </div >
+    </div>
   );
 };
 

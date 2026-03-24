@@ -405,7 +405,7 @@ export function DataPreviewPage() {
         </div>
 
         <Card className="shadow-lg border border-border bg-card">
-          <CardHeader className="pb-4">
+          <CardHeader className="pb-4 px-4">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-start gap-4">
                 <div className="h-10 w-10 rounded-md bg-primary/10 text-primary flex items-center justify-center shadow-sm">
@@ -416,7 +416,8 @@ export function DataPreviewPage() {
                     Mapped Data Preview
                   </CardTitle>
                   <CardDescription className="text-xs">
-                    Showing first {totalRows > 20 ? 20 : totalRows} rows &mdash; all&nbsp;
+                    Showing first {totalRows > 20 ? 20 : totalRows} rows &mdash;
+                    all&nbsp;
                     <span className="font-medium text-foreground">
                       {totalRows}
                     </span>
@@ -448,7 +449,7 @@ export function DataPreviewPage() {
             </div>
           </CardHeader>
 
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-3 px-4">
             {/* ── Entity tabs ─────────────────────────────────── */}
             {availableTabs.length > 1 && (
               <div className="flex gap-1 border-b border-border">
@@ -457,8 +458,8 @@ export function DataPreviewPage() {
                     key={entity}
                     onClick={() => setSelectedEntity(entity)}
                     className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${selectedEntity === entity
-                      ? "border-primary text-primary"
-                      : "border-transparent text-muted-foreground hover:text-foreground"
+                        ? "border-primary text-primary"
+                        : "border-transparent text-muted-foreground hover:text-foreground"
                       }`}
                   >
                     {entity}
@@ -522,11 +523,11 @@ export function DataPreviewPage() {
             )}
           </CardContent>
 
-          <div className="flex flex-col sm:flex-row justify-between gap-3 px-5 py-3 border-t bg-muted">
+          <div className="flex flex-col sm:flex-row justify-between gap-3 px-4 py-3 border-t bg-muted">
             <Button
               variant="outline"
               onClick={() => navigate("/field-mapping")}
-              className='border-primary text-primary font-semibold hover:bg-primary/10 transition-colors'
+              className="border-primary text-primary font-semibold hover:bg-primary/10 transition-colors"
             >
               <svg
                 className="mr-2 w-4 h-4"

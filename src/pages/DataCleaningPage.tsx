@@ -1804,7 +1804,7 @@ export function DataCleaningPage() {
         </div>
 
         <Card className="shadow-lg border border-border bg-card">
-          <CardHeader className="pb-3">
+          <CardHeader className="pb-3 px-4">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-start gap-4">
                 <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
@@ -1967,7 +1967,7 @@ export function DataCleaningPage() {
             </div>
           </CardHeader>
 
-          <CardContent>
+          <CardContent className="px-4">
             <div className="flex flex-col md:flex-row gap-2 pt-2">
               <div className="relative flex-1 max-w-md">
                 <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -2000,7 +2000,7 @@ export function DataCleaningPage() {
                 </select>
               </div>
             </div>
-            <div className="rounded-md border border-border overflow-hidden mt-4">
+            <div className="rounded-md border border-border overflow-hidden mt-2">
               <div
                 className="max-h-[500px] overflow-y-auto rounded-md"
                 onScroll={(e) => {
@@ -2150,7 +2150,7 @@ export function DataCleaningPage() {
               </div>
             </div>
           </CardContent>
-          <div className="flex flex-col sm:flex-row justify-between px-6 py-3 border-t bg-muted">
+          <div className="flex flex-col sm:flex-row justify-between px-4 py-3 border-t bg-muted">
             <Button
               variant="outline"
               className="border-primary text-primary font-semibold hover:bg-primary/10 transition-colors"
@@ -2172,7 +2172,9 @@ export function DataCleaningPage() {
               Back
             </Button>
             <Button
-              onClick={handleContinue}
+              onClick={() => {
+                handleNextClick();
+              }}
               disabled={submitting}
               variant="outline"
               className="w-full sm:w-auto  border-primary text-primary font-semibold order-1 hover:bg-primary/10 transition-colors px-5 pr-3"
@@ -2450,23 +2452,102 @@ export function DataCleaningPage() {
               </div>
             </div>
 
-            <div className="shrink-0 border-t border-border bg-white p-4 flex items-center justify-end gap-2">
+            <div className="shrink-0 border-t border-border bg-white p-4 flex items-center justify-between gap-2">
               <Button
                 variant="outline"
                 disabled={autoFixSubmitting}
                 onClick={closeAutoFixDrawer}
-                className="h-10"
+                className="h-10 px-5"
               >
                 Cancel
               </Button>
               <Button
                 disabled={autoFixSubmitting}
                 onClick={() => void handleAutoFixAllIssues()}
-                variant='outline'
-                className='bg-white text-primary border-primary hover:bg-blue-100 '
+                variant="outline"
+                className="bg-white text-primary border-primary hover:bg-blue-100 "
               >
-                {autoFixSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                {autoFixSubmitting ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : null}
                 Apply Fixes
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {addressFixConfirmOpen && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => {
+              if (addressFixSubmitting) return;
+              setAddressFixConfirmOpen(false);
+              setAddressFixError(null);
+            }}
+          />
+          <div className="relative z-10 w-full max-w-xl rounded-md border border-border bg-background shadow-2xl overflow-hidden">
+            <div className="py-4 border-b flex items-center justify-between">
+              <h3 className="flex items-center text-md leading-none font-light text-foreground px-4">
+                <span className="mr-2">
+                  <MapPin className="h-4 w-4" />
+                </span>
+                <span>Auto-fix Addresses</span>
+              </h3>
+
+              <div className="px-4">
+                <X
+                  onClick={() => {
+                    setAddressFixConfirmOpen(false);
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="p-6">
+              <p className="text-sm text-muted-foreground whitespace-pre-line">
+                One-click cleanup that automatically fixes address issues in the
+                dataset.
+                {"\n"}All fixes are logged step-by-step. ✨
+              </p>
+              {addressFixError && (
+                <p className="text-xs text-destructive mt-3">
+                  {addressFixError}
+                </p>
+              )}
+              {addressFixSubmitting && (
+                <div className="mt-4 w-full">
+                  <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-sky-400 transition-all duration-300"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {progress < 100
+                      ? `Processing auto-fix... ${progress}%`
+                      : "Processed successfully ✅"}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="p-4 border-t flex items-center justify-end gap-2">
+              <Button
+                variant="outline"
+                className="px-6 "
+                onClick={() => {
+                  setAddressFixConfirmOpen(false);
+                  setAddressFixError(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button onClick={() => void handleProceedFixAddresses()} disabled={addressFixSubmitting} variant="outline" className="px-5 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors ">
+                {addressFixSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Proceed
               </Button>
             </div>
           </div>
@@ -2474,131 +2555,65 @@ export function DataCleaningPage() {
       )
       }
 
-      {
-        addressFixConfirmOpen && (
-          <div className="fixed inset-0 z-[70] flex items-center justify-center">
-            <div
-              className="absolute inset-0 bg-black/40"
-              onClick={() => {
-                if (addressFixSubmitting) return;
-                setAddressFixConfirmOpen(false);
-                setAddressFixError(null);
-              }}
-            />
-            <div className="relative z-10 w-full max-w-xl rounded-md border border-border bg-background shadow-2xl overflow-hidden">
-              <div className="py-4 border-b flex items-center justify-between">
-                <h3 className="flex items-center text-md leading-none font-light text-foreground px-4">
-                  <span className="mr-2"><MapPin className="h-4 w-4" /></span>
-                  <span>Auto-fix Addresses</span>
-                </h3>
+      {proceedConfirmOpen && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => {
+              if (submitting) return;
+              setProceedConfirmOpen(false);
+            }}
+          />
+          <div className="relative z-10 w-full max-w-xl rounded-md border border-border bg-background shadow-2xl overflow-hidden">
+            <div className="py-4 border-b flex items-center justify-between">
+              <h3 className="text-md leading-none font-light text-foreground px-4">
+                Outstanding Issues Alert
+              </h3>
 
-                <div className="px-4">
-                  <X
-                    onClick={() => {
-                      setAddressFixConfirmOpen(false);
-                    }}
-                  />
-                </div>
-              </div>
-
-              <div className="p-6">
-                <p className="text-sm text-muted-foreground whitespace-pre-line">
-                  One-click cleanup that automatically fixes address issues in the
-                  dataset.
-                  {"\n"}All fixes are logged step-by-step. ✨
-                </p>
-                {addressFixError && (
-                  <p className="text-xs text-destructive mt-3">
-                    {addressFixError}
-                  </p>
-                )}
-                {addressFixSubmitting && (
-                  <div className="mt-4 w-full">
-                    <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-sky-400 transition-all duration-300"
-                        style={{ width: `${progress}%` }}
-                      />
-                    </div>
-
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {progress < 100
-                        ? `Processing auto-fix... ${progress}%`
-                        : "Processed successfully ✅"}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              <div className="p-4 border-t flex items-center justify-end gap-2">
-                <Button
-                  variant="outline"
-                  className="px-6 "
+              <div className="px-4">
+                <X
+                  className="cursor-pointer"
                   onClick={() => {
-                    setAddressFixConfirmOpen(false);
-                    setAddressFixError(null);
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button onClick={() => void handleProceedFixAddresses()} disabled={addressFixSubmitting} variant="outline" className="px-5 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors ">
-                  {addressFixSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Proceed
-                </Button>
-              </div>
-            </div>
-          </div>
-        )
-      }
-
-      {
-        proceedConfirmOpen && (
-          <div className="fixed inset-0 z-[70] flex items-center justify-center">
-            <div
-              className="absolute inset-0 bg-black/40"
-              onClick={() => {
-                if (submitting) return;
-                setProceedConfirmOpen(false);
-              }}
-            />
-            <div className="relative z-10 w-full max-w-xl rounded-md border border-border bg-background shadow-2xl overflow-hidden">
-              <div className="py-4 border-b flex items-center justify-between">
-                <h3 className="text-md leading-none font-light text-foreground px-4">Outstanding Issues Alert</h3>
-
-                <div className='px-4'>
-                  <X className="cursor-pointer" onClick={() => {
                     if (submitting) return;
                     setProceedConfirmOpen(false);
-                  }} />
-                </div>
-              </div>
-
-              <div className="p-6">
-                <p className="text-sm text-muted-foreground whitespace-pre-line">
-                  Some data anomalies were not resolved. Proceeding may result in inconsistencies. Do you want to Proceed?
-                </p>
-              </div>
-
-              <div className="p-4 border-t flex items-center justify-end gap-2">
-                <Button
-                  variant="outline"
-                  className="px-6 "
-                  disabled={submitting}
-                  onClick={() => {
-                    setProceedConfirmOpen(false);
                   }}
-                >
-                  Cancel
-                </Button>
-                <Button onClick={() => void handleContinue()} disabled={submitting} variant="outline" className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors ">
-                  {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Proceed
-                </Button>
+                />
               </div>
             </div>
+
+            <div className="p-6">
+              <p className="text-sm text-muted-foreground whitespace-pre-line">
+                Some data anomalies were not resolved. Proceeding may result in
+                inconsistencies. Do you want to Proceed?
+              </p>
+            </div>
+
+            <div className="p-4 border-t flex items-center justify-end gap-2">
+              <Button
+                variant="outline"
+                className="px-6 "
+                disabled={submitting}
+                onClick={() => {
+                  setProceedConfirmOpen(false);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => void handleContinue()}
+                disabled={submitting}
+                variant="outline"
+                className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
+              >
+                {submitting && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Proceed
+              </Button>
+            </div>
           </div>
-        )
-      }
+        </div>
+      )}
       {/* Navigation Arrows */}
       <button
         onClick={() => navigate("/data-preview")}

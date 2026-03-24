@@ -1,13 +1,25 @@
-import { useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import Papa from 'papaparse';
-import * as XLSX from 'xlsx';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Upload, Loader2, X, ChevronRight } from 'lucide-react';
-import { PAGE_OUTER, PAGE_CONTAINER } from '@/constants/layout';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import Papa from "papaparse";
+import * as XLSX from "xlsx";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Upload, Loader2, X, ChevronRight } from "lucide-react";
+import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -15,11 +27,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import type { SheetData } from '@/services/api';
-import ProcessStepper from '@/components/ProcessStepper';
-import { joinSheets, mapFields, uploadFile } from '@/services/api';
-import { setSessionId } from '@/store/sessionSlice';
+} from "@/components/ui/table";
+import type { SheetData } from "@/services/api";
+import ProcessStepper from "@/components/ProcessStepper";
+import { joinSheets, mapFields, uploadFile } from "@/services/api";
+import { setSessionId } from "@/store/sessionSlice";
 
 type JoinSelection = {
   leftSheet: string;
@@ -36,17 +48,21 @@ export function UploadPage() {
   const [loading, setLoading] = useState(false);
   const [showSheetSelector, setShowSheetSelector] = useState(false);
   const [availableSheetNames, setAvailableSheetNames] = useState<string[]>([]);
-  const [sheetHeadersByName, setSheetHeadersByName] = useState<Record<string, string[]>>({});
+  const [sheetHeadersByName, setSheetHeadersByName] = useState<
+    Record<string, string[]>
+  >({});
   const [isJoinRequired, setIsJoinRequired] = useState(false);
-  const [joinSelection, setJoinSelection] = useState<JoinSelection | null>(null);
-  const [leftSheetName, setLeftSheetName] = useState('');
-  const [rightSheetName, setRightSheetName] = useState('');
-  const [leftKey, setLeftKey] = useState('');
-  const [rightKey, setRightKey] = useState('');
-  const [leftSheetQuery, setLeftSheetQuery] = useState('');
-  const [rightSheetQuery, setRightSheetQuery] = useState('');
-  const [leftKeyQuery, setLeftKeyQuery] = useState('');
-  const [rightKeyQuery, setRightKeyQuery] = useState('');
+  const [joinSelection, setJoinSelection] = useState<JoinSelection | null>(
+    null,
+  );
+  const [leftSheetName, setLeftSheetName] = useState("");
+  const [rightSheetName, setRightSheetName] = useState("");
+  const [leftKey, setLeftKey] = useState("");
+  const [rightKey, setRightKey] = useState("");
+  const [leftSheetQuery, setLeftSheetQuery] = useState("");
+  const [rightSheetQuery, setRightSheetQuery] = useState("");
+  const [leftKeyQuery, setLeftKeyQuery] = useState("");
+  const [rightKeyQuery, setRightKeyQuery] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const workbookRef = useRef<XLSX.WorkBook | null>(null);
   const navigate = useNavigate();
@@ -61,23 +77,23 @@ export function UploadPage() {
     setSheetHeadersByName({});
     setIsJoinRequired(false);
     setJoinSelection(null);
-    setLeftSheetName('');
-    setRightSheetName('');
-    setLeftKey('');
-    setRightKey('');
-    setLeftSheetQuery('');
-    setRightSheetQuery('');
-    setLeftKeyQuery('');
-    setRightKeyQuery('');
+    setLeftSheetName("");
+    setRightSheetName("");
+    setLeftKey("");
+    setRightKey("");
+    setLeftSheetQuery("");
+    setRightSheetQuery("");
+    setLeftKeyQuery("");
+    setRightKeyQuery("");
     workbookRef.current = null;
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
 
   const openFilePicker = () => {
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
       fileInputRef.current.click();
     }
   };
@@ -96,22 +112,23 @@ export function UploadPage() {
     setSheetHeadersByName({});
     setIsJoinRequired(false);
     setJoinSelection(null);
-    setLeftSheetName('');
-    setRightSheetName('');
-    setLeftKey('');
-    setRightKey('');
-    setLeftSheetQuery('');
-    setRightSheetQuery('');
-    setLeftKeyQuery('');
-    setRightKeyQuery('');
+    setLeftSheetName("");
+    setRightSheetName("");
+    setLeftKey("");
+    setRightKey("");
+    setLeftSheetQuery("");
+    setRightSheetQuery("");
+    setLeftKeyQuery("");
+    setRightKeyQuery("");
     workbookRef.current = null;
 
     const fileType = selectedFile.type;
     const fileName = selectedFile.name;
-    const isCSV = fileType === 'text/csv' || fileName.endsWith('.csv');
+    const isCSV = fileType === "text/csv" || fileName.endsWith(".csv");
     const isXLSX =
-      fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-      fileName.endsWith('.xlsx');
+      fileType ===
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+      fileName.endsWith(".xlsx");
 
     if (isCSV) {
       setFile(selectedFile);
@@ -120,7 +137,7 @@ export function UploadPage() {
       setFile(selectedFile);
       parseXLSX(selectedFile);
     } else {
-      alert('Please select a valid CSV or XLSX file');
+      alert("Please select a valid CSV or XLSX file");
       setFile(null);
     }
   };
@@ -158,7 +175,7 @@ export function UploadPage() {
 
         const sheetsData: SheetData[] = [
           {
-            name: 'Account',
+            name: "Account",
             headers,
             rows: rows.slice(0, 10),
           },
@@ -174,15 +191,20 @@ export function UploadPage() {
     });
   };
 
-  const getSheetRowsAndHeaders = (workbook: XLSX.WorkBook, sheetName: string) => {
+  const getSheetRowsAndHeaders = (
+    workbook: XLSX.WorkBook,
+    sheetName: string,
+  ) => {
     const worksheet = workbook.Sheets[sheetName];
-    const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(worksheet, { defval: '' });
+    const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(worksheet, {
+      defval: "",
+    });
     let headers = Object.keys(rows[0] || {});
 
     if (!headers.length) {
       const matrix = XLSX.utils.sheet_to_json<string[]>(worksheet, {
         header: 1,
-        defval: '',
+        defval: "",
       });
       headers = (matrix[0] || [])
         .map((value) => String(value).trim())
@@ -197,7 +219,7 @@ export function UploadPage() {
     reader.onload = (event) => {
       try {
         const data = event.target?.result;
-        const workbook = XLSX.read(data, { type: 'array' });
+        const workbook = XLSX.read(data, { type: "array" });
         workbookRef.current = workbook;
         const sheetNames = workbook.SheetNames;
 
@@ -206,25 +228,28 @@ export function UploadPage() {
           setJoinSelection(null);
           processXLSXSheet(workbook, sheetNames[0]);
         } else {
-          const headersBySheet = sheetNames.reduce<Record<string, string[]>>((acc, name) => {
-            acc[name] = getSheetRowsAndHeaders(workbook, name).headers;
-            return acc;
-          }, {});
+          const headersBySheet = sheetNames.reduce<Record<string, string[]>>(
+            (acc, name) => {
+              acc[name] = getSheetRowsAndHeaders(workbook, name).headers;
+              return acc;
+            },
+            {},
+          );
 
-          const firstSheet = sheetNames[0] ?? '';
-          const secondSheet = sheetNames[1] ?? '';
+          const firstSheet = sheetNames[0] ?? "";
+          const secondSheet = sheetNames[1] ?? "";
 
           setIsJoinRequired(true);
           setAvailableSheetNames(sheetNames);
           setSheetHeadersByName(headersBySheet);
           setLeftSheetName(firstSheet);
           setRightSheetName(secondSheet);
-          setLeftKey(headersBySheet[firstSheet]?.[0] ?? '');
-          setRightKey(headersBySheet[secondSheet]?.[0] ?? '');
-          setLeftSheetQuery('');
-          setRightSheetQuery('');
-          setLeftKeyQuery('');
-          setRightKeyQuery('');
+          setLeftKey(headersBySheet[firstSheet]?.[0] ?? "");
+          setRightKey(headersBySheet[secondSheet]?.[0] ?? "");
+          setLeftSheetQuery("");
+          setRightSheetQuery("");
+          setLeftKeyQuery("");
+          setRightKeyQuery("");
           requestAnimationFrame(() => setShowSheetSelector(true));
         }
       } catch (error) {
@@ -244,7 +269,7 @@ export function UploadPage() {
 
       const sheetsData: SheetData[] = [
         {
-          name: 'Account',
+          name: "Account",
           headers,
           rows: rows.slice(0, 10),
         },
@@ -261,30 +286,33 @@ export function UploadPage() {
 
   const handleConfirmJoinSelection = () => {
     if (!workbookRef.current) {
-      alert('Workbook is not available. Please re-upload the file.');
+      alert("Workbook is not available. Please re-upload the file.");
       return;
     }
 
     if (!leftSheetName || !rightSheetName || !leftKey || !rightKey) {
-      alert('Please select both sheets and keys before continuing.');
+      alert("Please select both sheets and keys before continuing.");
       return;
     }
 
     const leftHeaders = sheetHeadersByName[leftSheetName] ?? [];
     const rightHeaders = sheetHeadersByName[rightSheetName] ?? [];
 
-    if (!availableSheetNames.includes(leftSheetName) || !availableSheetNames.includes(rightSheetName)) {
-      alert('Please choose valid sheet names from the dropdown options.');
+    if (
+      !availableSheetNames.includes(leftSheetName) ||
+      !availableSheetNames.includes(rightSheetName)
+    ) {
+      alert("Please choose valid sheet names from the dropdown options.");
       return;
     }
 
     if (!leftHeaders.includes(leftKey) || !rightHeaders.includes(rightKey)) {
-      alert('Please choose valid join keys from the dropdown options.');
+      alert("Please choose valid join keys from the dropdown options.");
       return;
     }
 
     if (leftSheetName === rightSheetName) {
-      alert('Please select two different sheets for join.');
+      alert("Please select two different sheets for join.");
       return;
     }
 
@@ -302,23 +330,23 @@ export function UploadPage() {
   const handleNext = async () => {
     if (!file || sheets.length === 0) return;
     if (isJoinRequired && !joinSelection) {
-      alert('Please configure sheet join before proceeding.');
+      alert("Please configure sheet join before proceeding.");
       return;
     }
 
     setLoading(true);
     try {
-      const entityName = sheets[0]?.name ?? 'string';
+      const entityName = sheets[0]?.name ?? "string";
 
       const uploadResponse = await uploadFile(file);
       const sessionId = uploadResponse?.session_id;
 
       if (!sessionId) {
-        throw new Error('session_id was not returned from /upload-file');
+        throw new Error("session_id was not returned from /upload-file");
       }
 
       dispatch(setSessionId(sessionId));
-      sessionStorage.setItem('session_id', sessionId);
+      sessionStorage.setItem("session_id", sessionId);
 
       if (isJoinRequired && joinSelection) {
         await joinSheets({
@@ -329,11 +357,14 @@ export function UploadPage() {
           right_key: joinSelection.rightKey,
         });
 
-        sessionStorage.setItem('joinSelection', JSON.stringify(joinSelection));
-        sessionStorage.setItem('sheetHeadersByName', JSON.stringify(sheetHeadersByName));
+        sessionStorage.setItem("joinSelection", JSON.stringify(joinSelection));
+        sessionStorage.setItem(
+          "sheetHeadersByName",
+          JSON.stringify(sheetHeadersByName),
+        );
       } else {
-        sessionStorage.removeItem('joinSelection');
-        sessionStorage.removeItem('sheetHeadersByName');
+        sessionStorage.removeItem("joinSelection");
+        sessionStorage.removeItem("sheetHeadersByName");
       }
 
       const mappingResponse = await mapFields({
@@ -341,25 +372,36 @@ export function UploadPage() {
         entityName,
       });
 
-      sessionStorage.setItem('sheets', JSON.stringify(sheets));
-      sessionStorage.setItem('allRows', JSON.stringify(allRows));
-      sessionStorage.setItem('mappingResponse', JSON.stringify(mappingResponse));
+      sessionStorage.setItem("sheets", JSON.stringify(sheets));
+      sessionStorage.setItem("allRows", JSON.stringify(allRows));
+      sessionStorage.setItem(
+        "mappingResponse",
+        JSON.stringify(mappingResponse),
+      );
 
-      navigate('/field-mapping');
+      navigate("/field-mapping");
     } catch (error) {
-      console.error('Error uploading file, joining sheets, or fetching mappings:', error);
-      alert('Something Went Wrong.');
+      console.error(
+        "Error uploading file, joining sheets, or fetching mappings:",
+        error,
+      );
+      alert("Something Went Wrong.");
     } finally {
       setLoading(false);
     }
   };
 
-  const canProceed = file && sheets.length > 0 && (!isJoinRequired || Boolean(joinSelection));
-  const effectiveLeftSheet = availableSheetNames.includes(leftSheetName) ? leftSheetName : '';
-  const rightSheetOptions = availableSheetNames.filter((name) => name !== effectiveLeftSheet);
+  const canProceed =
+    file && sheets.length > 0 && (!isJoinRequired || Boolean(joinSelection));
+  const effectiveLeftSheet = availableSheetNames.includes(leftSheetName)
+    ? leftSheetName
+    : "";
+  const rightSheetOptions = availableSheetNames.filter(
+    (name) => name !== effectiveLeftSheet,
+  );
   const effectiveRightSheet = rightSheetOptions.includes(rightSheetName)
     ? rightSheetName
-    : rightSheetOptions[0] ?? '';
+    : (rightSheetOptions[0] ?? "");
   const leftSheetHeaders = sheetHeadersByName[effectiveLeftSheet] ?? [];
   const rightSheetHeaders = sheetHeadersByName[effectiveRightSheet] ?? [];
   const isLeftKeyValid = leftSheetHeaders.includes(leftKey);
@@ -376,7 +418,7 @@ export function UploadPage() {
           <ProcessStepper />
         </div>
         <Card className="shadow-none border border-border bg-card animate-in">
-          <CardHeader>
+          <CardHeader className="px-4">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
@@ -384,7 +426,9 @@ export function UploadPage() {
                 </div>
                 <div>
                   <div className="flex items-center gap-3">
-                    <CardTitle className="text-md font-normal">Upload File</CardTitle>
+                    <CardTitle className="text-md font-normal">
+                      Upload File
+                    </CardTitle>
                     {/* {file && (
                       <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-full text-xs font-medium animate-in fade-in slide-in-from-left-2">
                         <span>📄 {file.name}</span>
@@ -399,10 +443,10 @@ export function UploadPage() {
                     )} */}
                   </div>
                   <CardDescription className="text-xs text-muted-foreground">
-                    Upload your source CSV or XLSX file to begin the data processing workflow
+                    Upload your source CSV or XLSX file to begin the data
+                    processing workflow
                   </CardDescription>
                 </div>
-
               </div>
               <div className='float-right'>
                 {file && (
@@ -429,7 +473,7 @@ export function UploadPage() {
             </div>
           </CardHeader>
 
-          <CardContent className="px-6 pt-0 pb-0 my-5">
+          <CardContent className="p-4">
             <div className="flex justify-center flex-col items-center">
               {!file && (
                 <div
@@ -440,8 +484,8 @@ export function UploadPage() {
                     w-full max-w-3xl relative group flex flex-col items-center justify-center gap-3 p-6 
                     rounded-xl border-2 border-dashed transition-all duration-300 cursor-pointer
                     ${isDragging
-                      ? 'border-primary bg-primary/10 scale-[1.02] shadow-2xl'
-                      : 'border-primary/40 bg-primary/[0.03] hover:border-primary/60 hover:bg-primary/[0.06]'
+                      ? "border-primary bg-primary/10 scale-[1.02] shadow-2xl"
+                      : "border-primary/40 bg-primary/[0.03] hover:border-primary/60 hover:bg-primary/[0.06]"
                     }
                   `}
                   onClick={openFilePicker}
@@ -454,8 +498,12 @@ export function UploadPage() {
                   </div>
 
                   <div className="text-center space-y-2">
-                    <h3 className="text-md font-normal text-foreground tracking-tight">Drop your file here</h3>
-                    <p className="text-sm font-normal  text-muted-foreground  opacity-60">Or Click To Browse</p>
+                    <h3 className="text-md font-normal text-foreground tracking-tight">
+                      Drop your file here
+                    </h3>
+                    <p className="text-sm font-normal  text-muted-foreground  opacity-60">
+                      Or Click To Browse
+                    </p>
                   </div>
 
                   <Button
@@ -492,13 +540,16 @@ export function UploadPage() {
                       //   className="group p-5 border border-border rounded-xl bg-card hover:shadow-md transition-all hover:border-primary/40"
                       //   style={{ animationDelay: `${index * 100}ms` }}
                       // >
-                      //       
-                      <div key={sheet.name}
+                      //
+                      <div
+                        key={sheet.name}
                         className="group "
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
                         <div className=" gap-4">
-                          <div className="text-sm font-semibold" >Data Preview :</div>
+                          <div className="text-sm font-semibold">
+                            Data Preview :
+                          </div>
                           <div className="bg-primary/10 text-blue-900 border border-blue-300 px-2 py-1 rounded-md w-full mt-2">
 
                             <span className='text-xs'>
@@ -550,7 +601,11 @@ export function UploadPage() {
                                       key={`${rowIndex}-${header}`}
                                       className="px-3 py-2 whitespace-nowrap"
                                     >
-                                      {String((row as Record<string, unknown>)?.[header] ?? '')}
+                                      {String(
+                                        (row as Record<string, unknown>)?.[
+                                        header
+                                        ] ?? "",
+                                      )}
                                     </TableCell>
                                   ))}
                                 </TableRow>
@@ -562,17 +617,30 @@ export function UploadPage() {
                     );
                   })}
                 </div>
-
-
               </>
             )}
           </CardContent>
           <div className="flex justify-end px-6 py-3 border-t bg-muted">
-            <Button onClick={handleNext} disabled={loading || !canProceed} variant="outline" className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors">
+            <Button
+              onClick={handleNext}
+              disabled={loading || !canProceed}
+              variant="outline"
+              className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors"
+            >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Next
-              <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="ml-2 w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </Button>
           </div>
@@ -585,7 +653,7 @@ export function UploadPage() {
           }
         }}>
           <DialogContent className="w-[95vw] max-w-4xl p-0 !animate-none !duration-0 overflow-hidden">
-            <DialogHeader className='border-b p-4'>
+            <DialogHeader className="border-b p-4">
               <DialogTitle>Select Sheets To Join</DialogTitle>
               <DialogDescription>
                 Pick two different sheets and choose a join key for each.
@@ -597,27 +665,38 @@ export function UploadPage() {
               <div className="rounded-lg border border-border bg-muted/20 p-4 space-y-3">
                 {/* <div className="text-sm font-semibold text-foreground">Primary Data</div> */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Primary Sheet</label>
+                  <label className="text-sm font-medium text-foreground">
+                    Primary Sheet
+                  </label>
                   <select
                     className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
                     value={leftSheetName}
                     onChange={(e) => {
                       const nextLeft = e.target.value;
                       setLeftSheetName(nextLeft);
-                      const nextRightOptions = availableSheetNames.filter((n) => n !== nextLeft);
-                      const nextRight = nextLeft === rightSheetName ? nextRightOptions[0] ?? '' : rightSheetName;
+                      const nextRightOptions = availableSheetNames.filter(
+                        (n) => n !== nextLeft,
+                      );
+                      const nextRight =
+                        nextLeft === rightSheetName
+                          ? (nextRightOptions[0] ?? "")
+                          : rightSheetName;
                       setRightSheetName(nextRight);
-                      setLeftKey(sheetHeadersByName[nextLeft]?.[0] ?? '');
-                      setRightKey(sheetHeadersByName[nextRight]?.[0] ?? '');
+                      setLeftKey(sheetHeadersByName[nextLeft]?.[0] ?? "");
+                      setRightKey(sheetHeadersByName[nextRight]?.[0] ?? "");
                     }}
                   >
                     {filteredLeftSheets.map((name) => (
-                      <option key={name} value={name}>{name}</option>
+                      <option key={name} value={name}>
+                        {name}
+                      </option>
                     ))}
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Column</label>
+                  <label className="text-sm font-medium text-foreground">
+                    Column
+                  </label>
                   <select
                     className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
                     value={leftKey}
@@ -625,7 +704,9 @@ export function UploadPage() {
                     disabled={!effectiveLeftSheet}
                   >
                     {filteredLeftKeys.map((h) => (
-                      <option key={h} value={h}>{h}</option>
+                      <option key={h} value={h}>
+                        {h}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -635,23 +716,29 @@ export function UploadPage() {
               <div className="rounded-lg border border-border bg-muted/20 p-4 space-y-3">
                 {/* <div className="text-sm font-semibold text-foreground">Seconday Data</div> */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Reference Sheet</label>
+                  <label className="text-sm font-medium text-foreground">
+                    Reference Sheet
+                  </label>
                   <select
                     className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
                     value={rightSheetName}
                     onChange={(e) => {
                       const nextRight = e.target.value;
                       setRightSheetName(nextRight);
-                      setRightKey(sheetHeadersByName[nextRight]?.[0] ?? '');
+                      setRightKey(sheetHeadersByName[nextRight]?.[0] ?? "");
                     }}
                   >
                     {filteredRightSheets.map((name) => (
-                      <option key={name} value={name}>{name}</option>
+                      <option key={name} value={name}>
+                        {name}
+                      </option>
                     ))}
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Related Column</label>
+                  <label className="text-sm font-medium text-foreground">
+                    Related Column
+                  </label>
                   <select
                     className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
                     value={rightKey}
@@ -659,7 +746,9 @@ export function UploadPage() {
                     disabled={!effectiveRightSheet}
                   >
                     {filteredRightKeys.map((h) => (
-                      <option key={h} value={h}>{h}</option>
+                      <option key={h} value={h}>
+                        {h}
+                      </option>
                     ))}
                   </select>
                 </div>
