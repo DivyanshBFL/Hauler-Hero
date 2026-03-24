@@ -1,4 +1,4 @@
-import { Bot, Download, FileText, Loader2, Sparkles, Type, UserCircle2, X } from 'lucide-react';
+import { Bot, Download, FileClock, FileText, Loader2, Sparkles, Type, UserCircle2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { ActivityLogItem } from './types';
 
@@ -36,7 +36,10 @@ export default function ActivityLogDrawer({ open, loading, error, items, onClose
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="h-12 px-6 border-b border-border bg-white flex items-center justify-between">
-                    <h2 className="text-md leading-none font-light text-foreground">Activity Log</h2>
+                    <h2 className="flex items-center text-md leading-none font-light text-foreground">
+                        <FileClock className="mr-2 h-4 w-4" />
+                        <span>Activity Log</span>
+                    </h2>
                     <button onClick={onClose} className="text-foreground/80 hover:text-foreground">
                         <X className="h-4 w-4" />
                     </button>
