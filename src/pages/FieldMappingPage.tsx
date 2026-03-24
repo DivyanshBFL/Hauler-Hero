@@ -177,7 +177,7 @@ function buildNodesAndEdges(
     nodes.push({
       id: `${SOURCE_PREFIX}${label}`,
       type: 'sourceField',
-      position: { x: sourceX, y: i * ROW_HEIGHT },
+      position: { x: sourceX, y: 10 + i * ROW_HEIGHT },
       data: {
         label: showMissingSourceText ? MISSING_SOURCE_TEXT : label,
         dataType: sourceTypeMap[label],
@@ -187,14 +187,8 @@ function buildNodesAndEdges(
         draggable: showMissingSourceText,
       },
       style: {
-        // f9e4e4 this was previous red color but changed it to yellow after :
-        background: mapped ? '#f0fef4' : showMissingSourceText ? '#fcf9e6' : '#fcf9e6',
-        border: mapped
-          ? '1px solid #92ecb3'
-          : showMissingSourceText
-            ? '1px solid #f7eab8'
-            // f5c7c7 this was previous red color but changed it to yellow
-            : '1px solid #f7eab8',
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
         borderRadius: 8,
       },
       draggable: false,
@@ -209,7 +203,7 @@ function buildNodesAndEdges(
     nodes.push({
       id: `${TARGET_PREFIX}${label}`,
       type: 'targetField',
-      position: { x: targetX, y: i * ROW_HEIGHT },
+      position: { x: targetX, y: 10 + i * ROW_HEIGHT },
       data: {
         label: isRequired ? (
           <>
@@ -226,8 +220,8 @@ function buildNodesAndEdges(
         onUnmap: onUnmapTarget,
       },
       style: {
-        background: mapped ? '#f0fef4' : '#fcf9e6',
-        border: mapped ? '1px solid #92ecb3' : '1px solid #fee686',
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
         borderRadius: 8,
       },
       draggable: false,
@@ -481,7 +475,7 @@ export function FieldMappingPage() {
     [sourceFields, targetFields, mappings]
   );
 
-  const mappingContentHeight = Math.max(orderedSource.length, orderedTarget.length, 1) * ROW_HEIGHT + 80;
+  const mappingContentHeight = Math.max(orderedSource.length, orderedTarget.length, 1) * ROW_HEIGHT + 40;
   const flowPaneRef = useRef<HTMLDivElement | null>(null);
   const [flowPaneWidth, setFlowPaneWidth] = useState(900);
 
@@ -917,10 +911,11 @@ export function FieldMappingPage() {
             <div className="text-sm mt-4 font-semibold" >AI Auto-Mapping Summary :</div>
             <div className="rounded-lg border mt-2 mb-4 bg-primary/10 text-blue-900">
               <div className="px-4 py-3 flex items-center justify-between gap-2">
-                <div className="px-1 flex flex-wrap gap-1 text-xs" >
-                  <div className="flex items-center gap-2 ">
-                    <span>Fields Auto-Mapped</span>
-                    <span className={autoMappedCoverageClass}>
+                <div className="px-1 flex items-center flex-wrap gap-1 text-xs" >
+                  <span className='font-bold'>Summary:</span>
+                  <div className="flex items-center gap-1 ">
+                    <span>Fields Auto-Mapped:</span>
+                    <span >
                       {autoMappedCoveragePct}% ({autoMappedCount}/{targetFieldsAll.length})
                     </span>
                   </div>
@@ -1021,7 +1016,15 @@ export function FieldMappingPage() {
                         </div>
                       </div>
                     </div>
-
+                    <label className="inline-flex items-center gap-2 text-sm text-foreground cursor-pointer ml-4" style={{ minWidth: "150px" }}>
+                              <input
+                                type="checkbox"
+                                checked={showOnlyErrors}
+                                onChange={(e) => setShowOnlyErrors(e.target.checked)}
+                                className="h-4 w-4 rounded border-input cursor-pointer accent-primary"
+                              />
+                              Show only unmapped
+                            </label>
                     <ScrollArea
                       ref={scrollAreaRef}
                       className="w-full [&_[data-radix-scroll-area-viewport]]:overflow-x-hidden [&_[data-radix-scroll-area-viewport]]:overflow-y-auto"
@@ -1068,22 +1071,12 @@ export function FieldMappingPage() {
                             type: 'default',
                             deletable: true,
                           }}
-                          proOptions={{ hideAttribution: true }}
-                          fitView
-                          style={{ background: 'transparent' }}
-                        >
-                          <Background gap={10} size={1} color="#e5e7eb" />
-                           <div>
-                            <label className="inline-flex items-center gap-2 text-sm text-muted-foreground ml-5" style={{ minWidth: "150px" }}>
-                              <input
-                                type="checkbox"
-                                checked={showOnlyErrors}
-                                onChange={(e) => setShowOnlyErrors(e.target.checked)}
-                                className="h-4 w-4 rounded border-input"
-                              />
-                              Show only unmapped
-                            </label>
-                          </div>
+                           proOptions={{ hideAttribution: true }}
+                           defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+                           fitView={false}
+                           style={{ background: 'transparent' }}
+                         >
+                          <Background gap={8} size={1} color="#e5e7eb" />
                           {/* <Panel position="top-left" className="m-2 mx-4 text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded shadow">
                             {mappings.filter((m) => m.targetField !== 'Unmapped').length} mappings
                           </Panel> */}
