@@ -382,7 +382,7 @@ export function UploadPage() {
                 <div>
                   <div className="flex items-center gap-3">
                     <CardTitle className="text-md font-normal">Upload File</CardTitle>
-                    {file && (
+                    {/* {file && (
                       <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-full text-xs font-medium animate-in fade-in slide-in-from-left-2">
                         <span>📄 {file.name}</span>
                         <X
@@ -393,13 +393,36 @@ export function UploadPage() {
                           }}
                         />
                       </div>
-                    )}
+                    )} */}
                   </div>
                   <CardDescription className="text-xs text-muted-foreground">
                     Upload your source CSV or XLSX file to begin the data processing workflow
                   </CardDescription>
                 </div>
+
               </div>
+              <div className='float-right'>
+                      {file && (
+                        <div className='flex gap-2'>
+                        <Button variant='outline'
+                        className="px-5 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors"
+                        onClick={()=>{setShowSheetSelector(true)}}
+                        >
+                          Remap
+                        </Button>
+                      <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-sm text-xs font-medium animate-in fade-in slide-in-from-left-2">
+                        <span>📄 {file.name}</span>
+                        <X
+                          className="h-3 w-3 cursor-pointer hover:text-red-500 transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            resetUploadState();
+                          }}
+                          />
+                          </div>
+                      </div>
+                    )}
+                </div>
             </div>
           </CardHeader>
 
@@ -509,7 +532,7 @@ export function UploadPage() {
                                 {previewHeaders.map((header) => (
                                   <TableHead
                                     key={header}
-                                    className="px-3 py-2 text-left font-medium uppercase whitespace-nowrap"
+                                    className="px-3 py-2 text-left font-medium  whitespace-nowrap"
                                   >
                                     {header}
                                   </TableHead>
@@ -542,7 +565,7 @@ export function UploadPage() {
             )}
           </CardContent>
           <div className="flex justify-end px-6 py-3 border-t bg-muted">
-            <Button onClick={handleNext} disabled={loading || !canProceed} variant="outline" className="px-5 h-11 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors ">
+            <Button onClick={handleNext} disabled={loading || !canProceed} variant="outline" className="px-5  pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors ">
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Next
               <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -646,7 +669,7 @@ export function UploadPage() {
                 effectiveLeftSheet === effectiveRightSheet
               }
                 variant="outline" 
-                className="px-5 h-11 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors max-w-[300px] mx-auto my-4 "
+                className="px-5 h-11 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors max-w-[300px] mx-auto mb-4 "
             >
               Confirm Join Selection
             </Button>
