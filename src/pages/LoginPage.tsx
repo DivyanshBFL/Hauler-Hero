@@ -68,9 +68,9 @@ export function LoginPage() {
 
           <div className="absolute bottom-10 left-10 right-10 text-white">
             <Quote className="mb-4 h-8 w-8 scale-x-[-1] fill-white stroke-0" />
-            <p className="max-w-3xl text-xl/10 font-light">
+            <p className="max-w-3xl text-md font-light">
               Hauler Hero has made our lives more efficient and significantly less complicated. Since switching to Hauler Hero,
-              my time to send our monthly or quarterly bills has been cut in half
+              my time to send our monthly or quarterly bills has been cut in half.
             </p>
             <div className="mt-4">
               <p className="text-2xl font-semibold">Alex Babbitt</p>
@@ -79,7 +79,7 @@ export function LoginPage() {
               </p>
             </div>
 
-            <div className="flex justify-end gap-3">
+            {/* <div className="flex justify-end gap-3">
               <button
                 type="button"
                 aria-label="Previous"
@@ -94,7 +94,7 @@ export function LoginPage() {
               >
                 <ChevronRight className="h-5 w-5" />
               </button>
-            </div>
+            </div> */}
           </div>
         </section>
 
@@ -115,7 +115,7 @@ export function LoginPage() {
             </CardHeader>
 
             <CardContent className='flex justify-center'>
-              <form onSubmit={handleSubmit} className="space-y-5 flex-1 max-w-[300px]">
+              <form onSubmit={handleSubmit} className="space-y-5 flex-1 max-w-[350px] border-2 rounded-md p-4">
                 <div className="space-y-2 ">
                   <Label htmlFor="email" className="text-sm font-medium">Email</Label>
                   <Input
@@ -178,12 +178,12 @@ export function LoginPage() {
                   Sign In
                 </Button>
 
-                <p className="text-sm text-muted-foreground text-center pt-2">
+                {/* <p className="text-sm text-muted-foreground text-center pt-2">
                   Didn&apos;t have an account?{' '}
                   <a href="#" className="font-medium text-foreground hover:underline">
                     Sign up
                   </a>
-                </p>
+                </p> */}
               </form>
             </CardContent>
           </div>

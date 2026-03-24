@@ -345,7 +345,7 @@ export function UploadPage() {
       navigate('/field-mapping');
     } catch (error) {
       console.error('Error uploading file, joining sheets, or fetching mappings:', error);
-      alert('Failed to upload file, join sheets, or fetch field mappings. Please try again.');
+      alert('Something Went Wrong.');
     } finally {
       setLoading(false);
     }
@@ -408,7 +408,7 @@ export function UploadPage() {
                         className="px-5 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors"
                         onClick={()=>{setShowSheetSelector(true)}}
                         >
-                          Remap
+                          Re-Join Sheets
                         </Button>
                       <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-sm text-xs font-medium animate-in fade-in slide-in-from-left-2">
                         <span>📄 {file.name}</span>
@@ -504,7 +504,7 @@ export function UploadPage() {
                             </span>
 
                           {isJoinRequired && joinSelection && (
-                            <span className="text-xs">
+                            <span className="text-xs ml-1">
                              Join configured: <span className="font-semibold">{joinSelection.leftSheet}</span>
                             {' '}(<span className="font-semibold">{joinSelection.leftKey}</span>) {'->'}{' '}
                             <span className="font-semibold">{joinSelection.rightSheet}</span>
