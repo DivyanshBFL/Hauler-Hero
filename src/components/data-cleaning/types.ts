@@ -2,6 +2,7 @@ export type DrawerType = 'dedupe' | 'address' | null;
 export type DedupeMode = 'column' | 'row';
 export type DedupeMethod = 'automatic' | 'manual';
 export type KeepRemove = 'keep' | 'remove';
+export type DedupeKeepStrategy = 'oldest' | 'latest' | 'max_filled';
 
 export type DedupeCondition = {
     column: string;
