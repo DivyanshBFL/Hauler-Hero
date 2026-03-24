@@ -863,7 +863,7 @@ export function FieldMappingPage() {
               <div>
                 <CardTitle className="text-md font-normal">Map Your Fields</CardTitle>
                 <CardDescription className="text-xs ">
-                  Drag from a source field handle (right) to a destination field handle (left) to create a mapping.
+                  Drag from a source field handle (left) to a destination field handle (right) to create a mapping.
                   Select a line and press Delete to remove. Target fields marked with * are required.
                 </CardDescription>
               </div>
