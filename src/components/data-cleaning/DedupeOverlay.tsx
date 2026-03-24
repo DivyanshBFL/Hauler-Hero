@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Loader2, Plus, X } from 'lucide-react';
-import type { DedupeCondition, DedupeMode, DedupeMethod, DrawerType, KeepRemove, PreviewRow } from './types';
+import type { DedupeCondition, DedupeMode, DedupeMethod, DedupeKeepStrategy, DrawerType, KeepRemove, PreviewRow } from './types';
 
 type Props = {
     drawer: DrawerType;
@@ -38,6 +38,8 @@ type Props = {
     setFlagDuplicates: (v: boolean) => void;
     dedupeMethod: DedupeMethod;
     setDedupeMethod: (v: DedupeMethod) => void;
+    dedupeKeepStrategy: DedupeKeepStrategy;
+    setDedupeKeepStrategy: (v: DedupeKeepStrategy) => void;
 
 };
 
@@ -75,6 +77,8 @@ export default function DedupeOverlay(props: Props) {
         setFlagDuplicates,
         dedupeMethod,
         setDedupeMethod,
+        dedupeKeepStrategy,
+        setDedupeKeepStrategy,
     } = props;
 
     if (!(drawer || previewOpen)) return null;
@@ -83,7 +87,7 @@ export default function DedupeOverlay(props: Props) {
         <div className="fixed inset-0 z-50">
             <div className="absolute inset-0 bg-black/25" onClick={() => { setDrawer(null); setPreviewOpen(false); }} />
             {previewOpen && (
-                <div 
+                <div
                     className="absolute left-4 top-4 bottom-4 bg-white border border-border rounded shadow-2xl overflow-hidden transition-all duration-300"
                     style={{ right: drawer ? '580px' : '4%' }}
                 >
@@ -102,9 +106,14 @@ export default function DedupeOverlay(props: Props) {
                             </TableHeader>
                             <TableBody>
                                 {previewRows.map((r, i) => {
-                                    const rowClass = flagDuplicates
+                                    const isAffected = r.row?.dedup_flag === 'affected';
+                                    let rowClass = flagDuplicates
                                         ? (r.shaded ? 'bg-red-50 hover:bg-red-100' : 'bg-white hover:bg-gray-50')
                                         : 'odd:bg-background even:bg-primary/10';
+
+                                    if (flagDuplicates && isAffected) {
+                                        rowClass = 'bg-red-100 hover:bg-red-200';
+                                    }
                                     return (
                                         <TableRow key={String(r.rowIndex) + '-' + String(i)} className={rowClass}>
                                             {previewColumns.map((c) => (
@@ -177,33 +186,24 @@ export default function DedupeOverlay(props: Props) {
                                                     setDedupeColumns((prev) => (prev.includes(v) ? prev : [...prev, v]));
                                                 }}
                                             >
-                                                <option value="">Select columns</option>
+                                                <option value="">Select columns to View/Remove Duplicates</option>
                                                 {columns.map((c) => <option key={c} value={c}>{c}</option>)}
                                             </select>
                                         </div>
                                     </div>
                                 )}
 
-                                <div>
-                                    <p className="text-sm font-medium mb-2">Options</p>
-                                    <div className="flex flex-wrap gap-4 text-sm">
-                                        <label className="inline-flex items-center gap-3"><input type="checkbox" checked={ignoreCase} onChange={(e) => setIgnoreCase(e.target.checked)} /> Ignore case</label>
-                                        <label className="inline-flex items-center gap-3"><input type="checkbox" checked={ignoreWhitespace} onChange={(e) => setIgnoreWhitespace(e.target.checked)} /> Ignore whitespace</label>
-                                        <label className="inline-flex items-center gap-3"><input type="checkbox" checked={flagDuplicates} onChange={(e) => setFlagDuplicates(e.target.checked)} /> Flag duplicate records</label>
-                                    </div>
-                                </div>
-
                                 {dedupeMode === 'column' && (
                                     <>
                                         <div>
-                                            <p className="text-sm text-muted-foreground mb-2">Select how to duplicate</p>
+                                            <p className="text-sm text-muted-foreground mb-2">Select method</p>
                                             <select
                                                 className="w-full h-11 border border-border rounded-md px-3 bg-background text-sm"
                                                 value={dedupeMethod}
                                                 onChange={(e) => setDedupeMethod(e.target.value as DedupeMethod)}
                                             >
                                                 <option value="automatic">Automatic</option>
-                                                <option value="manual">Manual conditions</option>
+                                                <option value="manual">Manual</option>
                                             </select>
                                         </div>
 
@@ -262,6 +262,32 @@ export default function DedupeOverlay(props: Props) {
                                             </div>
                                         )}
                                     </>
+                                )}
+
+                                <div>
+                                    <p className="text-sm font-medium mb-2">Options</p>
+                                    <div className="flex flex-wrap gap-4 text-sm">
+                                        <label className="inline-flex items-center gap-3"><input type="checkbox" checked={ignoreCase} onChange={(e) => setIgnoreCase(e.target.checked)} /> Ignore case</label>
+                                        <label className="inline-flex items-center gap-3"><input type="checkbox" checked={ignoreWhitespace} onChange={(e) => setIgnoreWhitespace(e.target.checked)} /> Ignore whitespace</label>
+                                        <label className="inline-flex items-center gap-3"><input type="checkbox" checked={flagDuplicates} onChange={(e) => setFlagDuplicates(e.target.checked)} /> Flag duplicate records</label>
+                                    </div>
+                                </div>
+
+                                {dedupeMethod === 'automatic' && duplicateIndicatorCount > 0 && (
+                                    <div className="mt-4">
+                                        <p className="text-sm font-medium mb-2">Keep strategy</p>
+                                        <div className="flex flex-wrap gap-4 text-sm mt-2">
+                                            <label className="inline-flex items-center gap-2">
+                                                <input type="radio" name="keep_strategy" checked={dedupeKeepStrategy === 'oldest'} onChange={() => setDedupeKeepStrategy('oldest')} className="text-primary focus:ring-primary h-4 w-4" /> Oldest
+                                            </label>
+                                            <label className="inline-flex items-center gap-2">
+                                                <input type="radio" name="keep_strategy" checked={dedupeKeepStrategy === 'latest'} onChange={() => setDedupeKeepStrategy('latest')} className="text-primary focus:ring-primary h-4 w-4" /> Latest
+                                            </label>
+                                            <label className="inline-flex items-center gap-2">
+                                                <input type="radio" name="keep_strategy" checked={dedupeKeepStrategy === 'max_filled'} onChange={() => setDedupeKeepStrategy('max_filled')} className="text-primary focus:ring-primary h-4 w-4" /> Maximum filled
+                                            </label>
+                                        </div>
+                                    </div>
                                 )}
 
                                 <div className="absolute bottom-0 left-0 right-0 border-t border-border bg-white p-4 flex gap-2">

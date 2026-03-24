@@ -45,6 +45,7 @@ import type {
   DedupeCondition,
   DedupeMode,
   DedupeMethod,
+  DedupeKeepStrategy,
   DrawerType,
   IssueCellPanel,
   KeepRemove,
@@ -186,7 +187,8 @@ export function DataCleaningPage() {
   const [ignoreWhitespace, setIgnoreWhitespace] = useState(false);
   const [keepRemove, setKeepRemove] = useState<KeepRemove>('keep');
   const [flagDuplicates, setFlagDuplicates] = useState(false);
-  const [dedupeMethod, setDedupeMethod] = useState<DedupeMethod>('manual');
+  const [dedupeMethod, setDedupeMethod] = useState<DedupeMethod>('automatic');
+  const [dedupeKeepStrategy, setDedupeKeepStrategy] = useState<DedupeKeepStrategy>('oldest');
 
   const [columnActionModal, setColumnActionModal] = useState<ColumnActionModal | null>(null);
   const [editingCell, setEditingCell] = useState<{ rowIndex: number; column: string } | null>(null);
@@ -466,6 +468,8 @@ export function DataCleaningPage() {
       if (dedupeMethod === 'manual') {
         payload.condition_mode = keepRemove;
         payload.conditions = activeConditions;
+      } else if (dedupeMethod === 'automatic') {
+        payload.keep_strategy = dedupeKeepStrategy;
       }
 
       return payload;
@@ -476,7 +480,7 @@ export function DataCleaningPage() {
         ignore_whitespace: ignoreWhitespace
       };
     }
-  }, [dedupeMode, getActiveDedupeColumns, getActiveConditions, ignoreCase, ignoreWhitespace, keepRemove]);
+  }, [dedupeMode, dedupeMethod, dedupeKeepStrategy, getActiveDedupeColumns, getActiveConditions, ignoreCase, ignoreWhitespace, keepRemove]);
 
   const parsePreviewResponse = useCallback((previewPayload: any, candidateColumns: string[]): DedupePreviewResult | null => {
     const normalizedColumns = candidateColumns.length ? candidateColumns : getActiveDedupeColumns();
@@ -491,8 +495,10 @@ export function DataCleaningPage() {
         input?.row_index ??
         input?.rowIndex ??
         input?.__rowIndex ??
+        input?._row_id ??
         directRow?.row_index ??
-        directRow?.__rowIndex;
+        directRow?.__rowIndex ??
+        directRow?._row_id;
 
       let rowIndex = Number(rowIndexRaw);
       if (!Number.isFinite(rowIndex)) {
@@ -1011,7 +1017,7 @@ export function DataCleaningPage() {
   }, [visibleRows, search, columns, rowIssueMap, selectedIssueType]);
   useEffect(() => {
     setPreviewDuplicateCount(0);
-  }, [dedupeMode, dedupeColumns, ignoreCase, ignoreWhitespace, keepRemove, conditions]);
+  }, [dedupeMode, dedupeColumns, dedupeMethod, dedupeKeepStrategy, ignoreCase, ignoreWhitespace, keepRemove, conditions]);
 
   const duplicateIndicatorCount = previewDuplicateCount;
 
@@ -1736,6 +1742,7 @@ export function DataCleaningPage() {
         onRemoveDuplicates={handleRemoveDuplicates}
         flagDuplicates={flagDuplicates} setFlagDuplicates={setFlagDuplicates}
         dedupeMethod={dedupeMethod} setDedupeMethod={setDedupeMethod}
+        dedupeKeepStrategy={dedupeKeepStrategy} setDedupeKeepStrategy={setDedupeKeepStrategy}
       />
 
       <ActivityLogDrawer
