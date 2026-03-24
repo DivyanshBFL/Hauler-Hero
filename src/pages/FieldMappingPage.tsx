@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ReactFlow,
@@ -161,7 +161,8 @@ function buildNodesAndEdges(
   targetX: number,
   nodeWidth: number,
   requiredTargetSet: Set<string>,
-  onUnmap?: (fieldName: string) => void
+  onUnmapTarget: (targetField: string) => void,
+  selectedEdgeId: string | null
 ): { nodes: Node[]; edges: Edge[] } {
   const nodes: Node[] = [];
   const active = mappings.filter((m) => m.targetField !== 'Unmapped');
@@ -176,7 +177,7 @@ function buildNodesAndEdges(
     nodes.push({
       id: `${SOURCE_PREFIX}${label}`,
       type: 'sourceField',
-      position: { x: sourceX, y: i * ROW_HEIGHT },
+      position: { x: sourceX, y: 10 + i * ROW_HEIGHT },
       data: {
         label: showMissingSourceText ? MISSING_SOURCE_TEXT : label,
         dataType: sourceTypeMap[label],
@@ -202,7 +203,7 @@ function buildNodesAndEdges(
     nodes.push({
       id: `${TARGET_PREFIX}${label}`,
       type: 'targetField',
-      position: { x: targetX, y: i * ROW_HEIGHT },
+      position: { x: targetX, y: 10 + i * ROW_HEIGHT },
       data: {
         label: isRequired ? (
           <>
@@ -216,7 +217,7 @@ function buildNodesAndEdges(
         status: mapped ? 'mapped' : 'unmapped',
         nodeWidth,
         isWarning: !mapped,
-        onUnmap,
+        onUnmap: onUnmapTarget,
       },
       style: {
         background: '#ffffff',
@@ -231,18 +232,25 @@ function buildNodesAndEdges(
 
   const edges: Edge[] = active
     .filter((m) => sourceFields.includes(m.sourceField) && targetFields.includes(m.targetField))
-    .map(
-      (m) =>
-        ({
-          id: `e-${m.sourceField}-${m.targetField}`,
-          source: `${SOURCE_PREFIX}${m.sourceField}`,
-          target: `${TARGET_PREFIX}${m.targetField}`,
-          type: 'default',
-          pathOptions: { curvature: 0.5 },
-          style: { stroke: 'hsl(211, 88%, 52%)', strokeWidth: 2.5 },
-          deletable: true,
-        }) as Edge
-    );
+    .map((m) => {
+      const id = `e-${m.sourceField}-${m.targetField}`;
+      const isSelected = id === selectedEdgeId;
+      return {
+        id,
+        source: `${SOURCE_PREFIX}${m.sourceField}`,
+        target: `${TARGET_PREFIX}${m.targetField}`,
+        type: 'default',
+        pathOptions: { curvature: 0.5 },
+        style: {
+          stroke: isSelected ? 'hsl(222, 84%, 36%)' : 'hsl(211, 88%, 52%)',
+          strokeWidth: isSelected ? 4 : 2.5,
+        },
+        zIndex: isSelected ? 1000 : 1,
+        animated: isSelected,
+        selectable: true,
+        deletable: true,
+      } as Edge;
+    });
 
   return { nodes, edges };
 }
@@ -368,6 +376,7 @@ export function FieldMappingPage() {
   const [baselineMappingsByEntity, setBaselineMappingsByEntity] = useState<{ [key: string]: FieldMapping[] }>({});
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
   const [isDraggingConnection, setIsDraggingConnection] = useState(false);
+  const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
   const lastPointerY = useRef(0);
   const [autoMappedCountByEntity, setAutoMappedCountByEntity] = useState<{ [key: string]: number }>({});
 
@@ -429,15 +438,20 @@ export function FieldMappingPage() {
   );
 
   const autoMappedCoverageClass = useMemo(() => {
-    if (autoMappedCoveragePct > 60) return 'rounded-md px-2 py-0.5 font-semibold';
-    if (autoMappedCoveragePct > 40) return 'rounded-md px-2 py-0.5 font-semibold';
-    return 'rounded-md px-2 py-0.5 font-semibold';
+    if (autoMappedCoveragePct > 60) return 'rounded-md bg-green-200 text-green-800 px-2 py-0.5 font-semibold';
+    if (autoMappedCoveragePct > 40) return 'rounded-md bg-yellow-200 text-yellow-800 px-2 py-0.5 font-semibold';
+    return 'rounded-md bg-red-200 text-red-800 px-2 py-0.5 font-semibold';
   }, [autoMappedCoveragePct]);
 
   const unmatchedColumnsCount = useMemo(
     () =>
       sourceFieldsAll.filter((f) => !mappedSourceSet.has(f)).length,
     [sourceFieldsAll, mappedSourceSet]
+  );
+  const dataTypeMismatchCount = mismatchPairs.length;
+  const dataSizeOverflowWarningCount = useMemo(
+    () => getSessionCount('dataSizeOverflowWarnings', 'dataSizeOverflowCount', 'overflowWarnings'),
+    []
   );
 
   const sourceFields = useMemo(() => {
@@ -461,7 +475,7 @@ export function FieldMappingPage() {
     [sourceFields, targetFields, mappings]
   );
 
-  const mappingContentHeight = Math.max(orderedSource.length, orderedTarget.length, 1) * ROW_HEIGHT + 80;
+  const mappingContentHeight = Math.max(orderedSource.length, orderedTarget.length, 1) * ROW_HEIGHT + 40;
   const flowPaneRef = useRef<HTMLDivElement | null>(null);
   const [flowPaneWidth, setFlowPaneWidth] = useState(900);
 
@@ -477,18 +491,17 @@ export function FieldMappingPage() {
     return () => observer.disconnect();
   }, [chatCollapsed]);
 
-  const handleUnmapTarget = useCallback((targetField: string) => {
+  const nodeWidth = chatCollapsed ? 420 : 300;
+  const flowCanvasWidth = Math.max(flowPaneWidth, nodeWidth * 2 + HORIZONTAL_COLUMN_MARGIN * 2 + 300);
+  const sourceX = HORIZONTAL_COLUMN_MARGIN;
+  const targetX = flowCanvasWidth - HORIZONTAL_COLUMN_MARGIN - nodeWidth;
+  const handleUnmapTarget = (targetField: string) => {
     setEntityMappings((prev) => {
       const current = prev[selectedEntity] ?? [];
       const updated = current.filter((m) => m.targetField !== targetField);
       return { ...prev, [selectedEntity]: updated };
     });
-  }, [selectedEntity]);
-
-  const nodeWidth = chatCollapsed ? 420 : 300;
-  const flowCanvasWidth = Math.max(flowPaneWidth, nodeWidth * 2 + HORIZONTAL_COLUMN_MARGIN * 2 + 300);
-  const sourceX = HORIZONTAL_COLUMN_MARGIN;
-  const targetX = flowCanvasWidth - HORIZONTAL_COLUMN_MARGIN - nodeWidth;
+  };
 
   const initialNodesAndEdges = useMemo(
     () =>
@@ -502,9 +515,10 @@ export function FieldMappingPage() {
         targetX,
         nodeWidth,
         requiredTargetSet,
-        handleUnmapTarget
+        handleUnmapTarget,
+        selectedEdgeId
       ),
-    [orderedSource, orderedTarget, mappings, sourceTypeMap, targetTypeMap, sourceX, targetX, nodeWidth, requiredTargetSet, handleUnmapTarget]
+    [orderedSource, orderedTarget, mappings, sourceTypeMap, targetTypeMap, sourceX, targetX, nodeWidth, requiredTargetSet, selectedEntity, selectedEdgeId]
   );
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodesAndEdges.nodes);
@@ -754,8 +768,9 @@ export function FieldMappingPage() {
     };
   }, [isDraggingConnection]);
 
-  const onConnect: OnConnect = useCallback((connection: Connection) => {
+  const onConnect: OnConnect = (connection: Connection) => {
     setIsDraggingConnection(false);
+    setSelectedEdgeId(null);
     const sourceId = connection.source;
     const targetId = connection.target;
     if (!sourceId || !targetId) return;
@@ -764,18 +779,40 @@ export function FieldMappingPage() {
     const targetField = targetId.startsWith(TARGET_PREFIX) ? targetId.slice(TARGET_PREFIX.length) : null;
     if (!sourceField || !targetField) return;
 
-    const updated: FieldMapping[] = mappings
-      .filter((m) => m.sourceField !== sourceField && m.targetField !== targetField)
-      .concat([{ sourceField, targetField }]);
+    setEntityMappings((prev) => {
+      const current = prev[selectedEntity] ?? [];
+      const updated: FieldMapping[] = current
+        .filter((m) => m.sourceField !== sourceField && m.targetField !== targetField)
+        .concat([{ sourceField, targetField }]);
+      return { ...prev, [selectedEntity]: updated };
+    });
+  };
 
-    setEntityMappings((prev) => ({ ...prev, [selectedEntity]: updated }));
-  }, [mappings, selectedEntity]);
-
-  const onEdgesDelete: OnEdgesDelete = useCallback((deleted) => {
+  const onEdgesDelete: OnEdgesDelete = (deleted) => {
     const toRemove = new Set(deleted.map((e) => e.id));
-    const updated = mappings.filter((m) => !toRemove.has(`e-${m.sourceField}-${m.targetField}`));
-    setEntityMappings((prev) => ({ ...prev, [selectedEntity]: updated }));
-  }, [mappings, selectedEntity]);
+    setSelectedEdgeId((prev) => (prev && toRemove.has(prev) ? null : prev));
+    setEntityMappings((prev) => {
+      const current = prev[selectedEntity] ?? [];
+      const updated = current.filter((m) => !toRemove.has(`e-${m.sourceField}-${m.targetField}`));
+      return { ...prev, [selectedEntity]: updated };
+    });
+  };
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.key !== 'Delete' && event.key !== 'Backspace') || !selectedEdgeId) return;
+      event.preventDefault();
+      setEntityMappings((prev) => {
+        const current = prev[selectedEntity] ?? [];
+        const updated = current.filter((m) => `e-${m.sourceField}-${m.targetField}` !== selectedEdgeId);
+        return { ...prev, [selectedEntity]: updated };
+      });
+      setSelectedEdgeId(null);
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [selectedEdgeId, selectedEntity]);
 
   const handleNext = async () => {
     setProcessing(true);
@@ -863,7 +900,7 @@ export function FieldMappingPage() {
               <div>
                 <CardTitle className="text-md font-normal">Map Your Fields</CardTitle>
                 <CardDescription className="text-xs ">
-                  Drag from a source field handle (right) to a destination field handle (left) to create a mapping.
+                  Drag from a source field handle (left) to a destination field handle (right) to create a mapping.
                   Select a line and press Delete to remove. Target fields marked with <span className='text-red-400'>*</span> are required.
                 </CardDescription>
               </div>
@@ -871,19 +908,19 @@ export function FieldMappingPage() {
           </CardHeader>
 
           <CardContent className="gap-4 ">
-            {/* <div className="text-sm mt-4 font-semibold" >AI Auto-Mapping Summary :</div> */}
-            <div className="rounded-lg border mt-2 mb-4 bg-primary/10 text-blue-900 border-blue-300">
-              <div className="px-4 py-1 flex items-center justify-between gap-2">
-                <div className="px-1 flex flex-wrap  items-center gap-1 text-xs" >
-                    <span className='font-semibold'>Summary:</span>
-                  <div className="flex items-center gap-0 ">
+            <div className="text-sm mt-4 font-semibold" >AI Auto-Mapping Summary :</div>
+            <div className="rounded-lg border mt-2 mb-4 bg-primary/10 text-blue-900">
+              <div className="px-4 py-3 flex items-center justify-between gap-2">
+                <div className="px-1 flex items-center flex-wrap gap-1 text-xs" >
+                  <span className='font-bold'>Summary:</span>
+                  <div className="flex items-center gap-1 ">
                     <span>Fields Auto-Mapped:</span>
-                    <span className={autoMappedCoverageClass}>
+                    <span >
                       {autoMappedCoveragePct}% ({autoMappedCount}/{targetFieldsAll.length})
                     </span>
                   </div>
                   <div className="flex items-center gap-0 ">
-                    <span>Unmatched Columns:</span>
+                    <span>Unmapped Columns:</span>
                     <span className="rounded-md px-1 py-0.5 font-semibold">
                       {unmatchedColumnsCount}
                     </span>
@@ -928,11 +965,12 @@ export function FieldMappingPage() {
                     ref={flowPaneRef} className="rounded-xl border border-border bg-background overflow-hidden" style={{ background: 'white !important' }}>
                     <div className="grid grid-cols-2 gap-6 px-4 py-3">
                       <div className="space-y-2">
-                        <div className="flex items-center justify-start text-sm gap-2 h-[25px]">
+                        <div className="flex items-center justify-start text-sm gap-2">
                           <span className="font-semibold text-foreground">
-                            Source Schema :
+                            Datasets ({selectedEntity || 'Source'}) :
                           </span>
-                          <span className="text-muted-foreground">{sourceFieldsAll.length} Columns</span>
+                          <span className="text-muted-foreground">
+                            {sourceFieldsAll.length} Columns </span>
                         </div>
                         <div className="relative">
                           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -951,9 +989,9 @@ export function FieldMappingPage() {
                         <div className='flex justify-between'>
                           <div className="flex items-center justify-start text-sm gap-2">
                             <span className="font-semibold text-foreground">Target Schema :</span>
-                            <span className="text-muted-foreground">{targetFieldsAll.length} Columns</span>
+                            <span className="text-muted-foreground">{mappings.filter((m) => m.targetField !== 'Unmapped').length}/{targetFieldsAll.length} Columns Mapped</span>
                           </div>
-                          <div>
+                          {/* <div>
                             <label className="inline-flex items-center gap-2 text-sm text-muted-foreground ml-auto" style={{ minWidth: "150px" }}>
                               <input
                                 type="checkbox"
@@ -961,9 +999,9 @@ export function FieldMappingPage() {
                                 onChange={(e) => setShowOnlyErrors(e.target.checked)}
                                 className="h-4 w-4 rounded border-input"
                               />
-                              Show only errors
+                              Show only unmapped
                             </label>
-                          </div>
+                          </div> */}
                         </div>
                         <div className="relative">
                           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -978,7 +1016,15 @@ export function FieldMappingPage() {
                         </div>
                       </div>
                     </div>
-
+                    <label className="inline-flex items-center gap-2 text-sm text-foreground cursor-pointer ml-4" style={{ minWidth: "150px" }}>
+                              <input
+                                type="checkbox"
+                                checked={showOnlyErrors}
+                                onChange={(e) => setShowOnlyErrors(e.target.checked)}
+                                className="h-4 w-4 rounded border-input cursor-pointer accent-primary"
+                              />
+                              Show only unmapped
+                            </label>
                     <ScrollArea
                       ref={scrollAreaRef}
                       className="w-full [&_[data-radix-scroll-area-viewport]]:overflow-x-hidden [&_[data-radix-scroll-area-viewport]]:overflow-y-auto"
@@ -1002,9 +1048,11 @@ export function FieldMappingPage() {
                           onEdgesChange={onEdgesChange}
                           onConnect={onConnect}
                           onEdgesDelete={onEdgesDelete}
+                          onEdgeClick={(_, edge) => setSelectedEdgeId(edge.id)}
+                          onPaneClick={() => setSelectedEdgeId(null)}
                           onConnectStart={() => setIsDraggingConnection(true)}
                           onConnectEnd={() => setIsDraggingConnection(false)}
-                          deleteKeyCode={['Backspace', 'Delete']} // allow keyboard delete for selected line
+                          deleteKeyCode={['Backspace', 'Delete']} 
                           isValidConnection={() => true}
                           nodeTypes={NODE_TYPES}
                           zoomOnScroll={false}
@@ -1023,14 +1071,15 @@ export function FieldMappingPage() {
                             type: 'default',
                             deletable: true,
                           }}
-                          proOptions={{ hideAttribution: true }}
-                          fitView
-                          style={{ background: 'transparent' }}
-                        >
-                          <Background gap={12} size={1} color="#e5e7eb" />
-                          <Panel position="top-left" className="m-2 mx-4 text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded shadow">
+                           proOptions={{ hideAttribution: true }}
+                           defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+                           fitView={false}
+                           style={{ background: 'transparent' }}
+                         >
+                          <Background gap={8} size={1} color="#e5e7eb" />
+                          {/* <Panel position="top-left" className="m-2 mx-4 text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded shadow">
                             {mappings.filter((m) => m.targetField !== 'Unmapped').length} mappings
-                          </Panel>
+                          </Panel> */}
                         </ReactFlow>
                       </div>
                     </ScrollArea>
@@ -1118,7 +1167,7 @@ export function FieldMappingPage() {
             <Button
               variant="outline"
               onClick={() => navigate('/upload')}
-              className="w-full sm:w-auto order-2 sm:order-1"
+              className="className='border-primary text-primary font-semibold hover:bg-primary/10 transition-colors'"
             >
               <svg className="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -1145,7 +1194,7 @@ export function FieldMappingPage() {
       {/* Navigation Arrows */}
       <button
         onClick={() => navigate('/upload')}
-        className="fixed left-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-primary/10  text-primary border border-blue-300 transition-all duration-200"
+        className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
         title="Previous: Data Preview"
       >
         <ChevronLeft className="h-6 w-6" />
@@ -1154,7 +1203,7 @@ export function FieldMappingPage() {
       <button
         onClick={handleNext}
         disabled={processing}
-        className="fixed right-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-primary/10  text-primary border border-blue-300 text-primary shadow-lg transition-all duration-200 disabled:opacity-50"
+        className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
         title="Next: Data Analytics"
       >
         <ChevronRight className="h-6 w-6" />

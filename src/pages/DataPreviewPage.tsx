@@ -24,6 +24,7 @@ import {
   ChevronRight,
   Table2,
   FileDown,
+  ScanEye,
 } from "lucide-react";
 import jsPDF from "jspdf";
 import * as XLSX from "xlsx";
@@ -408,7 +409,7 @@ export function DataPreviewPage() {
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-start gap-4">
                 <div className="h-10 w-10 rounded-md bg-primary/10 text-primary flex items-center justify-center shadow-sm">
-                  <Table2 className="w-6 h-6 text-primary" />
+                  <ScanEye className="w-6 h-6 text-primary" />
                 </div>
                 <div className="space-y-1">
                   <CardTitle className="text-sm font-normal">
@@ -525,7 +526,7 @@ export function DataPreviewPage() {
             <Button
               variant="outline"
               onClick={() => navigate("/field-mapping")}
-              className="w-full sm:w-auto"
+              className='border-primary text-primary font-semibold hover:bg-primary/10 transition-colors'
             >
               <svg
                 className="mr-2 w-4 h-4"
@@ -570,7 +571,7 @@ export function DataPreviewPage() {
       {/* Navigation Arrows */}
       <button
         onClick={() => navigate("/upload")}
-        className="fixed left-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-primary/10  text-primary border border-blue-300 transition-all duration-200"
+       className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
         title="Previous: Upload"
       >
         <ChevronLeft className="h-6 w-6" />
@@ -579,7 +580,7 @@ export function DataPreviewPage() {
       <button
         onClick={handleNext}
         disabled={processing}
-      className="fixed right-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-primary/10  text-primary border border-blue-300 text-primary shadow-lg transition-all duration-200 disabled:opacity-50"
+      className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
         title="Next: Data Cleaning"
       >
         <ChevronRight className="h-6 w-6" />

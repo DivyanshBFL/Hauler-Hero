@@ -64,19 +64,19 @@ export default function ProcessStepper() {
         const styles = {
           completed: {
             card: "bg-white border-slate-200",
-            icon: "bg-primary text-primary-foreground border-primary",
+            icon: "bg-primary/10 text-primary !border-1 border-primary ",
             title: "text-slate-900",
             subtitle: "text-slate-400",
           },
           active: {
-            card: "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/20",
-            icon: "bg-transparent text-primary-foreground border-white/50",
+            card: "bg-primary border-primary text-primary-foreground shadow-xs shadow-primary/20",
+            icon: "bg-transparent text-primary-foreground border-white/50 !border-2",
             title: "text-white",
             subtitle: "text-primary-foreground/90",
           },
           upcoming: {
             card: "bg-white border-slate-200",
-            icon: "bg-white text-slate-300 border-slate-200",
+            icon: "bg-white text-slate-300 border-slate-200 border-2",
             title: "text-slate-500",
             subtitle: "text-slate-300",
           },
@@ -86,12 +86,12 @@ export default function ProcessStepper() {
           <button
             key={step.path}
             onClick={() => i <= currentStep && navigate(step.path)}
-            className={`w-full p-3 rounded-lg border text-left transition-all duration-300 ${styles.card} ${state === "active" ? "scale-[1.02]" : "hover:border-primary/50"
+            className={`w-full p-2 rounded-lg border text-left transition-all duration-300 ${styles.card} ${state === "active" ? "scale-[1.02]" : "hover:border-primary/50"
               }`}
           >
             <div className="flex items-center gap-1.5">
               <span
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-300 ${styles.icon}`}
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-1 transition-colors duration-300 ${styles.icon}`}
               >
                 {state === "completed" ? (
                   <Check size={20} strokeWidth={3} />

@@ -371,7 +371,9 @@ const DataAnalyticsPage = () => {
 
           </CardContent>
           <div className="flex flex-col sm:flex-row justify-between px-6 py-3 border-t bg-muted">
-            <Button variant="outline" onClick={() => navigate("/data-cleaning")}>
+            <Button variant="outline" 
+            className='border-primary text-primary font-semibold hover:bg-primary/10 transition-colors'
+            onClick={() => navigate("/data-cleaning")}>
               <svg className="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
@@ -379,7 +381,7 @@ const DataAnalyticsPage = () => {
             </Button>
 
             <Button
-              variant="outline" className="px-5 h-11 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
+              variant="outline" className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
               onClick={() => {
                 const total = rows.length;
                 const updated = changedRowsCount;
@@ -409,7 +411,7 @@ const DataAnalyticsPage = () => {
       {/* Navigation Arrows */}
       <button
         onClick={() => navigate('/data-cleaning')}
-        className="fixed left-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-primary/10  text-primary border border-blue-300 transition-all duration-200"
+        className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
         title="Previous: Data Cleaning"
       >
         <ChevronLeft className="h-6 w-6" />
@@ -433,7 +435,7 @@ const DataAnalyticsPage = () => {
           sessionStorage.setItem(IMPORT_STATS_KEY, JSON.stringify(stats));
           navigate('/complete');
         }}
-        className="fixed right-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-primary/10  text-primary border border-blue-300 text-primary shadow-lg transition-all duration-200 disabled:opacity-50"
+        className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
         title="Next: Complete"
       >
         <ChevronRight className="h-6 w-6" />

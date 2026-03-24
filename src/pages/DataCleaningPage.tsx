@@ -216,6 +216,8 @@ export function DataCleaningPage() {
   const sessionIdRef = useRef<string | null>(null);
 
   const [autoFixConfirmOpen, setAutoFixConfirmOpen] = useState(false);
+  const [autoFixDrawerMounted, setAutoFixDrawerMounted] = useState(false);
+  const [autoFixDrawerVisible, setAutoFixDrawerVisible] = useState(false);
   const [autoFixSubmitting, setAutoFixSubmitting] = useState(false);
   const [autoFixError, setAutoFixError] = useState<string | null>(null);
   const [issueSummaryOpen, setIssueSummaryOpen] = useState(false);
@@ -235,6 +237,25 @@ export function DataCleaningPage() {
     field_length_fix: true,
     deduplication: true,
   });
+
+  useEffect(() => {
+    if (autoFixConfirmOpen) {
+      setAutoFixDrawerVisible(false);
+      setAutoFixDrawerMounted(true);
+      const timeoutId = window.setTimeout(() => setAutoFixDrawerVisible(true), 10);
+      return () => window.clearTimeout(timeoutId);
+    }
+
+    setAutoFixDrawerVisible(false);
+    const timeoutId = window.setTimeout(() => setAutoFixDrawerMounted(false), 300);
+    return () => window.clearTimeout(timeoutId);
+  }, [autoFixConfirmOpen]);
+
+  const closeAutoFixDrawer = () => {
+    if (autoFixSubmitting) return;
+    setAutoFixConfirmOpen(false);
+    setAutoFixError(null);
+  };
 
   type CleaningNavigationState = {
     selectedMappedRows?: Record<string, any>[];
@@ -1555,7 +1576,7 @@ export function DataCleaningPage() {
             <div className="flex flex-col md:flex-row gap-2 pt-2">
               <div className="relative flex-1 max-w-md">
                 <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <Input placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-8" />
+                <Input placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-9" />
               </div>
               <div className="flex gap-2 ml-auto">
                 <select
@@ -1700,7 +1721,9 @@ export function DataCleaningPage() {
 
           </CardContent>
           <div className="flex flex-col sm:flex-row justify-between px-6 py-3 border-t bg-muted">
-            <Button variant="outline" onClick={() => navigate('/data-preview')}>
+            <Button variant="outline"
+              className='border-primary text-primary font-semibold hover:bg-primary/10 transition-colors'
+              onClick={() => navigate('/data-preview')}>
               <svg className="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
@@ -1762,138 +1785,144 @@ export function DataCleaningPage() {
       />
 
       {
-        autoFixConfirmOpen && (
-          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+        autoFixDrawerMounted && (
+          <div className="fixed inset-0 z-[70]">
             <div
-              className="absolute inset-0 bg-black/40"
-              onClick={() => {
-                if (autoFixSubmitting) return;
-                setAutoFixConfirmOpen(false);
-                setAutoFixError(null);
-              }}
+              className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${autoFixDrawerVisible ? 'opacity-100' : 'opacity-0'}`}
+              onClick={closeAutoFixDrawer}
             />
-            <div className="relative z-10 w-full max-w-2xl rounded-xl border border-border bg-background p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
-              <h3 className="text-xl leading-none font-light text-foreground mb-6 border-b pb-3">Auto-fix Configuration</h3>
+            <div
+              className={`absolute right-0 top-0 z-10 h-full w-full max-w-[560px] bg-white border-l border-border shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${autoFixDrawerVisible ? 'translate-x-0' : 'translate-x-full'}`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="h-12 px-6 border-b border-border bg-white flex items-center justify-between shrink-0">
+                <h3 className="text-md leading-none font-light text-foreground">Auto-fix Configuration</h3>
+                <button
+                  type="button"
+                  disabled={autoFixSubmitting}
+                  onClick={closeAutoFixDrawer}
+                  className="text-muted-foreground hover:text-foreground disabled:opacity-50"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
 
-              <div className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8">
-                  {/* Boolean Options */}
-                  <div className="space-y-6">
-                    {[
-                      { key: 'datatype_fix', label: 'Datatype Fix' },
-                      { key: 'missing_value_fix', label: 'Missing Value Fix' },
-                      { key: 'field_length_fix', label: 'Field Length Fix' },
-                      { key: 'deduplication', label: 'Deduplication' },
-                    ].map((opt) => (
-                      <div key={opt.key} className="space-y-2">
-                        <label className="text-md text-foreground">{opt.label}</label>
-                        <div className="flex gap-4">
-                          <label className="flex items-center gap-2 cursor-pointer group">
-                            <input
-                              type="radio"
-                              name={opt.key}
-                              checked={autoFixOptions[opt.key as keyof typeof autoFixOptions] === true}
-                              onChange={() => setAutoFixOptions({ ...autoFixOptions, [opt.key]: true })}
-                              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-                            />
-                            <span className="text-sm group-hover:text-primary transition-colors">Yes</span>
-                          </label>
-                          <label className="flex items-center gap-2 cursor-pointer group">
-                            <input
-                              type="radio"
-                              name={opt.key}
-                              checked={autoFixOptions[opt.key as keyof typeof autoFixOptions] === false}
-                              onChange={() => setAutoFixOptions({ ...autoFixOptions, [opt.key]: false })}
-                              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-                            />
-                            <span className="text-sm group-hover:text-primary transition-colors">No</span>
-                          </label>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Choice Options */}
-                  <div className="space-y-8">
-                    {[
-                      { key: 'phone_action', label: 'Phone Action' },
-                      { key: 'email_action', label: 'Email Action' },
-                    ].map((opt) => (
-                      <div key={opt.key} className="space-y-3">
-                        <label className="text-md text-foreground">{opt.label}</label>
-                        <div className="flex flex-col gap-2.5">
-                          {[
-                            { value: 'standardize', label: 'Standardize' },
-                            { value: 'clear', label: 'Clear' },
-                            { value: 'null', label: 'Skip' },
-                          ].map((choice) => (
-                            <label key={choice.value} className="flex items-center gap-2.5 cursor-pointer group">
+              <div className="flex-1 overflow-y-auto pt-4 px-6">
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 gap-y-6">
+                    <div className="space-y-6">
+                      {[
+                        { key: 'datatype_fix', label: 'Datatype Fix' },
+                        { key: 'missing_value_fix', label: 'Missing Value Fix' },
+                        { key: 'field_length_fix', label: 'Field Length Fix' },
+                        { key: 'deduplication', label: 'Deduplication' },
+                      ].map((opt) => (
+                        <div key={opt.key} className="space-y-2">
+                          <label className="text-md text-foreground">{opt.label}</label>
+                          <div className="flex gap-4">
+                            <label className="flex items-center gap-2 cursor-pointer group">
                               <input
                                 type="radio"
                                 name={opt.key}
-                                checked={
-                                  (choice.value === 'null' && autoFixOptions[opt.key as keyof typeof autoFixOptions] === null) ||
-                                  autoFixOptions[opt.key as keyof typeof autoFixOptions] === choice.value
-                                }
-                                onChange={() =>
-                                  setAutoFixOptions({
-                                    ...autoFixOptions,
-                                    [opt.key]: choice.value === 'null' ? null : choice.value,
-                                  })
-                                }
-                                className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                                checked={autoFixOptions[opt.key as keyof typeof autoFixOptions] === true}
+                                onChange={() => setAutoFixOptions({ ...autoFixOptions, [opt.key]: true })}
+                                className="w-4 h-4 accent-blue-600 border-gray-300 focus:ring-blue-500"
                               />
-                              <span className="text-sm group-hover:text-primary transition-colors">{choice.label}</span>
+                              <span className="text-sm group-hover:text-primary transition-colors">Yes</span>
                             </label>
-                          ))}
+                            <label className="flex items-center gap-2 cursor-pointer group">
+                              <input
+                                type="radio"
+                                name={opt.key}
+                                checked={autoFixOptions[opt.key as keyof typeof autoFixOptions] === false}
+                                onChange={() => setAutoFixOptions({ ...autoFixOptions, [opt.key]: false })}
+                                className="w-4 h-4 accent-blue-600 border-gray-300 focus:ring-blue-500"
+                              />
+                              <span className="text-sm group-hover:text-primary transition-colors">No</span>
+                            </label>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {autoFixError && (
-                  <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20">
-                    <p className="text-xs text-destructive font-medium">{autoFixError}</p>
-                  </div>
-                )}
-
-                {autoFixSubmitting && (
-                  <div className="w-full space-y-3 bg-muted/30 p-4 rounded-lg">
-                    <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-primary transition-all duration-300 shadow-[0_0_8px_rgba(59,130,246,0.5)]"
-                        style={{ width: `${progress}%` }}
-                      />
+                      ))}
                     </div>
-                    <p className="text-xs text-muted-foreground text-center font-medium">
-                      {progress < 100 ? `Processing auto-fix... ${progress}%` : "Processed successfully ✅"}
-                    </p>
-                  </div>
-                )}
 
-                <div className="flex items-center justify-end gap-3 pt-6 border-t">
-                  <Button
-                    variant="outline"
-                    disabled={autoFixSubmitting}
-                    onClick={() => {
-                      setAutoFixConfirmOpen(false);
-                      setAutoFixError(null);
-                    }}
-                    className="px-6"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    variant='outline'
-                    disabled={autoFixSubmitting}
-                    onClick={() => void handleAutoFixAllIssues()}
-                    className="min-w-[120px] font-semibold border-primary text-primary hover:bg-primary/10 transition-colors"
-                  >
-                    {autoFixSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                    Apply Fixes
-                  </Button>
+                    <div className="space-y-6">
+                      {[
+                        { key: 'phone_action', label: 'Phone Action' },
+                        { key: 'email_action', label: 'Email Action' },
+                      ].map((opt) => (
+                        <div key={opt.key} className="space-y-3">
+                          <label className="text-md text-foreground">{opt.label}</label>
+                          <div className="flex flex-row flex-wrap gap-4">
+                            {[
+                              { value: 'standardize', label: 'Standardize' },
+                              { value: 'clear', label: 'Clear' },
+                              { value: 'null', label: 'Skip' },
+                            ].map((choice) => (
+                              <label key={choice.value} className="flex items-center gap-2.5 cursor-pointer group">
+                                <input
+                                  type="radio"
+                                  name={opt.key}
+                                  checked={
+                                    (choice.value === 'null' && autoFixOptions[opt.key as keyof typeof autoFixOptions] === null) ||
+                                    autoFixOptions[opt.key as keyof typeof autoFixOptions] === choice.value
+                                  }
+                                  onChange={() =>
+                                    setAutoFixOptions({
+                                      ...autoFixOptions,
+                                      [opt.key]: choice.value === 'null' ? null : choice.value,
+                                    })
+                                  }
+                                  className="w-4 h-4 accent-blue-600 border-gray-300 focus:ring-blue-500"
+                                />
+                                <span className="text-sm group-hover:text-primary transition-colors">{choice.label}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {autoFixError && (
+                    <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                      <p className="text-xs text-destructive font-medium">{autoFixError}</p>
+                    </div>
+                  )}
+
+                  {autoFixSubmitting && (
+                    <div className="w-full space-y-3 bg-muted/30 p-4 rounded-lg">
+                      <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-primary transition-all duration-300 shadow-[0_0_8px_rgba(59,130,246,0.5)]"
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground text-center font-medium">
+                        {progress < 100 ? `Processing auto-fix... ${progress}%` : "Processed successfully ✅"}
+                      </p>
+                    </div>
+                  )}
                 </div>
+              </div>
+
+              <div className="shrink-0 border-t border-border bg-white p-4 flex items-center justify-end gap-2">
+                <Button
+                  variant="outline"
+                  disabled={autoFixSubmitting}
+                  onClick={closeAutoFixDrawer}
+                  className="h-10 px-5"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  disabled={autoFixSubmitting}
+                  onClick={() => void handleAutoFixAllIssues()}
+                  variant='outline'
+                  className='bg-white text-primary border-primary '
+                >
+                  {autoFixSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                  Apply Fixes
+                </Button>
               </div>
             </div>
           </div>
@@ -1916,7 +1945,7 @@ export function DataCleaningPage() {
                 <h3 className="text-md leading-none font-light text-foreground px-4">Auto-fix Addresses</h3>
 
                 <div className='px-4'>
-                  <X onClick={()=>{
+                  <X onClick={() => {
                     setAddressFixConfirmOpen(false)
                   }} />
                 </div>
@@ -1971,7 +2000,7 @@ export function DataCleaningPage() {
       {/* Navigation Arrows */}
       <button
         onClick={() => navigate('/data-preview')}
-        className="fixed left-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-primary/10  text-primary border border-blue-300 transition-all duration-200"
+        className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
         title="Previous: Data Preview"
       >
         <ChevronLeft className="h-6 w-6" />
@@ -1980,7 +2009,7 @@ export function DataCleaningPage() {
       <button
         onClick={handleContinue}
         disabled={submitting}
-        className="fixed right-2 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-primary/10  text-primary border border-blue-300 text-primary shadow-lg transition-all duration-200 disabled:opacity-50"
+       className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
         title="Next: Data Analytics"
       >
         <ChevronRight className="h-6 w-6" />
