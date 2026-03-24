@@ -387,7 +387,7 @@ function buildCorrectionPayload(
         sourceField,
         previousTargetField,
         updatedTargetField: null,
-        action: "DELETE",
+        action: "UPDATE",
       });
       return;
     }
