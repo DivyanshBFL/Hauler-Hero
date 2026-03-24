@@ -188,8 +188,8 @@ function buildNodesAndEdges(
       },
       style: {
         background: '#ffffff',
-        border: '1px solid #e2e8f0',
-        borderRadius: 8,
+        border: 'none',
+        borderRadius: 6,
       },
       draggable: false,
       selectable: false,
@@ -221,8 +221,10 @@ function buildNodesAndEdges(
       },
       style: {
         background: '#ffffff',
-        border: '1px solid #e2e8f0',
-        borderRadius: 8,
+        border: 'none',
+        borderRadius: 6,
+        boxShadow:"none",
+        
       },
       draggable: false,
       selectable: false,
@@ -909,7 +911,7 @@ export function FieldMappingPage() {
 
           <CardContent className="gap-4 ">
             {/* <div className="text-sm mt-4 font-semibold" >AI Auto-Mapping Summary :</div> */}
-            <div className="rounded-lg border mt-2 mb-4 bg-primary/10 text-blue-900 border-blue-300">
+            <div className="rounded-lg border mt-2 mb-2 bg-primary/10 text-blue-900 border-blue-300">
               <div className="px-4 py-2 flex items-center justify-between gap-2">
                 <div className="px-1 flex items-center flex-wrap gap-1 text-xs" >
                   <span className='font-bold'>Summary:</span>
@@ -962,7 +964,7 @@ export function FieldMappingPage() {
                 <div className={chatCollapsed ? 'col-span-1 w-full space-y-4' : 'lg:col-span-3 space-y-4'}>
 
                   <div
-                    ref={flowPaneRef} className="rounded-xl border border-border bg-background overflow-hidden" style={{ background: 'white !important' }}>
+                    ref={flowPaneRef} className="rounded-md border border-border bg-background overflow-hidden" style={{ background: 'white !important' }}>
                     <div className="grid grid-cols-2 gap-6 px-4 py-3">
                       <div className="space-y-2">
                         <div className="flex items-center justify-start text-sm gap-2">
@@ -1023,7 +1025,7 @@ export function FieldMappingPage() {
                         onChange={(e) => setShowOnlyErrors(e.target.checked)}
                         className="h-4 w-4 rounded border-input cursor-pointer accent-primary"
                       />
-                      Show only unmapped
+                      Show Unmapped
                     </label>
                     <ScrollArea
                       ref={scrollAreaRef}
@@ -1072,7 +1074,7 @@ export function FieldMappingPage() {
                             deletable: true,
                           }}
                           proOptions={{ hideAttribution: true }}
-                          defaultViewport={{ x: 0, y: 0, zoom: 0 }}
+                          defaultViewport={{ x: 0, y: 0, zoom: 1 }}
                           fitView={false}
                           style={{ background: 'transparent' }}
                         >

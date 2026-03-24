@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, ChevronLeft, ChevronRight,ChartNoAxesCombined } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight, ChartNoAxesCombined, Search } from "lucide-react";
 import { IMPORT_STATS_KEY, type ImportStats } from "@/types/importStats";
 import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
 import ProcessStepper from "@/components/ProcessStepper";
@@ -240,7 +240,7 @@ const DataAnalyticsPage = () => {
                   <CardTitle className="text-sm font-normal">Entity Changes Preview</CardTitle>
                   <CardDescription className="text-xs text-muted-foreground">
                     Data preview of the cleaned data
-                    <span className="inline-flex items-center ml-3 px-3 py-1 text-xs font-medium bg-muted rounded-md border">
+                    <span className="inline-flex items-center ml-3 px-3 py-1 text-xs font-medium bg-primary/10 rounded-md borderbg-primary/10 text-blue-900 border border-blue-300 ">
                       Changed rows: {changedRowsCount} | Changed cells: {changedCellsCount}
                     </span>
                   </CardDescription>
@@ -248,12 +248,15 @@ const DataAnalyticsPage = () => {
                 </div>
               </div>
               <div className="flex flex-wrap gap-2">
-                <Input
-                  placeholder="Search"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="w-[220px]"
-                />
+                <div className="relative">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="w-[220px] pl-8"
+                  />
+                </div>
                 <Button
                   variant={filterMode === "ALL" ? "default" : "outline"}
                   className={filterMode === "ALL"? "text-white":"border-primary text-primary font-semibold  hover:bg-primary/10 transition-colors"}
@@ -266,7 +269,7 @@ const DataAnalyticsPage = () => {
                   className={filterMode === "CHANGED"? "text-white":"border-primary text-primary font-semibold  hover:bg-primary/10 transition-colors"}
                   onClick={() => setFilterMode("CHANGED")}
                 >
-                  Changed only
+                  Changed
                 </Button>
                 <Button
                   variant={filterMode === "UNCHANGED" ? "default" : "outline"}
@@ -281,7 +284,7 @@ const DataAnalyticsPage = () => {
 
           <CardContent>
             <div className="rounded-md border border-border overflow-hidden mt-4">
-              <div className="max-h-[520px] overflow-y-auto border rounded-md">
+              <div className="max-h-[520px] min-h-[40vh] overflow-y-auto border rounded-md">
                 <Table className="w-full text-sm">
                   <TableHeader className="sticky top-0 z-10 bg-muted">
                     <TableRow>
