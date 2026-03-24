@@ -7,13 +7,11 @@ import {
   TrendingUp,
   PlusCircle,
   RefreshCw,
-  MinusCircle,
   Copy,
   Calendar,
   Percent,
   Activity,
-  Download,
-  ScrollText
+  Download
 } from 'lucide-react';
 import { getDefaultImportStats, type ImportStats } from '@/types/importStats';
 import { PAGE_OUTER, PAGE_CONTAINER } from '@/constants/layout';
@@ -33,13 +31,15 @@ function MetricCard({
   className?: string;
 }>) {
   return (
-    <div className={`rounded-lg border p-3 ${className}`}>
-      <div className="flex items-center justify-between">
-        <span className="text-[11px] font-medium text-muted-foreground">{label}</span>
-        <Icon className="h-4 w-4 text-muted-foreground" />
+    <div className={`rounded-xl border p-8 flex flex-col justify-between min-h-[160px] ${className}`}>
+      <div className="flex items-center justify-between opacity-80">
+        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{label}</span>
+        <Icon className="h-6 w-6 text-muted-foreground" />
       </div>
-      <div className="text-xl font-semibold tabular-nums mt-1">{value}</div>
-      {subtext ? <div className="text-[11px] text-muted-foreground">{subtext}</div> : null}
+      <div className="mt-4">
+        <div className="text-4xl font-bold tabular-nums tracking-tight">{value}</div>
+        {subtext ? <div className="text-sm font-medium text-muted-foreground mt-1.5 opacity-70">{subtext}</div> : null}
+      </div>
     </div>
   );
 }
@@ -113,8 +113,6 @@ export function CompletePage() {
   const totalFields = s.total_processed.fields;
   const affectedRows = s.records_affected.rows;
   const affectedRowsPct = s.records_affected.rows_pct;
-  const unchangedRows = s.unchanged_data.rows;
-  const unchangedPct = s.unchanged_data.pct;
   const duplicatesRows = s.duplicate_findings.rows_removed;
   const duplicatesPct = s.duplicate_findings.pct;
 
@@ -124,20 +122,6 @@ export function CompletePage() {
   const autoMappedPct = s.mapped_data.cols_pct;
   const successRatePct = s.success_rate.pct;
 
-  // Donut — row level: affected / unchanged / duplicates
-  const donutTotal = Math.max(affectedRows + unchangedRows + duplicatesRows, 1);
-  const donutAffectedDeg = (affectedRows / donutTotal) * 360;
-  const donutUnchangedDeg = (unchangedRows / donutTotal) * 360;
-  const donutDupDeg = (duplicatesRows / donutTotal) * 360;
-
-  // By-action bars — use natural max across all four values
-  const maxActionCount = Math.max(affectedRows, updatedFields, unchangedRows, duplicatesRows, 1);
-
-  // Outcome stacked bar — normalise to 100 %
-  const outcomeSum = Math.max(affectedRowsPct + unchangedPct + duplicatesPct, 1);
-  const outcomeAffected = (affectedRowsPct / outcomeSum) * 100;
-  const outcomeUnchanged = (unchangedPct / outcomeSum) * 100;
-  const outcomeDuplicates = (duplicatesPct / outcomeSum) * 100;
 
   // Import date — use updated timestamp if available, otherwise fallback to current time
   const importDate =
@@ -150,250 +134,90 @@ export function CompletePage() {
       <div className={PAGE_CONTAINER}>
         <Card className="border bg-card overflow-hidden">
           <CardContent className="p-5 space-y-5">
-            <div className="flex items-center justify-center bg-muted/20">
-              <div className="flex gap-6 w-full max-w-6xl">
-
-                {/* LEFT: Success Card */}
-                <div className="flex flex-col items-center justify-center rounded-xl border border-green-200 bg-green-50 px-8 py-4 text-center w-full max-w-md">
+            <div className="bg-muted/10">
+              <div className="w-full animate-in fade-in slide-in-from-top-8 duration-1000">
+                {/* Full Width Success Banner */}
+                <div className="flex flex-col items-center justify-center rounded-xl border border-green-200 bg-green-50 px-8 py-8 text-center w-full">
                   {/* Icon */}
-                  <div className="flex items-center justify-center h-14 w-14 rounded-full border-2 border-green-500">
-                    <CheckCircle2 className="h-7 w-7 text-green-600" />
+                  <div className="flex items-center justify-center h-16 w-16 rounded-full border-2 border-green-500 bg-green-100 mb-4">
+                    <CheckCircle2 className="h-8 w-8 text-green-600" />
                   </div>
 
                   {/* Title */}
-                  <p className="mt-4 text-lg font-semibold text-gray-900">
+                  <h1 className="text-2xl font-semibold text-foreground">
                     Success!
-                  </p>
+                  </h1>
 
                   {/* Subtitle */}
-                  <p className="mt-2 text-sm text-gray-600">
-                    Data cleaning completed. 
+                  <p className="mt-2 text-muted-foreground">
+                    Data cleaning completed successfully.
                   </p>
 
-                  {/* Footer row */}
-                  <div className="mt-4 flex items-center gap-6 text-sm text-gray-600">
-
+                  {/* Footer info */}
+                  <div className="mt-6 flex items-center justify-center gap-6 text-sm text-muted-foreground">
                     {importDate && (
                       <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-gray-500" />
+                        <Calendar className="h-4 w-4" />
                         <span>{importDate}</span>
                       </div>
                     )}
-                  </div>
-                </div>
-
-                {/* RIGHT: Quick Summary */}
-                <div className="rounded-xl border border-gray-200 bg-white px-6 py-5 w-full max-w-4xl">
-                  {/* Header */}
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="flex items-center justify-center h-7 w-7 rounded-md bg-green-100">
-                      <ScrollText className="h-4 w-4 text-green-600" />
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4" />
+                      <span>{totalRows} Rows Processed</span>
                     </div>
-                    <p className="text-base font-semibold text-gray-900">
-                      Quick Summary
-                    </p>
                   </div>
-
-                  {/* List */}
-                  <ul className="space-y-3 text-sm text-gray-600">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5" />
-                      <span>
-                        Your CSV was uploaded and parsed into{" "}
-                        <span className="font-medium">{totalRows}</span> rows and{" "}
-                      <span className="font-medium">{totalFields}</span> fields.
-                      </span>
-                    </li>
-
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5" />
-                      <span>
-                       Source columns were mapped to the target entity;{" "}
-                       <span className="font-medium">
-                        {s.mapped_data.mapped_cols}/{s.mapped_data.total_cols} columns matched
-                      </span>{" "}
-                      ({autoMappedPct}%).
-                      </span>
-                    </li>
-
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5" />
-                      <span>
-                        <span className="font-medium">{affectedRows}</span> rows affected,{" "}
-                      <span className="font-medium">{updatedFields}</span> fields updated,{" "}
-                      <span className="font-medium">{duplicatesRows}</span> duplicates removed.
-                      </span>
-                    </li>
-
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5" />
-                      <span>
-                        Data is now available to download.  
-                      </span>
-                    </li>
-                  </ul>
                 </div>
-
               </div>
             </div>
 
             <div>
-              <div className="text-sm font-semibold mb-2">Key metrics</div>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2.5">
+              <div className="text-sm font-semibold mb-4 text-muted-foreground uppercase tracking-wider">Summary Report</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                 <MetricCard
                   label="Total Processed Rows"
                   value={totalRows}
                   icon={TrendingUp}
                   subtext={`with ${totalFields.toLocaleString()} fields`}
-                  className="bg-emerald-100/70"
+                  className="bg-emerald-100/70 border-emerald-200"
                 />
                 <MetricCard
                   label="Records Affected"
                   value={affectedRows}
                   icon={Activity}
                   subtext={`${affectedRowsPct}% of total`}
-                  className="bg-violet-100/70"
+                  className="bg-violet-100/70 border-violet-200"
                 />
                 <MetricCard
                   label="Success Rate"
                   value={`${successRatePct}%`}
                   icon={Percent}
                   subtext="AI corrected"
-                  className="bg-amber-100/70"
+                  className="bg-amber-100/70 border-amber-200"
                 />
                 <MetricCard
                   label="Auto-mapped coverage"
                   value={`${autoMappedPct}%`}
                   icon={PlusCircle}
                   subtext={`${s.mapped_data.mapped_cols}/${s.mapped_data.total_cols} cols`}
-                  className="bg-lime-100/70"
+                  className="bg-lime-100/70 border-lime-200"
                 />
                 <MetricCard
                   label="Updated Fields"
                   value={updatedFields}
                   icon={RefreshCw}
                   subtext={`${updatedPct}%`}
-                  className="bg-fuchsia-100/70"
-                />
-                <MetricCard
-                  label="Unchanged Rows"
-                  value={unchangedRows}
-                  icon={MinusCircle}
-                  subtext={`${unchangedPct}%`}
-                  className="bg-blue-100/70"
+                  className="bg-fuchsia-100/70 border-fuchsia-200"
                 />
                 <MetricCard
                   label="Duplicates Removed"
                   value={duplicatesRows}
                   icon={Copy}
                   subtext={`${duplicatesPct}%`}
-                  className="bg-rose-100/70"
+                  className="bg-rose-100/70 border-rose-200"
                 />
               </div>
             </div>
 
-            {/* <div className="rounded-lg border bg-muted/30 p-3">
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-2">
-                
-                <div className="rounded-md border bg-background px-3 py-2 flex items-center justify-between text-sm">
-                  <span className="inline-flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-blue-500" />
-                    Affected
-                  </span>
-                  <span className="font-semibold">{affectedRowsPct}%</span>
-                </div>
-                <div className="rounded-md border bg-background px-3 py-2 flex items-center justify-between text-sm">
-                  <span className="inline-flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
-                    Updated Fields
-                  </span>
-                  <span className="font-semibold">{updatedPct}%</span>
-                </div>
-                <div className="rounded-md border bg-background px-3 py-2 flex items-center justify-between text-sm">
-                  <span className="inline-flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-zinc-400" />
-                    Unchanged
-                  </span>
-                  <span className="font-semibold">{unchangedPct}%</span>
-                </div>
-                <div className="rounded-md border bg-background px-3 py-2 flex items-center justify-between text-sm">
-                  <span className="inline-flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-rose-500" />
-                    Duplicates
-                  </span>
-                  <span className="font-semibold">{duplicatesPct}%</span>
-                </div>
-              </div>
-            </div> */}
-
-            {/* 3 panels */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-              <div className="rounded-lg border bg-muted/30 p-4">
-                <div className="text-sm font-semibold mb-3">Record breakdown</div>
-                <div className="flex items-center gap-4">
-                  <div
-                    className="h-28 w-28 rounded-full border"
-                    style={{
-                      background: `conic-gradient(
-                          #3b82f6 0deg ${donutAffectedDeg}deg,
-                          #d1d5db ${donutAffectedDeg}deg ${donutAffectedDeg + donutUnchangedDeg}deg,
-                          #ef4444 ${donutAffectedDeg + donutUnchangedDeg}deg 360deg
-                        )`,
-                    }}
-                  />
-                  <div className="space-y-1.5 text-sm">
-                    <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-blue-500" />Affected <b>{affectedRows}</b></div>
-                    <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-zinc-400" />Unchanged <b>{unchangedRows}</b></div>
-                    <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full bg-rose-500" />Duplicates <b>{duplicatesRows}</b></div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-lg border bg-muted/30 p-4">
-                <div className="text-sm font-semibold mb-3">By action</div>
-                {[
-                  { label: 'Affected Rows', value: affectedRows, color: 'bg-blue-500' },
-                  { label: 'Updated Fields', value: updatedFields, color: 'bg-amber-500' },
-                  { label: 'Unchanged Rows', value: unchangedRows, color: 'bg-zinc-400' },
-                  { label: 'Duplicates', value: duplicatesRows, color: 'bg-rose-500' },
-                ].map((row) => (
-                  <div key={row.label} className="grid grid-cols-[120px_1fr_40px] items-center gap-3 mb-2 text-sm">
-                    <span className="text-muted-foreground">{row.label}</span>
-                    <div className="h-2.5 rounded bg-background overflow-hidden">
-                      <div
-                        className={`h-full ${row.color}`}
-                        style={{ width: `${Math.round((row.value / maxActionCount) * 100)}%` }}
-                      />
-                    </div>
-                    <span className="text-right font-medium tabular-nums">{row.value}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="rounded-lg border bg-muted/30 p-4">
-                <div className="text-sm font-semibold mb-3">Outcome overview</div>
-                <div className="h-11 rounded-md bg-background overflow-hidden flex">
-                  <div style={{ width: `${outcomeAffected}%` }} className="bg-blue-500" />
-                  <div style={{ width: `${outcomeUnchanged}%` }} className="bg-zinc-400" />
-                  <div style={{ width: `${outcomeDuplicates}%` }} className="bg-rose-500" />
-                </div>
-                <div className="mt-3 text-sm text-muted-foreground">
-                  <b className="text-foreground">{affectedRowsPct}%</b> Affected &nbsp;&nbsp;
-                  <b className="text-foreground">{unchangedPct}%</b> Unchanged &nbsp;&nbsp;
-                  <b className="text-foreground">{duplicatesPct}%</b> Duplicates
-                </div>
-              </div>
-            </div>
-
-            {/* <div className="rounded-lg border bg-muted/30 p-4">
-              <div className="text-sm font-semibold mb-2">What happened</div>
-              <ul className="text-sm space-y-2 text-foreground">
-                <li>• Your CSV was uploaded and parsed into <span className="font-medium tabular-nums">{totalRows}</span> rows and <span className="font-medium tabular-nums">{totalFields.toLocaleString()}</span> fields.</li>
-                <li>• Source columns were mapped to the target entity; <span className="font-medium tabular-nums">{s.mapped_data.mapped_cols}/{s.mapped_data.total_cols}</span> columns matched ({autoMappedPct}%).</li>
-                <li>• <span className="font-medium tabular-nums">{affectedRows}</span> rows affected, <span className="font-medium tabular-nums">{updatedFields}</span> fields updated, <span className="font-medium tabular-nums">{duplicatesRows}</span> duplicates removed.</li>
-                <li>• Data is now available in the system.</li>
-              </ul>
-            </div> */}
 
             <div className="flex flex-col sm:flex-row gap-3 pt-1">
               <Button variant="outline" onClick={handleDownloadProcessedFile} className="flex-1 h-10">

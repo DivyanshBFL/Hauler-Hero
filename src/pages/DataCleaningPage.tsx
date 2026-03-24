@@ -1381,12 +1381,13 @@ export function DataCleaningPage() {
         if (!sid) throw new Error('Missing session id for column operation refresh');
 
         const refreshedRows = await refreshRowsFromSession();
-        if (!refreshedRows?.length) {
+        const backendRows = refreshedRows && refreshedRows.length ? refreshedRows : buildRowsFromServiceResponse(result);
+        if (!backendRows || !backendRows.length) {
           throw new Error('No refreshed rows returned from data endpoint');
         }
 
-        const edits = buildDiffEdits(allRows, refreshedRows, [column]);
-        await commitRows(refreshedRows, edits, {
+        const edits = buildDiffEdits(allRows, backendRows, [column]);
+        await commitRows(backendRows, edits, {
           actor: 'user',
           actionLabel: 'Column operation applied',
         });
@@ -1397,13 +1398,15 @@ export function DataCleaningPage() {
           cellsToMarkAsWorked.add(getCellKey(edit.row_index, edit.column));
         });
         setWorkedOnCells(prev => new Set([...prev, ...cellsToMarkAsWorked]));
+        
+        if (!refreshedRows?.length) {
+          await runIssueAnalysis(backendRows);
+        }
       } catch (error) {
         showApiErrorToast(error, 'Failed to refresh rows after column operation');
-      } finally {
-        setIssueCellPanel(null);
       }
     },
-    [addActivityLog, getActiveSessionId, refreshRowsFromSession, buildDiffEdits, allRows, commitRows]
+    [addActivityLog, getActiveSessionId, refreshRowsFromSession, buildRowsFromServiceResponse, buildDiffEdits, allRows, commitRows, runIssueAnalysis]
   );
 
   const handleColumnOperationApplied = useCallback(
@@ -1420,22 +1423,27 @@ export function DataCleaningPage() {
         if (!sid) throw new Error('Missing session id for column operation refresh');
 
         const refreshedRows = await refreshRowsFromSession();
-        if (!refreshedRows?.length) {
+        const backendRows = refreshedRows && refreshedRows.length ? refreshedRows : buildRowsFromServiceResponse(result);
+        if (!backendRows || !backendRows.length) {
           throw new Error('No refreshed rows returned from data endpoint');
         }
 
-        const edits = buildDiffEdits(allRows, refreshedRows, [column]);
-        await commitRows(refreshedRows, edits, {
+        const edits = buildDiffEdits(allRows, backendRows, [column]);
+        await commitRows(backendRows, edits, {
           actor: 'user',
           actionLabel: 'Column operation applied',
         });
+        
+        if (!refreshedRows?.length) {
+          await runIssueAnalysis(backendRows);
+        }
       } catch (error) {
         showApiErrorToast(error, 'Failed to refresh rows after column operation');
       } finally {
         setColumnActionModal(null);
       }
     },
-    [addActivityLog, getActiveSessionId, loadSessionStartIssues, buildDiffEdits, allRows, commitRows]
+    [addActivityLog, getActiveSessionId, loadSessionStartIssues, refreshRowsFromSession, buildRowsFromServiceResponse, buildDiffEdits, allRows, commitRows, runIssueAnalysis]
   );
 
 
