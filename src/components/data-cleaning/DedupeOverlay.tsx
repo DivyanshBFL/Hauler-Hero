@@ -311,7 +311,7 @@ export default function DedupeOverlay(props: Props) {
                                     </div>
                                 )}
 
-                                <div className="absolute bottom-0 left-0 right-0 border-t border-border bg-white p-4 flex justify-between gap-2">
+                                <div className="absolute bottom-0 left-0 right-0 border-t border-border bg-white p-4 flex justify-end gap-2">
                                     <Button
                                         variant="outline"
                                         onClick={() => { setDrawer(null); setPreviewOpen(false); }}

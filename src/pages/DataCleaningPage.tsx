@@ -2272,7 +2272,8 @@ export function DataCleaningPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="h-12 px-6 border-b border-border bg-white flex items-center justify-between shrink-0">
-              <h3 className="text-md leading-none font-light text-foreground">
+              <h3 className="flex items-center gap-2 text-md leading-none font-light text-foreground">
+                <Sparkles className="h-4 w-4" />
                 Data Cleanup Rules
               </h3>
               <button
@@ -2449,12 +2450,12 @@ export function DataCleaningPage() {
               </div>
             </div>
 
-            <div className="shrink-0 border-t border-border bg-white p-4 flex items-center justify-between gap-2">
+            <div className="shrink-0 border-t border-border bg-white p-4 flex items-center justify-end gap-2">
               <Button
                 variant="outline"
                 disabled={autoFixSubmitting}
                 onClick={closeAutoFixDrawer}
-                className="h-10 px-5"
+                className="h-10"
               >
                 Cancel
               </Button>
@@ -2529,7 +2530,7 @@ export function DataCleaningPage() {
                 )}
               </div>
 
-              <div className="p-4 border-t flex items-center justify-between gap-2">
+              <div className="p-4 border-t flex items-center justify-end gap-2">
                 <Button
                   variant="outline"
                   className="px-6 "
@@ -2540,7 +2541,7 @@ export function DataCleaningPage() {
                 >
                   Cancel
                 </Button>
-                <Button onClick={() => void handleProceedFixAddresses()} disabled={addressFixSubmitting} variant="outline" className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors ">
+                <Button onClick={() => void handleProceedFixAddresses()} disabled={addressFixSubmitting} variant="outline" className="px-5 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors ">
                   {addressFixSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Proceed
                 </Button>
