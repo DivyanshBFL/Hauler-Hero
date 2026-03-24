@@ -2327,7 +2327,7 @@ export function DataCleaningPage() {
                                     [opt.key]: true,
                                   })
                                 }
-                                className="w-4 h-4 accent-blue-600 border-gray-300 focus:ring-blue-500"
+                                className="w-4 h-4 accent-blue-600 border-gray-300"
                               />
                               <span className="text-xs group-hover:text-primary transition-colors">
                                 Yes
@@ -2348,7 +2348,7 @@ export function DataCleaningPage() {
                                     [opt.key]: false,
                                   })
                                 }
-                                className="w-4 h-4 accent-blue-600 border-gray-300 focus:ring-blue-500"
+                                className="w-4 h-4 accent-blue-600 border-gray-300"
                               />
                               <span className="text-xs group-hover:text-primary transition-colors">
                                 No
@@ -2410,7 +2410,7 @@ export function DataCleaningPage() {
                                           : choice.value,
                                     })
                                   }
-                                  className="w-4 h-4 accent-blue-600 border-gray-300 focus:ring-blue-500"
+                                  className="w-4 h-4 accent-blue-600 border-gray-300"
                                 />
                                 <span className="text-xs group-hover:text-primary transition-colors">
                                   {choice.label}

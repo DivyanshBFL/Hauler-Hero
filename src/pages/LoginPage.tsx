@@ -126,7 +126,7 @@ export function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     disabled={loading}
-                    className="h-11 transition-all duration-200 focus:ring-2 focus:ring-ring mt-0 rounded-none"
+                    className="h-11 transition-all duration-200 mt-0 rounded-none"
                   />
                 </div>
 
@@ -141,7 +141,7 @@ export function LoginPage() {
                       onChange={(e) => setPassword(e.target.value)}
                       required
                       disabled={loading}
-                      className="h-11 pr-10 transition-all duration-200 focus:ring-2 focus:ring-ring rounded-none"
+                      className="h-11 pr-10 transition-all duration-200 rounded-none"
                     />
                     <button
                       type="button"

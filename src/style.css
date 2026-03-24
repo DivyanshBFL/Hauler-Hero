@@ -13,6 +13,16 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+input:focus,
+input:focus-visible,
+select:focus,
+select:focus-visible,
+textarea:focus,
+textarea:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 a {
   font-weight: 500;
   color: #646cff;

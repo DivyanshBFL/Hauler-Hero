@@ -174,10 +174,10 @@ export default function DedupeOverlay(props: Props) {
 
                                 <div className="flex items-center gap-4">
                                     <label className="inline-flex items-center gap-2 text-sm">
-                                        <input className="accent-blue-600 focus:ring-blue-500" type="radio" checked={dedupeMode === 'column'} onChange={() => setDedupeMode('column')} /> Column wise
+                                        <input className="accent-blue-600" type="radio" checked={dedupeMode === 'column'} onChange={() => setDedupeMode('column')} /> Column wise
                                     </label>
                                     <label className="inline-flex items-center gap-2 text-sm">
-                                        <input className="accent-blue-600 focus:ring-blue-500" type="radio" checked={dedupeMode === 'row'} onChange={() => setDedupeMode('row')} /> Row wise
+                                        <input className="accent-blue-600" type="radio" checked={dedupeMode === 'row'} onChange={() => setDedupeMode('row')} /> Row wise
                                     </label>
                                     {duplicateIndicatorCount > 0 && (
                                         <div className="ml-auto text-red-500 bg-red-50 border border-red-100 rounded-md px-3 py-1.5 text-sm font-medium">
@@ -299,13 +299,13 @@ export default function DedupeOverlay(props: Props) {
                                         <p className="text-sm font-medium mb-2">Keep strategy</p>
                                         <div className="flex flex-wrap gap-4 text-sm mt-2">
                                             <label className="inline-flex items-center gap-2">
-                                                <input type="radio" name="keep_strategy" checked={dedupeKeepStrategy === 'oldest'} onChange={() => setDedupeKeepStrategy('oldest')} className="text-primary focus:ring-primary h-4 w-4" /> Oldest
+                                                <input type="radio" name="keep_strategy" checked={dedupeKeepStrategy === 'oldest'} onChange={() => setDedupeKeepStrategy('oldest')} className="text-primary h-4 w-4" /> Oldest
                                             </label>
                                             <label className="inline-flex items-center gap-2">
-                                                <input type="radio" name="keep_strategy" checked={dedupeKeepStrategy === 'latest'} onChange={() => setDedupeKeepStrategy('latest')} className="text-primary focus:ring-primary h-4 w-4" /> Latest
+                                                <input type="radio" name="keep_strategy" checked={dedupeKeepStrategy === 'latest'} onChange={() => setDedupeKeepStrategy('latest')} className="text-primary h-4 w-4" /> Latest
                                             </label>
                                             <label className="inline-flex items-center gap-2">
-                                                <input type="radio" name="keep_strategy" checked={dedupeKeepStrategy === 'max_filled'} onChange={() => setDedupeKeepStrategy('max_filled')} className="text-primary focus:ring-primary h-4 w-4" /> Maximum filled
+                                                <input type="radio" name="keep_strategy" checked={dedupeKeepStrategy === 'max_filled'} onChange={() => setDedupeKeepStrategy('max_filled')} className="text-primary h-4 w-4" /> Maximum filled
                                             </label>
                                         </div>
                                     </div>
