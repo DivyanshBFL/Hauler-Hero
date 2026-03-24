@@ -83,27 +83,27 @@ const COLUMN_MENU_ITEMS: {
   label: string;
   icon: React.ReactNode;
 }[] = [
-  {
-    action: "replaceValues",
-    label: "Replace values",
-    icon: <Replace className="h-4 w-4" />,
-  },
-  {
-    action: "trimSpaces",
-    label: "Trim spaces",
-    icon: <Scissors className="h-4 w-4" />,
-  },
-  {
-    action: "truncateValues",
-    label: "Truncate values",
-    icon: <AlignLeft className="h-4 w-4" />,
-  },
-  {
-    action: "addPrefixOrSuffix",
-    label: "Add prefix or suffix",
-    icon: <PlusSquare className="h-4 w-4" />,
-  },
-];
+    {
+      action: "replaceValues",
+      label: "Replace values",
+      icon: <Replace className="h-4 w-4" />,
+    },
+    {
+      action: "trimSpaces",
+      label: "Trim spaces",
+      icon: <Scissors className="h-4 w-4" />,
+    },
+    {
+      action: "truncateValues",
+      label: "Truncate values",
+      icon: <AlignLeft className="h-4 w-4" />,
+    },
+    {
+      action: "addPrefixOrSuffix",
+      label: "Add prefix or suffix",
+      icon: <PlusSquare className="h-4 w-4" />,
+    },
+  ];
 
 function isCellMissing(value: unknown): boolean {
   if (value === null || value === undefined) return true;
@@ -639,10 +639,10 @@ export function DataCleaningPage() {
         const row =
           directRow && typeof directRow === "object"
             ? {
-                ...(mappedFromSource ?? {}),
-                ...directRow,
-                __rowIndex: rowIndex,
-              }
+              ...(mappedFromSource ?? {}),
+              ...directRow,
+              __rowIndex: rowIndex,
+            }
             : mappedFromSource;
 
         if (!row || typeof row !== "object") return;
@@ -702,8 +702,8 @@ export function DataCleaningPage() {
       const inferredColumns = normalizedColumns.length
         ? normalizedColumns
         : Object.keys(resultRows[0]?.row ?? {}).filter(
-            (c) => !c.startsWith("__"),
-          );
+          (c) => !c.startsWith("__"),
+        );
 
       return {
         rows: resultRows,
@@ -2068,8 +2068,8 @@ export function DataCleaningPage() {
                               selectedIssueType === "allIssues"
                                 ? cellIssues
                                 : cellIssues.filter(
-                                    (x) => x === selectedIssueType,
-                                  );
+                                  (x) => x === selectedIssueType,
+                                );
                             let hasCellIssue = visibleCellIssues.length > 0;
 
                             const cellKey = getCellKey(rowIndex, col);
@@ -2088,8 +2088,8 @@ export function DataCleaningPage() {
                                 title={
                                   hasCellIssue
                                     ? visibleCellIssues
-                                        .map(toIssueLabel)
-                                        .join(", ")
+                                      .map(toIssueLabel)
+                                      .join(", ")
                                     : undefined
                                 }
                                 onClick={() => {
@@ -2099,7 +2099,7 @@ export function DataCleaningPage() {
                                 }}
                               >
                                 {editingCell?.rowIndex === rowIndex &&
-                                editingCell?.column === col ? (
+                                  editingCell?.column === col ? (
                                   <input
                                     type="text"
                                     value={editedValue}
@@ -2274,7 +2274,8 @@ export function DataCleaningPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="h-12 px-6 border-b border-border bg-white flex items-center justify-between shrink-0">
-              <h3 className="text-md leading-none font-light text-foreground">
+              <h3 className="flex items-center gap-2 text-md leading-none font-light text-foreground">
+                <Sparkles className="h-4 w-4" />
                 Data Cleanup Rules
               </h3>
               <button
@@ -2318,7 +2319,7 @@ export function DataCleaningPage() {
                                 name={opt.key}
                                 checked={
                                   autoFixOptions[
-                                    opt.key as keyof typeof autoFixOptions
+                                  opt.key as keyof typeof autoFixOptions
                                   ] === true
                                 }
                                 onChange={() =>
@@ -2339,7 +2340,7 @@ export function DataCleaningPage() {
                                 name={opt.key}
                                 checked={
                                   autoFixOptions[
-                                    opt.key as keyof typeof autoFixOptions
+                                  opt.key as keyof typeof autoFixOptions
                                   ] === false
                                 }
                                 onChange={() =>
@@ -2395,10 +2396,10 @@ export function DataCleaningPage() {
                                   checked={
                                     (choice.value === "null" &&
                                       autoFixOptions[
-                                        opt.key as keyof typeof autoFixOptions
+                                      opt.key as keyof typeof autoFixOptions
                                       ] === null) ||
                                     autoFixOptions[
-                                      opt.key as keyof typeof autoFixOptions
+                                    opt.key as keyof typeof autoFixOptions
                                     ] === choice.value
                                   }
                                   onChange={() =>
@@ -2533,7 +2534,7 @@ export function DataCleaningPage() {
               )}
             </div>
 
-            <div className="p-4 border-t flex items-center justify-between gap-2">
+            <div className="p-4 border-t flex items-center justify-end gap-2">
               <Button
                 variant="outline"
                 className="px-6 "
@@ -2544,21 +2545,15 @@ export function DataCleaningPage() {
               >
                 Cancel
               </Button>
-              <Button
-                onClick={() => void handleProceedFixAddresses()}
-                disabled={addressFixSubmitting}
-                variant="outline"
-                className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
-              >
-                {addressFixSubmitting && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
+              <Button onClick={() => void handleProceedFixAddresses()} disabled={addressFixSubmitting} variant="outline" className="px-5 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors ">
+                {addressFixSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Proceed
               </Button>
             </div>
           </div>
         </div>
-      )}
+      )
+      }
 
       {proceedConfirmOpen && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center">

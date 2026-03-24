@@ -127,7 +127,7 @@ export function UploadPage() {
     const isCSV = fileType === "text/csv" || fileName.endsWith(".csv");
     const isXLSX =
       fileType ===
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
       fileName.endsWith(".xlsx");
 
     if (isCSV) {
@@ -184,8 +184,9 @@ export function UploadPage() {
         setSheets(sheetsData);
       },
       error: (error) => {
-        console.error("Error parsing CSV:", error);
-        alert("Error parsing CSV file");
+        console.error('Error parsing CSV:', error);
+        alert('Error parsing CSV file');
+        resetUploadState();
       },
     });
   };
@@ -252,8 +253,9 @@ export function UploadPage() {
           requestAnimationFrame(() => setShowSheetSelector(true));
         }
       } catch (error) {
-        console.error("Error parsing XLSX:", error);
-        alert("Error parsing XLSX file");
+        console.error('Error parsing XLSX:', error);
+        alert('Error parsing XLSX file');
+        resetUploadState();
       }
     };
     reader.readAsArrayBuffer(file);
@@ -276,8 +278,9 @@ export function UploadPage() {
       setSheets(sheetsData);
       setShowSheetSelector(false);
     } catch (error) {
-      console.error("Error processing sheet:", error);
-      alert("Error processing sheet");
+      console.error('Error processing sheet:', error);
+      alert('Error processing sheet');
+      resetUploadState();
     }
   };
 
@@ -445,15 +448,12 @@ export function UploadPage() {
                   </CardDescription>
                 </div>
               </div>
-              <div className="float-right">
+              <div className='float-right'>
                 {file && (
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
+                  <div className='flex gap-2'>
+                    <Button variant='outline'
                       className="px-5 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors hover:text-primary"
-                      onClick={() => {
-                        setShowSheetSelector(true);
-                      }}
+                      onClick={() => { setShowSheetSelector(true) }}
                     >
                       Re-Join Sheets
                     </Button>
@@ -483,10 +483,9 @@ export function UploadPage() {
                   className={`
                     w-full max-w-3xl relative group flex flex-col items-center justify-center gap-3 p-6 
                     rounded-xl border-2 border-dashed transition-all duration-300 cursor-pointer
-                    ${
-                      isDragging
-                        ? "border-primary bg-primary/10 scale-[1.02] shadow-2xl"
-                        : "border-primary/40 bg-primary/[0.03] hover:border-primary/60 hover:bg-primary/[0.06]"
+                    ${isDragging
+                      ? "border-primary bg-primary/10 scale-[1.02] shadow-2xl"
+                      : "border-primary/40 bg-primary/[0.03] hover:border-primary/60 hover:bg-primary/[0.06]"
                     }
                   `}
                   onClick={openFilePicker}
@@ -552,39 +551,22 @@ export function UploadPage() {
                             Data Preview :
                           </div>
                           <div className="bg-primary/10 text-blue-900 border border-blue-300 px-2 py-1 rounded-md w-full mt-2">
-                            <span className="text-xs">
-                              Identified{" "}
-                              <span className="font-semibold">
-                                {sheet.headers.length} columns
-                              </span>{" "}
-                              and{" "}
-                              <span className="font-semibold">
-                                {allRows.length} rows
-                              </span>{" "}
-                              in this uploaded file.
+
+                            <span className='text-xs'>
+                              Identified <span className="font-semibold">{sheet.headers.length} columns</span> and{' '}
+                              <span className="font-semibold">{allRows.length} rows</span> in this selected file.
                             </span>
 
                             {isJoinRequired && joinSelection && (
                               <span className="text-xs ml-1">
-                                Join configured:{" "}
-                                <span className="font-semibold">
-                                  {joinSelection.leftSheet}
-                                </span>{" "}
-                                (
-                                <span className="font-semibold">
-                                  {joinSelection.leftKey}
-                                </span>
-                                ) {"->"}{" "}
-                                <span className="font-semibold">
-                                  {joinSelection.rightSheet}
-                                </span>{" "}
-                                (
-                                <span className="font-semibold">
-                                  {joinSelection.rightKey}
-                                </span>
-                                )
+                                Join configured: <span className="font-semibold">{joinSelection.leftSheet}</span>
+                                {' '}(<span className="font-semibold">{joinSelection.leftKey}</span>) {'->'}{' '}
+                                <span className="font-semibold">{joinSelection.rightSheet}</span>
+                                {' '}(<span className="font-semibold">{joinSelection.rightKey}</span>)
                               </span>
                             )}
+
+
                           </div>
                         </div>
 
@@ -621,7 +603,7 @@ export function UploadPage() {
                                     >
                                       {String(
                                         (row as Record<string, unknown>)?.[
-                                          header
+                                        header
                                         ] ?? "",
                                       )}
                                     </TableCell>
@@ -664,10 +646,12 @@ export function UploadPage() {
           </div>
         </Card>
 
-        <Dialog
-          open={showSheetSelector}
-          onOpenChange={(open) => setShowSheetSelector(open)}
-        >
+        <Dialog open={showSheetSelector} onOpenChange={(open) => {
+          setShowSheetSelector(open);
+          if (!open && sheets.length === 0) {
+            resetUploadState();
+          }
+        }}>
           <DialogContent className="w-[95vw] max-w-4xl p-0 !animate-none !duration-0 overflow-hidden">
             <DialogHeader className="border-b p-4">
               <DialogTitle>Select Sheets To Join</DialogTitle>
@@ -770,22 +754,35 @@ export function UploadPage() {
                 </div>
               </div>
             </div>
-            <div className="w-full border-b"></div>
-            <Button
-              type="button"
-              onClick={handleConfirmJoinSelection}
-              disabled={
-                !effectiveLeftSheet ||
-                !effectiveRightSheet ||
-                !isLeftKeyValid ||
-                !isRightKeyValid ||
-                effectiveLeftSheet === effectiveRightSheet
-              }
-              variant="outline"
-              className="px-5 h-11 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors max-w-[300px] mx-auto mb-4 "
-            >
-              Confirm Join Selection
-            </Button>
+            <div className='w-full border-b'></div>
+            <div className='flex gap-2 justify-end mb-4 mr-4'>
+              <Button
+                type="button"
+                onClick={() => {
+                  resetUploadState();
+                  setShowSheetSelector(false);
+                }}
+                variant="outline"
+                className="h-10 font-semibold transition-colors"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                onClick={handleConfirmJoinSelection}
+                disabled={
+                  !effectiveLeftSheet ||
+                  !effectiveRightSheet ||
+                  !isLeftKeyValid ||
+                  !isRightKeyValid ||
+                  effectiveLeftSheet === effectiveRightSheet
+                }
+                variant="outline"
+                className="h-10 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors"
+              >
+                Confirm Join Selection
+              </Button>
+            </div>
           </DialogContent>
         </Dialog>
       </div>

@@ -77,7 +77,7 @@ export function DataPreviewPage() {
       const allMappingsStr = sessionStorage.getItem("allEntityMappings");
 
       if (!allRowsStr) {
-        navigate("/upload");
+        navigate("/field-mapping");
         return;
       }
 
@@ -457,11 +457,10 @@ export function DataPreviewPage() {
                   <button
                     key={entity}
                     onClick={() => setSelectedEntity(entity)}
-                    className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                      selectedEntity === entity
+                    className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${selectedEntity === entity
                         ? "border-primary text-primary"
                         : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`}
+                      }`}
                   >
                     {entity}
                     <span className="ml-2 text-xs bg-muted rounded-full px-2 py-0.5">
@@ -572,7 +571,7 @@ export function DataPreviewPage() {
       </div>
       {/* Navigation Arrows */}
       <button
-        onClick={() => navigate("/upload")}
+        onClick={() => navigate("/field-mapping")}
         className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
         title="Previous: Upload"
       >
