@@ -10,7 +10,7 @@ export function Footer() {
 
   return (
     <footer className="w-full border-t bg-background">
-      <div className="mx-auto w-full px-6 md:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 py-6">
+      <div className="mx-auto w-full px-6 md:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 py-3">
         <div className="flex flex-col items-center sm:items-start gap-1">
           <p className="text-sm font-semibold text-foreground">
             Hauler Hero
