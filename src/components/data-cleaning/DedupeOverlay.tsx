@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Loader2, Plus, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import type { DedupeCondition, DedupeMode, DedupeMethod, DedupeKeepStrategy, DrawerType, KeepRemove, PreviewRow } from './types';
 
 type Props = {
@@ -81,7 +82,26 @@ export default function DedupeOverlay(props: Props) {
         setDedupeKeepStrategy,
     } = props;
 
-    if (!(drawer || previewOpen)) return null;
+    const [renderDrawer, setRenderDrawer] = useState(Boolean(drawer));
+    const [drawerVisible, setDrawerVisible] = useState(false);
+    const [lastDrawer, setLastDrawer] = useState<DrawerType>(drawer);
+
+    useEffect(() => {
+        if (drawer) {
+            setLastDrawer(drawer);
+            setDrawerVisible(false);
+            setRenderDrawer(true);
+            const timeoutId = window.setTimeout(() => setDrawerVisible(true), 10);
+            return () => window.clearTimeout(timeoutId);
+        }
+
+        if (!renderDrawer) return;
+        setDrawerVisible(false);
+        const timeoutId = window.setTimeout(() => setRenderDrawer(false), 300);
+        return () => window.clearTimeout(timeoutId);
+    }, [drawer, renderDrawer]);
+
+    if (!(drawer || previewOpen || renderDrawer)) return null;
 
     return (
         <div className="fixed inset-0 z-50">
@@ -89,7 +109,7 @@ export default function DedupeOverlay(props: Props) {
             {previewOpen && (
                 <div
                     className="absolute left-4 top-4 bottom-4 bg-white border border-border rounded shadow-2xl overflow-hidden transition-all duration-300"
-                    style={{ right: drawer ? '580px' : '4%' }}
+                    style={{ right: renderDrawer ? '580px' : '4%' }}
                 >
                     <div className="h-10 px-6 bg-white border-b border-border flex items-center justify-between">
                         <h2 className="text-xl leading-none font-light text-foreground">Preview</h2>
@@ -133,17 +153,17 @@ export default function DedupeOverlay(props: Props) {
                 </div>
             )}
 
-            {drawer && (
-                <div className="absolute right-0 top-0 h-full w-full max-w-[560px] bg-white border-l border-border shadow-2xl z-10">
+            {renderDrawer && (
+                <div className={`absolute right-0 top-0 h-full w-full max-w-[560px] bg-white border-l border-border shadow-2xl z-10 transition-transform duration-300 ease-in-out ${drawerVisible ? 'translate-x-0' : 'translate-x-full'}`}>
                     <div className="h-12 px-6 border-b border-border bg-white flex items-center justify-between">
                         <h2 className="text-md leading-none font-light text-foreground">
-                            {drawer === 'dedupe' ? (dedupeMode === 'column' ? 'Deduplicate column-wise' : 'Deduplicate row-wise') : 'Fix Addresses'}
+                            {lastDrawer === 'dedupe' ? (dedupeMode === 'column' ? 'Deduplicate column-wise' : 'Deduplicate row-wise') : 'Fix Addresses'}
                         </h2>
                         <button onClick={() => setDrawer(null)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
                     </div>
 
                     <div className="p-6 space-y-4 text-sm">
-                        {drawer === 'dedupe' && (
+                        {lastDrawer === 'dedupe' && (
                             <>
                                 {dedupeError && (
                                     <div className="rounded-md border border-amber-300 bg-amber-50 text-amber-900 px-3 py-2 text-xs">
@@ -290,25 +310,32 @@ export default function DedupeOverlay(props: Props) {
                                     </div>
                                 )}
 
-                                <div className="absolute bottom-0 left-0 right-0 border-t border-border bg-white p-4 flex gap-2">
-                                    <Button variant="outline" onClick={() => { setDrawer(null); setPreviewOpen(false); }} disabled={previewLoading || applyDedupLoading}>Cancel</Button>
-                                    <Button 
-                                    variant='outline'
-                                    onClick={() => void onBuildPreview()} 
-                                    disabled={previewLoading || applyDedupLoading}
-                                    className='bg-white text-primary border-primary '
-                                    >
-                                        {previewLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                        Preview
-                                    </Button>
-                                    <Button variant="outline" 
-                                    onClick={() => void onRemoveDuplicates()} 
-                                    disabled={previewLoading || applyDedupLoading}
-                                    className='border-red-400 text-red-400'
+                                <div className="absolute bottom-0 left-0 right-0 border-t border-border bg-white p-4 flex justify-between gap-2">
+                                    <Button variant="outline"
+                                        onClick={() => void onRemoveDuplicates()}
+                                        disabled={previewLoading || applyDedupLoading}
+                                        className='border-red-400 text-red-400'
                                     >
                                         {applyDedupLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                         Remove Duplicates
                                     </Button>
+
+                                    <div className='flex gap-2'>
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => { setDrawer(null); setPreviewOpen(false); }}
+                                            disabled={previewLoading || applyDedupLoading}
+                                        >Cancel</Button>
+                                        <Button
+                                            variant='outline'
+                                            onClick={() => void onBuildPreview()}
+                                            disabled={previewLoading || applyDedupLoading}
+                                            className='bg-white text-primary border-primary '
+                                        >
+                                            {previewLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                            Preview
+                                        </Button>
+                                    </div>
                                 </div>
                             </>
                         )}

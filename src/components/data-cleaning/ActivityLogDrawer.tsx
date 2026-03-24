@@ -1,4 +1,5 @@
 import { Bot, Download, FileText, Loader2, Sparkles, Type, UserCircle2, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import type { ActivityLogItem } from './types';
 
 type Props = {
@@ -10,12 +11,28 @@ type Props = {
 };
 
 export default function ActivityLogDrawer({ open, loading, error, items, onClose }: Props) {
-    if (!open) return null;
+    const [mounted, setMounted] = useState(open);
+    const [visible, setVisible] = useState(false);
+
+    useEffect(() => {
+        if (open) {
+            setVisible(false);
+            setMounted(true);
+            const timeoutId = window.setTimeout(() => setVisible(true), 10);
+            return () => window.clearTimeout(timeoutId);
+        }
+
+        setVisible(false);
+        const timeoutId = window.setTimeout(() => setMounted(false), 300);
+        return () => window.clearTimeout(timeoutId);
+    }, [open]);
+
+    if (!mounted) return null;
 
     return (
-        <div className="fixed inset-0 z-[80] bg-black/20" onClick={onClose}>
+        <div className={`fixed inset-0 z-[80] bg-black/20 transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0'}`} onClick={onClose}>
             <div
-                className="absolute right-0 top-0 h-full w-full max-w-[560px] bg-white border-l border-border shadow-2xl"
+                className={`absolute right-0 top-0 h-full w-full max-w-[560px] bg-white border-l border-border shadow-2xl transition-transform duration-300 ease-in-out ${visible ? 'translate-x-0' : 'translate-x-full'}`}
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="h-12 px-6 border-b border-border bg-white flex items-center justify-between">

@@ -216,6 +216,8 @@ export function DataCleaningPage() {
   const sessionIdRef = useRef<string | null>(null);
 
   const [autoFixConfirmOpen, setAutoFixConfirmOpen] = useState(false);
+  const [autoFixDrawerMounted, setAutoFixDrawerMounted] = useState(false);
+  const [autoFixDrawerVisible, setAutoFixDrawerVisible] = useState(false);
   const [autoFixSubmitting, setAutoFixSubmitting] = useState(false);
   const [autoFixError, setAutoFixError] = useState<string | null>(null);
   const [issueSummaryOpen, setIssueSummaryOpen] = useState(false);
@@ -235,6 +237,25 @@ export function DataCleaningPage() {
     field_length_fix: true,
     deduplication: true,
   });
+
+  useEffect(() => {
+    if (autoFixConfirmOpen) {
+      setAutoFixDrawerVisible(false);
+      setAutoFixDrawerMounted(true);
+      const timeoutId = window.setTimeout(() => setAutoFixDrawerVisible(true), 10);
+      return () => window.clearTimeout(timeoutId);
+    }
+
+    setAutoFixDrawerVisible(false);
+    const timeoutId = window.setTimeout(() => setAutoFixDrawerMounted(false), 300);
+    return () => window.clearTimeout(timeoutId);
+  }, [autoFixConfirmOpen]);
+
+  const closeAutoFixDrawer = () => {
+    if (autoFixSubmitting) return;
+    setAutoFixConfirmOpen(false);
+    setAutoFixError(null);
+  };
 
   type CleaningNavigationState = {
     selectedMappedRows?: Record<string, any>[];
@@ -1692,9 +1713,9 @@ export function DataCleaningPage() {
 
           </CardContent>
           <div className="flex flex-col sm:flex-row justify-between px-6 py-3 border-t bg-muted">
-            <Button variant="outline" 
-            className='border-primary text-primary font-semibold hover:bg-primary/10 transition-colors'
-            onClick={() => navigate('/data-preview')}>
+            <Button variant="outline"
+              className='border-primary text-primary font-semibold hover:bg-primary/10 transition-colors'
+              onClick={() => navigate('/data-preview')}>
               <svg className="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
@@ -1756,18 +1777,14 @@ export function DataCleaningPage() {
       />
 
       {
-        autoFixConfirmOpen && (
+        autoFixDrawerMounted && (
           <div className="fixed inset-0 z-[70]">
             <div
-              className="absolute inset-0 bg-black/40"
-              onClick={() => {
-                if (autoFixSubmitting) return;
-                setAutoFixConfirmOpen(false);
-                setAutoFixError(null);
-              }}
+              className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${autoFixDrawerVisible ? 'opacity-100' : 'opacity-0'}`}
+              onClick={closeAutoFixDrawer}
             />
             <div
-              className="absolute right-0 top-0 z-10 h-full w-full max-w-[560px] bg-white border-l border-border shadow-2xl flex flex-col"
+              className={`absolute right-0 top-0 z-10 h-full w-full max-w-[560px] bg-white border-l border-border shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${autoFixDrawerVisible ? 'translate-x-0' : 'translate-x-full'}`}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="h-12 px-6 border-b border-border bg-white flex items-center justify-between shrink-0">
@@ -1775,18 +1792,14 @@ export function DataCleaningPage() {
                 <button
                   type="button"
                   disabled={autoFixSubmitting}
-                  onClick={() => {
-                    if (autoFixSubmitting) return;
-                    setAutoFixConfirmOpen(false);
-                    setAutoFixError(null);
-                  }}
+                  onClick={closeAutoFixDrawer}
                   className="text-muted-foreground hover:text-foreground disabled:opacity-50"
                 >
                   <X className="h-4 w-4" />
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-6">
+              <div className="flex-1 overflow-y-auto pt-4 px-6">
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 gap-y-6">
                     <div className="space-y-6">
@@ -1805,7 +1818,7 @@ export function DataCleaningPage() {
                                 name={opt.key}
                                 checked={autoFixOptions[opt.key as keyof typeof autoFixOptions] === true}
                                 onChange={() => setAutoFixOptions({ ...autoFixOptions, [opt.key]: true })}
-                                className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                                className="w-4 h-4 accent-blue-600 border-gray-300 focus:ring-blue-500"
                               />
                               <span className="text-sm group-hover:text-primary transition-colors">Yes</span>
                             </label>
@@ -1815,7 +1828,7 @@ export function DataCleaningPage() {
                                 name={opt.key}
                                 checked={autoFixOptions[opt.key as keyof typeof autoFixOptions] === false}
                                 onChange={() => setAutoFixOptions({ ...autoFixOptions, [opt.key]: false })}
-                                className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                                className="w-4 h-4 accent-blue-600 border-gray-300 focus:ring-blue-500"
                               />
                               <span className="text-sm group-hover:text-primary transition-colors">No</span>
                             </label>
@@ -1851,7 +1864,7 @@ export function DataCleaningPage() {
                                       [opt.key]: choice.value === 'null' ? null : choice.value,
                                     })
                                   }
-                                  className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                                  className="w-4 h-4 accent-blue-600 border-gray-300 focus:ring-blue-500"
                                 />
                                 <span className="text-sm group-hover:text-primary transition-colors">{choice.label}</span>
                               </label>
@@ -1888,10 +1901,7 @@ export function DataCleaningPage() {
                 <Button
                   variant="outline"
                   disabled={autoFixSubmitting}
-                  onClick={() => {
-                    setAutoFixConfirmOpen(false);
-                    setAutoFixError(null);
-                  }}
+                  onClick={closeAutoFixDrawer}
                   className="h-10 px-5"
                 >
                   Cancel
@@ -1899,7 +1909,8 @@ export function DataCleaningPage() {
                 <Button
                   disabled={autoFixSubmitting}
                   onClick={() => void handleAutoFixAllIssues()}
-                  className="h-10 min-w-[120px] font-semibold"
+                  variant='outline'
+                  className='bg-white text-primary border-primary '
                 >
                   {autoFixSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                   Apply Fixes
@@ -1926,7 +1937,7 @@ export function DataCleaningPage() {
                 <h3 className="text-md leading-none font-light text-foreground px-4">Auto-fix Addresses</h3>
 
                 <div className='px-4'>
-                  <X onClick={()=>{
+                  <X onClick={() => {
                     setAddressFixConfirmOpen(false)
                   }} />
                 </div>
