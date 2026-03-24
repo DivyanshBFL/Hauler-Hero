@@ -59,7 +59,8 @@ export function Header() {
             >
               <DropdownMenuItem
                 onClick={handleLogout}
-                className="cursor-pointer text-primary focus:text-primary"
+                className="cursor-pointer text-primary focus:text-primary 
+                focus:bg-primary/10"
               >
                 <LogOut className="mr-2 h-4 w-4" />
                 Logout

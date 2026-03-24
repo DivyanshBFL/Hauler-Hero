@@ -106,16 +106,16 @@ export function LoginPage() {
               <div className="flex justify-center">
                 <img src="/images/logo.png" alt="Hauler Hero" className="h-12 w-auto" />
               </div>
-              <CardTitle className="h4 text-center text-foreground font-bold">
+              {/* <CardTitle className="h4 text-center text-foreground font-bold">
                 Welcome Back
-              </CardTitle>
+              </CardTitle> */}
               <CardDescription className="text-sm text-muted-foreground text-center">
                 Please Login to Your Account
               </CardDescription>
             </CardHeader>
 
             <CardContent className='flex justify-center'>
-              <form onSubmit={handleSubmit} className="space-y-5 flex-1 max-w-[350px] border-1 shadow-lg rounded-md p-4">
+              <form onSubmit={handleSubmit} className="space-y-5 flex-1 max-w-[400px] border-1 shadow-lg rounded-md p-4">
                 <div className="space-y-2 ">
                   <Label htmlFor="email" className="text-sm font-medium">Email</Label>
                   <Input

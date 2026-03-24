@@ -405,7 +405,7 @@ export function UploadPage() {
                       {file && (
                         <div className='flex gap-2'>
                         <Button variant='outline'
-                        className="px-5 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors"
+                        className="px-5 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors hover:text-primary"
                         onClick={()=>{setShowSheetSelector(true)}}
                         >
                           Re-Join Sheets
@@ -451,13 +451,13 @@ export function UploadPage() {
                   </div>
 
                   <div className="text-center space-y-2">
-                    <h3 className="text-xl font-normal text-foreground tracking-tight">Drop your file here</h3>
-                    <p className="text-xs font-semibold text-muted-foreground tracking-widest uppercase opacity-60">OR CLICK TO BROWSE</p>
+                    <h3 className="text-md font-normal text-foreground tracking-tight">Drop your file here</h3>
+                    <p className="text-sm font-normal  text-muted-foreground  opacity-60">Or Click To Browse</p>
                   </div>
 
                   <Button
                     variant="outline"
-                    className="relative overflow-hidden px-3 h-10 border-primary text-primary hover:bg-primary/10 font-bold rounded-md shadow-lg shadow-primary/10 transition-all active:scale-95"
+                    className="relative overflow-hidden px-3 h-10 border-primary text-primary hover:bg-primary/10 font-bold rounded-md shadow-primary/10 transition-all active:scale-95"
                   >
                     <div className="flex items-center gap-3">
                       <Upload className="h-5 w-5" />
@@ -565,7 +565,7 @@ export function UploadPage() {
             )}
           </CardContent>
           <div className="flex justify-end px-6 py-3 border-t bg-muted">
-            <Button onClick={handleNext} disabled={loading || !canProceed} variant="outline" className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors">
+            <Button onClick={handleNext} disabled={loading || !canProceed} variant="outline" className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors">
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Next
               <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -669,7 +669,7 @@ export function UploadPage() {
                 effectiveLeftSheet === effectiveRightSheet
               }
                 variant="outline" 
-                className="px-5 h-11 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors max-w-[300px] mx-auto mb-4 "
+                className="px-5 h-11 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors max-w-[300px] mx-auto mb-4 "
             >
               Confirm Join Selection
             </Button>
