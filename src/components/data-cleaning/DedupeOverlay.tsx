@@ -84,12 +84,12 @@ export default function DedupeOverlay(props: Props) {
             <div className="absolute inset-0 bg-black/25" onClick={() => { setDrawer(null); setPreviewOpen(false); }} />
             {previewOpen && (
                 <div 
-                    className="absolute left-4 top-4 bottom-4 bg-background border border-border rounded shadow-2xl overflow-hidden transition-all duration-300"
+                    className="absolute left-4 top-4 bottom-4 bg-white border border-border rounded shadow-2xl overflow-hidden transition-all duration-300"
                     style={{ right: drawer ? '580px' : '4%' }}
                 >
-                    <div className="h-10 px-6 bg-emerald-100 border-b border-emerald-200 flex items-center justify-between">
-                        <h5 className="text-xl font-medium">Preview</h5>
-                        <button onClick={() => setPreviewOpen(false)}><X className="h-8 w-8" /></button>
+                    <div className="h-10 px-6 bg-white border-b border-border flex items-center justify-between">
+                        <h2 className="text-xl leading-none font-light text-foreground">Preview</h2>
+                        <button onClick={() => setPreviewOpen(false)}><X className="h-4 w-4" /></button>
                     </div>
                     <div className="p-4 h-[calc(100%-40px)] overflow-auto">
                         <Table className="min-w-full text-sm">
@@ -125,11 +125,11 @@ export default function DedupeOverlay(props: Props) {
             )}
 
             {drawer && (
-                <div className="absolute right-0 top-0 h-full w-full max-w-[560px] bg-background border-l border-border shadow-2xl z-10">
-                    <div className="h-16 px-6 border-b border-border flex items-center justify-between">
-                        <h3 className="text-2xl font-normal tracking-tight text-foreground">
+                <div className="absolute right-0 top-0 h-full w-full max-w-[560px] bg-white border-l border-border shadow-2xl z-10">
+                    <div className="h-16 px-6 border-b border-border bg-white flex items-center justify-between">
+                        <h2 className="text-xl leading-none font-light text-foreground">
                             {drawer === 'dedupe' ? (dedupeMode === 'column' ? 'Deduplicate column-wise' : 'Deduplicate row-wise') : 'Fix Addresses'}
-                        </h3>
+                        </h2>
                         <button onClick={() => setDrawer(null)} className="text-muted-foreground hover:text-foreground"><X className="h-6 w-6" /></button>
                     </div>
 
@@ -264,7 +264,7 @@ export default function DedupeOverlay(props: Props) {
                                     </>
                                 )}
 
-                                <div className="absolute bottom-0 left-0 right-0 border-t border-border bg-background p-4 flex gap-2">
+                                <div className="absolute bottom-0 left-0 right-0 border-t border-border bg-white p-4 flex gap-2">
                                     <Button variant="outline" onClick={() => { setDrawer(null); setPreviewOpen(false); }} disabled={previewLoading || applyDedupLoading}>Cancel</Button>
                                     <Button onClick={() => void onBuildPreview()} disabled={previewLoading || applyDedupLoading}>
                                         {previewLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

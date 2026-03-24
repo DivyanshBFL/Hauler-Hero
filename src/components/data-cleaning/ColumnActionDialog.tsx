@@ -106,12 +106,12 @@ export default function ColumnActionDialog({ modal, menuItems, sessionId, onClos
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center">
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
-      <div className="relative bg-background border border-border rounded-xl shadow-2xl w-full max-w-sm p-5 space-y-4 z-10">
+      <div className="relative bg-white border border-border rounded-xl shadow-2xl w-full max-w-sm p-5 space-y-4 z-10">
         <div className="flex items-center justify-between">
-          <h4 className="text-sm font-semibold">
+          <h2 className="text-xl leading-none font-light text-foreground">
             {label}
             <span className="ml-1 text-muted-foreground font-normal">— {modal.column}</span>
-          </h4>
+          </h2>
           <button onClick={onClose}><X className="h-4 w-4 text-muted-foreground" /></button>
         </div>
 

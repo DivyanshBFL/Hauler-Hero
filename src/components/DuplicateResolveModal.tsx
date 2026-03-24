@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "./ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogDescription } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
 import { Check, ArrowRight, User } from "lucide-react";
@@ -71,9 +71,9 @@ export const DuplicateResolveModal = ({
         <DialogHeader className="p-6 pb-4 border-b bg-white dark:bg-slate-950">
           <div className="flex items-center justify-between">
             <div>
-              <DialogTitle className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <h2 className="text-xl leading-none font-light text-foreground">
                 Resolve Duplicates
-              </DialogTitle>
+              </h2>
               <DialogDescription className="mt-1">
                 Resolving duplicates • <span className="font-mono text-xs bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">{currentKey}</span>
               </DialogDescription>
