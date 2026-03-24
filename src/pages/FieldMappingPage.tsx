@@ -1129,7 +1129,7 @@ export function FieldMappingPage() {
 
           <CardContent className="gap-4 p-0 ">
             {/* <div className="text-sm mt-4 font-semibold" >AI Auto-Mapping Summary :</div> */}
-            <div className="bg-primary/10 text-blue-900 border border-blue-300 px-2 py-2 rounded-sm w-[98%] mt-2 mx-auto">
+            <div className="bg-primary/10 text-blue-900 border border-blue-300 px-2 py-2 rounded-sm w-[100%] mt-2">
               <div className="flex items-center justify-between gap-2">
                 <div className="px-1 flex items-center flex-wrap gap-1 text-xs">
                   <span className="font-bold">Summary:</span>
@@ -1188,7 +1188,7 @@ export function FieldMappingPage() {
                 >
                   <div
                     ref={flowPaneRef}
-                    className="border border-t bg-background overflow-hidden"
+                    className="rounded-md border border-border bg-background overflow-hidden"
                     style={{ background: "white !important" }}
                   >
                     <div className="grid grid-cols-2 gap-6 px-4 py-3">
@@ -1357,8 +1357,8 @@ export function FieldMappingPage() {
                               <div
                                 key={message.id}
                                 className={`rounded-md px-3 py-2 text-xs ${message.role === "assistant"
-                                  ? "bg-muted text-foreground"
-                                  : "bg-primary text-primary-foreground ml-auto max-w-[90%]"
+                                    ? "bg-muted text-foreground"
+                                    : "bg-primary text-primary-foreground ml-auto max-w-[90%]"
                                   }`}
                               >
                                 {message.text}
