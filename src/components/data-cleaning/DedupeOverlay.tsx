@@ -203,7 +203,7 @@ export default function DedupeOverlay(props: Props) {
         <div
           className={`absolute right-0 top-0 h-full w-full max-w-[560px] bg-white border-l border-border shadow-2xl z-10 transition-transform duration-300 ease-in-out ${drawerVisible ? "translate-x-0" : "translate-x-full"}`}
         >
-          <div className="h-12 px-6 border-b border-border bg-white flex items-center justify-between">
+          <div className="h-12 px-6 border-b border-border bg-muted flex items-center justify-between">
             <h2 className="flex items-center text-md leading-none font-light text-foreground">
               <span className="mr-2">
                 <Copy className="h-4 w-4" />
@@ -524,13 +524,14 @@ export default function DedupeOverlay(props: Props) {
                     </div>
                   )}
 
-                <div className="absolute bottom-0 left-0 right-0 border-t border-border bg-white p-4 flex justify-end gap-2">
+                <div className="absolute bottom-0 left-0 right-0 border-t border-border bg-muted p-4 py-2 flex justify-end gap-2">
                   <Button
                     variant="outline"
                     onClick={() => {
                       setDrawer(null);
                       setPreviewOpen(false);
                     }}
+                    className="h-9 text-xs px-5"
                     disabled={previewLoading || applyDedupLoading}
                   >
                     Cancel
@@ -541,7 +542,7 @@ export default function DedupeOverlay(props: Props) {
                       variant="outline"
                       onClick={() => void onRemoveDuplicates()}
                       disabled={previewLoading || applyDedupLoading}
-                      className="border-red-400 text-red-400 hover:text-red-400 hover:bg-red-100"
+                      className="border-red-400 text-red-400 hover:text-red-400 hover:bg-red-100 h-9 text-xs px-5"
                     >
                       {applyDedupLoading && (
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -552,7 +553,7 @@ export default function DedupeOverlay(props: Props) {
                       variant="outline"
                       onClick={() => void onBuildPreview()}
                       disabled={previewLoading || applyDedupLoading}
-                      className="bg-white text-primary border-primary hover:bg-blue-100 "
+                      className="bg-white text-primary border-primary hover:bg-blue-100 h-9 text-xs px-5"
                     >
                       {previewLoading && (
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />

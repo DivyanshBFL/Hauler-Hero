@@ -783,7 +783,7 @@ export function UploadPage() {
               </div>
             </div>
             <div className="w-full border-b"></div>
-            <div className="flex gap-2 justify-end mb-4 mr-4 ">
+            <div className="flex gap-2 bg-muted p-4 py-2 justify-end">
               <Button
                 type="button"
                 onClick={() => {
@@ -791,7 +791,7 @@ export function UploadPage() {
                   setShowSheetSelector(false);
                 }}
                 variant="outline"
-                className="h-10 font-semibold transition-colors"
+                className="h-9 text-xs px-5 font-semibold transition-colors"
               >
                 Cancel
               </Button>
@@ -806,7 +806,7 @@ export function UploadPage() {
                   effectiveLeftSheet === effectiveRightSheet
                 }
                 variant="outline"
-                className="font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors py-3 px-4"
+                className="font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors h-9 text-xs px-5"
               >
                 Confirm Join Selection
               </Button>

@@ -2597,7 +2597,7 @@ export function DataCleaningPage() {
             }}
           />
           <div className="relative z-10 w-full max-w-xl rounded-md border border-border bg-background shadow-2xl overflow-hidden">
-            <div className="py-4 border-b flex items-center justify-between">
+            <div className="py-4 border-b flex items-center justify-between bg-muted">
               <h3 className="flex items-center text-md leading-none font-light text-foreground px-4">
                 <span className="mr-2">
                   <MapPin className="h-4 w-4" />
@@ -2619,7 +2619,7 @@ export function DataCleaningPage() {
                 One-click cleanup that automatically fixes address issues in the
                 dataset.
                 {"\n"}All fixes are logged step-by-step.
-                <Sparkles className="mr-2 h-4 w-4 text-blue-500 fill-blue-400 animate-blink inline" />
+                <Sparkles className="mr-2 h-4 w-4 ml-1 text-blue-500 fill-blue-400 animate-blink inline" />
               </p>
               {addressFixError && (
                 <p className="text-xs text-destructive mt-3">
@@ -2644,10 +2644,10 @@ export function DataCleaningPage() {
               )}
             </div>
 
-            <div className="p-4 border-t flex items-center justify-end gap-2">
+            <div className="p-4 py-2 border-t flex bg-muted items-center justify-end gap-2">
               <Button
                 variant="outline"
-                className="px-6 "
+                className="h-9 text-xs px-5"
                 onClick={() => {
                   setAddressFixConfirmOpen(false);
                   setAddressFixError(null);
@@ -2659,7 +2659,7 @@ export function DataCleaningPage() {
                 onClick={() => void handleProceedFixAddresses()}
                 disabled={addressFixSubmitting}
                 variant="outline"
-                className="px-5 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
+                className="font-semibold border-primary text-primary hover:bg-primary/10 transition-colors h-9 text-xs px-5"
               >
                 {addressFixSubmitting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
