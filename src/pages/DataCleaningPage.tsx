@@ -2207,10 +2207,10 @@ export function DataCleaningPage() {
               </div>
             </div>
           </CardContent>
-          <div className="flex flex-col sm:flex-row justify-between px-4 py-3 border-t bg-muted">
+          <div className="flex flex-col sm:flex-row justify-between p-2 border-t bg-muted">
             <Button
               variant="outline"
-              className="border-primary text-primary font-semibold hover:bg-primary/10 transition-colors"
+              className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
               onClick={() => navigate("/data-preview")}
             >
               <svg
@@ -2234,7 +2234,7 @@ export function DataCleaningPage() {
               }}
               disabled={submitting}
               variant="outline"
-              className="w-full sm:w-auto  border-primary text-primary font-semibold order-1 hover:bg-primary/10 transition-colors px-5 pr-3"
+              className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
             >
               {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Next

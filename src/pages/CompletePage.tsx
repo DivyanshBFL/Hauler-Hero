@@ -227,7 +227,7 @@ export function CompletePage() {
             </div>
           </CardContent>
 
-          <div className="flex justify-end gap-3 px-6 py-3 border-t bg-muted">
+          <div className="flex justify-end gap-3 p-2 border-t bg-muted">
             <Button
               variant="outline"
               onClick={handleStartOver}

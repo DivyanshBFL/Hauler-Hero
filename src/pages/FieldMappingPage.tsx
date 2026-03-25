@@ -1192,10 +1192,10 @@ export function FieldMappingPage() {
                     className=" border border-border bg-background overflow-hidden"
                     style={{ background: "white !important" }}
                   >
-                    <div className="grid grid-cols-[1fr_auto_1fr] gap-[5rem] bg-muted px-6 py-3">
+                    <div className="grid grid-cols-[1fr_auto_1fr] gap-[5rem] bg-muted px-6 py-2">
                       <div className="space-y-2">
                         <div className="flex items-center justify-start text-sm gap-2">
-                          <span className="font-semibold text-foreground">
+                          <span className="font-bold text-xs ">
                             Source Schema :
                           </span>
                           <span className="text-muted-foreground text-xs">
@@ -1232,7 +1232,7 @@ export function FieldMappingPage() {
                       <div className="space-y-2">
                         <div className="flex justify-between">
                           <div className="flex items-center justify-start text-sm gap-2">
-                            <span className="font-semibold text-foreground">
+                            <span className="font-bold text-xs">
                               Target Schema :
                             </span>
                             <span className="text-muted-foreground text-xs">
@@ -1404,11 +1404,11 @@ export function FieldMappingPage() {
               )} */}
             </div>
           </CardContent>
-          <div className="flex flex-col sm:flex-row justify-between gap-3 px-4 py-3 border-t bg-muted">
+          <div className="flex flex-col sm:flex-row justify-between gap-3 p-2 border-t bg-muted">
             <Button
               variant="outline"
               onClick={() => navigate("/upload")}
-              className="border-primary text-primary font-semibold hover:bg-primary/10 transition-colors"
+              className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
             >
               <svg
                 className="mr-2 w-4 h-4"
@@ -1430,7 +1430,7 @@ export function FieldMappingPage() {
               onClick={handleNext}
               disabled={processing}
               variant="outline"
-              className="w-full sm:w-auto  border-primary text-primary font-semibold order-1 hover:bg-primary/10 transition-colors px-5 pr-3"
+              className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
             >
               {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Next
