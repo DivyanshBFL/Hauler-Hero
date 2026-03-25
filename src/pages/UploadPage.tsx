@@ -602,7 +602,7 @@ export function UploadPage() {
                           </div>
                         )} */}
 
-                        <div className="max-h-96  border border-border overflow-auto mt-2">
+                        <div className="max-h-96 overflow-auto mt-2">
                           <Table className="w-full min-w-[900px] ">
                             <TableHeader className=" font-bold text-sm ">
                               <TableRow>
@@ -819,7 +819,7 @@ export function UploadPage() {
         <button
           onClick={handleNext}
           disabled={loading}
-          className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
+          className="fixed right-0 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
           title="Next: Field Mapping"
         >
           <ChevronRight className="h-6 w-6" />

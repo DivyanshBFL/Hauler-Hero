@@ -1336,7 +1336,10 @@ export function DataCleaningPage() {
         );
       };
 
-      const rowHasIssueType = (rowIndex: number, issueType: string): boolean => {
+      const rowHasIssueType = (
+        rowIndex: number,
+        issueType: string,
+      ): boolean => {
         const rowIssues = rowIssueMap[rowIndex];
         if (!rowIssues) return false;
         return Object.values(rowIssues).some(
@@ -1886,14 +1889,14 @@ export function DataCleaningPage() {
   return (
     <div className={PAGE_OUTER}>
       <div className={PAGE_CONTAINER}>
-        <div className="mb-4">
+        <div className="mb-2">
           <ProcessStepper />
         </div>
 
         <Card className="shadow-lg border border-border bg-card">
-          <CardHeader className="pb-3 px-4">
+          <CardHeader className="p-2">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              <div className="flex items-start gap-4">
+              <div className="flex items-start gap-2">
                 <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
                   <ShieldAlert className="w-4 h-4 text-primary" />
                 </div>
@@ -2001,14 +2004,14 @@ export function DataCleaningPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className={`px-2 ${
+                      className={`px-2 border-blue-300 hover:bg-primary/10 ${
                         selectedIssueType !== "allIssues"
-                          ? "text-primary border-primary bg-primary/5"
+                          ? "text-primary  bg-primary/5 "
                           : ""
                       }`}
                       title="Filter by issue type"
                     >
-                      <Filter className="h-4 w-4" />
+                      <Filter className="h-4 w-4 text-primary " />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
@@ -2103,7 +2106,7 @@ export function DataCleaningPage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="text-white border-black bg-black hover:text-white"
+                  className="text-white text-xs border-black bg-black hover:text-white"
                   disabled={!issues.length || analyzing || autoFixSubmitting}
                   onClick={() => {
                     setAutoFixError(null);
@@ -2136,7 +2139,7 @@ export function DataCleaningPage() {
                         return (
                           <TableHead
                             key={col}
-                            className="font-normal relative px-2 py-[0.35rem] text-left whitespace-nowrap bg-gray-50"
+                            className="font-normal relative px-2 py-[0.35rem] text-left whitespace-nowrap bg-gray-50 border border-border"
                           >
                             <span
                               className={`absolute left-0 right-0 top-0 h-0.5 transition-colors duration-200 mx-[1px] ${hasIssue ? "bg-red-400" : "bg-emerald-400"}`}
@@ -2259,7 +2262,7 @@ export function DataCleaningPage() {
           <div className="flex flex-col sm:flex-row justify-between p-2 border-t bg-muted">
             <Button
               variant="outline"
-              className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
+              className="px-4 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
               onClick={() => navigate("/data-preview")}
             >
               <svg

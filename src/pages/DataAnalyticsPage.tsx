@@ -260,7 +260,7 @@ const DataAnalyticsPage = () => {
         <Card className="shadow-lg border border-border bg-card">
           <CardHeader className="p-2">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              <div className="flex items-start gap-4">
+              <div className="flex items-start gap-2">
                 <div className="h-8 w-8 flex items-center justify-center rounded-md bg-primary/10 text-primary shadow-sm">
                   <ChartNoAxesCombined className="h-4 w-4 text-primary" />
                 </div>
@@ -269,8 +269,8 @@ const DataAnalyticsPage = () => {
                     Entity Changes Preview
                   </CardTitle>
                   <CardDescription className="text-[11px] text-muted-foreground">
-                    Data preview of the cleaned data
-                    <span className="inline-flex items-center ml-3 px-2 text-[11px] font-normal bg-primary/10 rounded-md borderbg-primary/10 text-blue-900 border border-blue-300 ">
+                    {/* Data preview of the cleaned data */}
+                    <span className="inline-flex items-center  px-2 text-[11px] font-normal bg-primary/10 rounded-md borderbg-primary/10 text-blue-900 border border-blue-300 ">
                       Changed rows: {changedRowsCount} | Changed cells:{" "}
                       {changedCellsCount}
                     </span>
@@ -333,7 +333,7 @@ const DataAnalyticsPage = () => {
                       {headers.map((col) => (
                         <TableHead
                           key={col}
-                          className="font-normal bg-gray-100 px-3 py-2 text-left whitespace-nowrap"
+                          className="font-normal bg-gray-100 px-3 py-2 text-left whitespace-nowrap border border-border"
                         >
                           {col}
                         </TableHead>
@@ -416,12 +416,15 @@ const DataAnalyticsPage = () => {
                     ))}
 
                     {!visibleRows.length && (
-                      <TableRow>
+                      <TableRow className="h-40">
                         <TableCell
                           colSpan={Math.max(headers.length, 1)}
-                          className="px-4 py-6 text-center text-muted-foreground"
+                          className="p-6 text-center text-muted-foreground "
                         >
-                          No rows found.
+                          <span className=" p-6 bg-red-400 border-2 border-red-500 mt-4 opacity-40 text-white max-w-[200px]">
+                            {" "}
+                            No rows found.
+                          </span>
                         </TableCell>
                       </TableRow>
                     )}
@@ -433,7 +436,7 @@ const DataAnalyticsPage = () => {
           <div className="flex flex-col sm:flex-row justify-between p-2 border-t bg-muted">
             <Button
               variant="outline"
-              className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
+              className="px-4 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
               onClick={() => navigate("/data-cleaning")}
             >
               <svg

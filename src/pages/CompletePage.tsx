@@ -102,9 +102,11 @@ export function CompletePage() {
 
   if (!stats) {
     return (
-      <div className="flex flex-col items-center justify-center p-10 text-muted-foreground">
-        <Loader2 className="h-8 w-8 animate-spin mb-2" />
-        <p className="text-sm font-medium">Loading statistics...</p>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
+          <p className="mt-4 text-muted-foreground">Loading Statistics</p>
+        </div>
       </div>
     );
   }
@@ -115,60 +117,55 @@ export function CompletePage() {
     timeStyle: "short",
   });
 
-  const affectedRows = s.records_affected.rows;
-  const unchangedRows = s.unchanged_data.rows;
-  const duplicatesRows = s.duplicate_findings.rows_removed;
-  const updatedFields = s.updated.fields;
-
-  const affectedRowsPct = s.records_affected.rows_pct;
-  const unchangedPct = s.unchanged_data.pct;
-  const duplicatesPct = s.duplicate_findings.pct;
-
-  // Calculations for charts
-  const donutTotal = Math.max(affectedRows + unchangedRows + duplicatesRows, 1);
-  const donutAffectedDeg = Math.round((affectedRows / donutTotal) * 360);
-  const donutUnchangedDeg = Math.round((unchangedRows / donutTotal) * 360);
-
-  const maxActionCount = Math.max(
-    affectedRows,
-    updatedFields,
-    duplicatesRows,
-    1,
-  );
-
-  // Outcome stacked bar — normalise to 100 %
-  const outcomeSum = Math.max(
-    affectedRowsPct + unchangedPct + duplicatesPct,
-    1,
-  );
-  const outcomeAffected = (affectedRowsPct / outcomeSum) * 100;
-  const outcomeUnchanged = (unchangedPct / outcomeSum) * 100;
-  const outcomeDuplicates = (duplicatesPct / outcomeSum) * 100;
-
   return (
     <div className={`${PAGE_OUTER} min-h-80`}>
       <div className={PAGE_CONTAINER}>
         <Card className="shadow-none border border-border bg-card animate-in overflow-hidden ">
-          <CardContent className="p-8 space-y-8 h-[60vh]">
+          <CardContent className="p-8 space-y-8">
             <div className="space-y-8">
-              {/* TOP SECTION: Success Header */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center justify-center h-16 w-16 rounded-full border-2 border-green-500 bg-green-50 shadow-inner">
-                    <Check className="h-8 w-8 text-green-600" />
-                  </div>
-                  <div>
-                    <h1 className="text-2xl font-bold text-slate-900">
-                      Success!
-                    </h1>
-                    <p className="text-slate-500 font-medium">
-                      Data cleaning and processing completed successfully.
-                    </p>
-                    <div className="flex items-center gap-2 mt-1 text-xs text-slate-400">
-                      <Calendar className="h-3 w-3" />
-                      <span>Processed on {importDate}</span>
+              <div className="bg-white rounded-2xl border border-border p-8 shadow-sm flex flex-col md:flex-row gap-10 items-start md:items-center">
+                <div className="flex flex-col gap-2 shrink-0">
+                  <div className="flex items-center gap-6">
+                    <div className="h-16 w-16 flex items-center justify-center rounded-2xl bg-green-400 text-white shadow-xl">
+                      <Check className="h-10 w-10 font-bold" strokeWidth={4} />
+                    </div>
+                    <div>
+                      <h1 className="text-3xl font-bold text-slate-900 leading-none">
+                        Success!
+                      </h1>
+                      <div className="flex items-center gap-2 mt-2 text-xs text-slate-400 font-medium tracking-wide">
+                        <Calendar className="h-3 w-3" />
+                        <span>Processed on {importDate}</span>
+                      </div>
                     </div>
                   </div>
+                </div>
+
+                <div className="hidden md:block h-24 w-px bg-slate-100/80 shrink-0" />
+
+                <div className="space-y-4 flex-1">
+                  <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                    Quick Summary
+                  </h2>
+
+                  <ul className="grid grid-cols-1 gap-x-6 gap-y-3">
+                    {[
+                      `Your CSV was uploaded and parsed into ${s.total_processed.rows.toLocaleString()} records.`,
+                      "Source columns were mapped to the target entity; data was transformed accordingly.",
+                      "Each record was compared: new ones inserted, existing updated.",
+                      "Data has been loaded into the system and is ready to use.",
+                    ].map((text, i) => (
+                      <li
+                        key={i}
+                        className="flex items-start gap-4 text-[13px] leading-relaxed text-slate-600 font-medium"
+                      >
+                        <div className="mt-1 h-5 w-5 shrink-0 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm shadow-emerald-200">
+                          <Check className="h-2.5 w-2.5" strokeWidth={5} />
+                        </div>
+                        <span className="opacity-90">{text}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
 
