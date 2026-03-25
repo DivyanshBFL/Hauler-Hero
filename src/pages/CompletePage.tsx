@@ -157,7 +157,7 @@ export function CompletePage() {
                         key={i}
                         className="flex items-start gap-4 text-[13px] leading-relaxed text-slate-600 font-medium"
                       >
-                        <div className="mt-1 h-5 w-5 shrink-0 flex items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm shadow-emerald-200">
+                        <div className="mt-1 h-5 w-5 shrink-0 flex items-center justify-center rounded-full bg-green-400 text-white shadow-sm shadow-green-200">
                           <Check className="h-2.5 w-2.5" strokeWidth={5} />
                         </div>
                         <span className="opacity-90">{text}</span>
