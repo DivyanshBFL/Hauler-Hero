@@ -11,6 +11,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Upload, Loader2, X, ChevronRight } from "lucide-react";
 import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
 import {
@@ -708,15 +715,13 @@ export function UploadPage() {
               {/* Left Side */}
               <div className="rounded-lg border border-border bg-muted/20 p-4 space-y-3">
                 {/* <div className="text-sm font-semibold text-foreground">Primary Data</div> */}
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <label className="text-sm font-medium text-muted-foreground">
                     Primary Sheet
                   </label>
-                  <select
-                    className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+                  <Select
                     value={leftSheetName}
-                    onChange={(e) => {
-                      const nextLeft = e.target.value;
+                    onValueChange={(nextLeft) => {
                       setLeftSheetName(nextLeft);
                       const nextRightOptions = availableSheetNames.filter(
                         (n) => n !== nextLeft,
@@ -730,71 +735,103 @@ export function UploadPage() {
                       setRightKey(sheetHeadersByName[nextRight]?.[0] ?? "");
                     }}
                   >
-                    {filteredLeftSheets.map((name) => (
-                      <option key={name} value={name}>
-                        {name}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="w-full h-9 rounded-sm border-gray-200 bg-background px-3 text-xs font-normal shadow-none hover:bg-gray-50 transition-colors">
+                      <SelectValue placeholder="Select primary sheet" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-sm border-gray-200 shadow-md">
+                      {filteredLeftSheets.map((name) => (
+                        <SelectItem
+                          key={name}
+                          value={name}
+                          className="text-xs rounded-sm"
+                        >
+                          {name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <label className="text-sm font-medium text-muted-foreground">
                     Column
                   </label>
-                  <select
-                    className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+                  <Select
                     value={leftKey}
-                    onChange={(e) => setLeftKey(e.target.value)}
+                    onValueChange={(val) => setLeftKey(val)}
                     disabled={!effectiveLeftSheet}
                   >
-                    {filteredLeftKeys.map((h) => (
-                      <option key={h} value={h}>
-                        {h}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="w-full h-9 rounded-sm border-gray-200 bg-background px-3 text-xs font-normal shadow-none hover:bg-gray-50 transition-colors">
+                      <SelectValue placeholder="Select column" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-sm border-gray-200 shadow-md">
+                      {filteredLeftKeys.map((h) => (
+                        <SelectItem
+                          key={h}
+                          value={h}
+                          className="text-xs rounded-sm"
+                        >
+                          {h}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
               {/* Right Side */}
               <div className="rounded-lg border border-border bg-muted/20 p-4 space-y-3">
                 {/* <div className="text-sm font-semibold text-foreground">Seconday Data</div> */}
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <label className="text-sm font-medium text-muted-foreground">
                     Reference Sheet
                   </label>
-                  <select
-                    className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+                  <Select
                     value={rightSheetName}
-                    onChange={(e) => {
-                      const nextRight = e.target.value;
+                    onValueChange={(nextRight) => {
                       setRightSheetName(nextRight);
                       setRightKey(sheetHeadersByName[nextRight]?.[0] ?? "");
                     }}
                   >
-                    {filteredRightSheets.map((name) => (
-                      <option key={name} value={name}>
-                        {name}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="w-full h-9 rounded-sm border-gray-200 bg-background px-3 text-xs font-normal shadow-none hover:bg-gray-50 transition-colors">
+                      <SelectValue placeholder="Select reference sheet" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-sm border-gray-200 shadow-md">
+                      {filteredRightSheets.map((name) => (
+                        <SelectItem
+                          key={name}
+                          value={name}
+                          className="text-xs rounded-sm"
+                        >
+                          {name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-muted-foreground">
                     Related Column
                   </label>
-                  <select
-                    className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+                  <Select
                     value={rightKey}
-                    onChange={(e) => setRightKey(e.target.value)}
+                    onValueChange={(val) => setRightKey(val)}
                     disabled={!effectiveRightSheet}
                   >
-                    {filteredRightKeys.map((h) => (
-                      <option key={h} value={h}>
-                        {h}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="w-full h-9 rounded-sm border-gray-200 bg-background px-3 text-xs font-normal shadow-none hover:bg-gray-50 transition-colors">
+                      <SelectValue placeholder="Select related column" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-sm border-gray-200 shadow-md">
+                      {filteredRightKeys.map((h) => (
+                        <SelectItem
+                          key={h}
+                          value={h}
+                          className="text-xs rounded-sm"
+                        >
+                          {h}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </div>
