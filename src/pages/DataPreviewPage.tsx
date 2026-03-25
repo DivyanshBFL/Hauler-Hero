@@ -474,7 +474,7 @@ export function DataPreviewPage() {
             )}
 
             {/* ── Table ────────────────────────────────────────── */}
-            <div className="border border-border rounded-sm overflow-hidden shadow-sm bg-card">
+            <div className=" rounded-sm overflow-hidden shadow-sm bg-card">
               <div className="max-h-[60vh] overflow-auto">
                 {previewRows.length > 0 ? (
                   <Table className="w-full text-sm">
@@ -483,7 +483,7 @@ export function DataPreviewPage() {
                         {currentHeaders.map((h) => (
                           <TableHead
                             key={h}
-                            className="px-3 py-2 text-left font-medium  whitespace-nowrap bg-gray-50"
+                            className="px-3 py-2 text-left font-medium  whitespace-nowrap bg-gray-50 border border-border"
                           >
                             {h}
                           </TableHead>
@@ -529,7 +529,7 @@ export function DataPreviewPage() {
             <Button
               variant="outline"
               onClick={() => navigate("/field-mapping")}
-              className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
+              className="px-4 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
             >
               <svg
                 className="mr-2 w-4 h-4"
