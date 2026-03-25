@@ -127,7 +127,7 @@ export function UploadPage() {
     const isCSV = fileType === "text/csv" || fileName.endsWith(".csv");
     const isXLSX =
       fileType ===
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
       fileName.endsWith(".xlsx");
 
     if (isCSV) {
@@ -445,7 +445,6 @@ export function UploadPage() {
                     )} */}
                   </div>
                   <CardDescription className=" text-muted-foreground text-[11px]">
-
                     {sheets.length > 0 ? (
                       <>
                         <div className="gap-4 mt-0">
@@ -466,11 +465,9 @@ export function UploadPage() {
                                 style={{ animationDelay: `${index * 100}ms` }}
                               >
                                 <div className="">
-                                  
                                   <div>
-
-File Summary: {allRows.length} rows with {sheet.headers.length} column(s).
-
+                                    File Summary: {allRows.length} rows with{" "}
+                                    {sheet.headers.length} column(s).
                                     {/* <span className="text-xs">
                                       Identified{" "}
                                       <span className="">
@@ -482,7 +479,6 @@ File Summary: {allRows.length} rows with {sheet.headers.length} column(s).
                                       </span>{" "}
                                       in this selected file.
                                     </span> */}
-
                                     {isJoinRequired && joinSelection && (
                                       <span className="text-xs ml-1">
                                         Join Configured:{" "}
@@ -506,17 +502,17 @@ File Summary: {allRows.length} rows with {sheet.headers.length} column(s).
                                     )}
                                   </div>
                                 </div>
-
-
-
-
                               </div>
                             );
                           })}
                         </div>
                       </>
-                    ) : <>Upload your source CSV or XLSX file to begin the data
-                      processing workflow</>}
+                    ) : (
+                      <>
+                        Upload your source CSV or XLSX file to begin the data
+                        processing workflow
+                      </>
+                    )}
                   </CardDescription>
                 </div>
               </div>
@@ -558,9 +554,10 @@ File Summary: {allRows.length} rows with {sheet.headers.length} column(s).
                   className={`
                     w-full max-w-3xl relative group flex flex-col items-center justify-center gap-3 p-6 
                     rounded-xl border-2 border-dashed transition-all duration-300 cursor-pointer
-                    ${isDragging
-                      ? "border-primary bg-primary/10 scale-[1.02] shadow-2xl"
-                      : "border-primary/40 bg-primary/[0.03] hover:border-primary/60 hover:bg-primary/[0.06]"
+                    ${
+                      isDragging
+                        ? "border-primary bg-primary/10 scale-[1.02] shadow-2xl"
+                        : "border-primary/40 bg-primary/[0.03] hover:border-primary/60 hover:bg-primary/[0.06]"
                     }
                   `}
                   onClick={openFilePicker}
@@ -644,7 +641,7 @@ File Summary: {allRows.length} rows with {sheet.headers.length} column(s).
                                     >
                                       {String(
                                         (row as Record<string, unknown>)?.[
-                                        header
+                                          header
                                         ] ?? "",
                                       )}
                                     </TableCell>
