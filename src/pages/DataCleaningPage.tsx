@@ -1267,9 +1267,33 @@ export function DataCleaningPage() {
     const hasIssueMap = Object.keys(rowIssueMap).length > 0;
 
     if (hasIssueMap) {
+      const rowHasAnyIssues = (rowIndex: number): boolean => {
+        const rowIssues = rowIssueMap[rowIndex];
+        if (!rowIssues) return false;
+        return Object.values(rowIssues).some(
+          (list) => Array.isArray(list) && list.length > 0,
+        );
+      };
+
+      const rowHasIssueType = (rowIndex: number, issueType: string): boolean => {
+        const rowIssues = rowIssueMap[rowIndex];
+        if (!rowIssues) return false;
+        return Object.values(rowIssues).some(
+          (list) => Array.isArray(list) && list.includes(issueType),
+        );
+      };
+
+      // Apply issue-type filter only when a specific type is selected.
+      // "allIssues" is treated as "no issue-type filter" (show all rows).
+      if (selectedIssueType !== "allIssues") {
+        rows = rows.filter((row) =>
+          rowHasIssueType(Number(row.__rowIndex), selectedIssueType),
+        );
+      }
+
       rows = rows.map((row) => {
         const rowIndex = row.__rowIndex;
-        const hasIssues = rowIssueMap[rowIndex];
+        const hasIssues = rowHasAnyIssues(Number(rowIndex));
         const wasFixed = !hasIssues && row._wasFixed; // Check if the row was fixed
 
         return {
