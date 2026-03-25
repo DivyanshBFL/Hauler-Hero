@@ -39,9 +39,7 @@ function MetricCard({
       className={`rounded-xl border p-6 flex flex-col justify-between shadow-sm transition-all hover:shadow-md h-40 ${className}`}
     >
       <div className="flex items-start justify-between">
-        <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">
-          {label}
-        </span>
+        <span className="text-xs font-normal">{label}</span>
         <div className="p-2 rounded-lg bg-white/50">
           <Icon className="h-5 w-5 text-muted-foreground" />
         </div>
@@ -123,7 +121,7 @@ export function CompletePage() {
         <Card className="shadow-none border border-border bg-card animate-in overflow-hidden ">
           <CardContent className="p-8 space-y-8">
             <div className="space-y-8">
-              <div className="bg-white rounded-2xl border border-border p-8 shadow-sm flex flex-col md:flex-row gap-10 items-start md:items-center">
+              <div className="bg-white rounded-2xl border border-border p-8 flex flex-col md:flex-row gap-10 items-start md:items-center justify-evenly">
                 <div className="flex flex-col gap-2 shrink-0">
                   <div className="flex items-center gap-6">
                     <div className="h-16 w-16 flex items-center justify-center rounded-2xl bg-green-400 text-white shadow-xl">
@@ -143,7 +141,7 @@ export function CompletePage() {
 
                 <div className="hidden md:block h-24 w-px bg-slate-100/80 shrink-0" />
 
-                <div className="space-y-4 flex-1">
+                <div className="space-y-4">
                   <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
                     Quick Summary
                   </h2>
@@ -172,7 +170,7 @@ export function CompletePage() {
               {/* GRID SECTION: 3 per line with increased size */}
               <section>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400">
+                  <h2 className="text-sm font-normal">
                     Key Performance Metrics
                   </h2>
                 </div>
