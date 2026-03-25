@@ -46,6 +46,7 @@ import {
   Cross,
   X,
   CircleAlert,
+  Filter,
 } from "lucide-react";
 import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
 import ProcessStepper from "@/components/ProcessStepper";
@@ -1880,6 +1881,16 @@ export function DataCleaningPage() {
                 )}
               </div>
 
+              <div className="relative flex-1 max-w-md">
+                <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Search"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-9 h-9"
+                />
+              </div>
+
               <div className="flex items-center gap-2">
                 <Button
                   size="sm"
@@ -1913,6 +1924,59 @@ export function DataCleaningPage() {
                   <Sparkles className="mr-2 h-4 w-4 text-white fill-white animate-pulse" />
                   Auto Cleanup
                 </Button>
+                <DropdownMenu modal={false}>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className={`px-2 ${
+                        selectedIssueType !== "allIssues"
+                          ? "text-primary border-primary bg-primary/5"
+                          : ""
+                      }`}
+                      title="Filter by issue type"
+                    >
+                      <Filter className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="end"
+                    sideOffset={8}
+                    className="w-56"
+                  >
+                    <DropdownMenuItem
+                      onClick={() => setSelectedIssueType("allIssues")}
+                      className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${selectedIssueType === "allIssues" ? "text-primary bg-primary/5" : ""}`}
+                    >
+                      <span className="flex-1">
+                        {toIssueLabel("allIssues")} (
+                        {Object.values(issueCountByType || {}).reduce(
+                          (acc, curr) => acc + curr,
+                          0,
+                        )}
+                        )
+                      </span>
+                      {selectedIssueType === "allIssues" && (
+                        <span className="text-primary">✓</span>
+                      )}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    {availableIssueTypes.map((type) => (
+                      <DropdownMenuItem
+                        key={type}
+                        onClick={() => setSelectedIssueType(type)}
+                        className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${selectedIssueType === type ? "text-primary bg-primary/5" : ""}`}
+                      >
+                        <span className="flex-1">
+                          {toIssueLabel(type)} ({issueCountByType[type] || 0})
+                        </span>
+                        {selectedIssueType === type && (
+                          <span className="text-primary">✓</span>
+                        )}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -1968,39 +2032,7 @@ export function DataCleaningPage() {
             </div>
           </CardHeader>
 
-          <CardContent className="px-4">
-            <div className="flex flex-col md:flex-row gap-2 pt-2">
-              <div className="relative flex-1 max-w-md">
-                <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder="Search"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 h-9"
-                />
-              </div>
-              <div className="flex gap-2 ml-auto">
-                <select
-                  value={selectedIssueType}
-                  onChange={(e) => setSelectedIssueType(e.target.value)}
-                  className="h-9 rounded-md border border-input bg-background px-3 text-sm"
-                >
-                  <option value="allIssues">
-                    {toIssueLabel("allIssues")} (
-                    {Object.values(issueCountByType || {}).reduce(
-                      (acc, curr) => acc + curr,
-                      0,
-                    )}
-                    )
-                  </option>
-                  {availableIssueTypes.map((type) => (
-                    <option key={type} value={type}>
-                      {toIssueLabel(type)} ({issueCountByType[type] || 0})
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+          <CardContent className="p-0">
             <div className="rounded-md border border-border overflow-hidden mt-2">
               <div
                 className="max-h-[500px] overflow-y-auto rounded-md"
@@ -2019,7 +2051,7 @@ export function DataCleaningPage() {
                         return (
                           <TableHead
                             key={col}
-                            className="font-normal relative px-2 py-3 text-left whitespace-nowrap bg-gray-50"
+                            className="font-normal relative px-2 py-[0.35rem] text-left whitespace-nowrap bg-gray-50"
                           >
                             <span
                               className={`absolute left-0 right-0 top-0 h-1 transition-colors duration-200 mx-[1px] ${hasIssue ? "bg-red-400" : "bg-emerald-400"}`}
@@ -2602,7 +2634,7 @@ export function DataCleaningPage() {
             <div className="p-4 border-t flex items-center justify-end gap-2">
               <Button
                 variant="outline"
-                className="px-6 "
+                className="px-3"
                 disabled={submitting}
                 onClick={() => {
                   setProceedConfirmOpen(false);
@@ -2614,7 +2646,7 @@ export function DataCleaningPage() {
                 onClick={() => void handleContinue()}
                 disabled={submitting}
                 variant="outline"
-                className="px-5 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
+                className="px-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
               >
                 {submitting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

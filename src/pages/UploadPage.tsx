@@ -414,15 +414,15 @@ export function UploadPage() {
   return (
     <div className={`${PAGE_OUTER} !min-h-0`}>
       <div className={PAGE_CONTAINER}>
-        <div className="mb-4">
+        <div className="mb-2">
           <ProcessStepper />
         </div>
         <Card className="shadow-none border border-border bg-card animate-in">
-          <CardHeader className="px-4">
+          <CardHeader className="p-2">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
-                  <Upload className="h-6 w-6 text-primary" />
+                <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
+                  <Upload className="h-4 w-4 text-primary" />
                 </div>
                 <div>
                   <div className="flex items-center gap-3">
@@ -442,7 +442,7 @@ export function UploadPage() {
                       </div>
                     )} */}
                   </div>
-                  <CardDescription className="text-xs text-muted-foreground">
+                  <CardDescription className=" text-muted-foreground text-[11px]">
                     Upload your source CSV or XLSX file to begin the data
                     processing workflow
                   </CardDescription>
@@ -453,7 +453,7 @@ export function UploadPage() {
                   <div className="flex gap-2">
                     <Button
                       variant="outline"
-                      className="px-5 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors hover:text-primary"
+                      className="font-normal text-xs border-primary text-primary hover:bg-primary/10 transition-colors hover:text-primary py-1"
                       onClick={() => {
                         setShowSheetSelector(true);
                       }}
@@ -476,8 +476,8 @@ export function UploadPage() {
             </div>
           </CardHeader>
 
-          <CardContent className="p-4">
-            <div className="flex justify-center flex-col items-center">
+          <CardContent className="p-0">
+            <div className="flex justify-center flex-col items-center my-2">
               {!file && (
                 <div
                   onDragOver={handleDragOver}
@@ -501,7 +501,7 @@ export function UploadPage() {
                     <div className="absolute -inset-4 bg-primary/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
 
-                  <div className="text-center space-y-2">
+                  <div className="text-center space-y-2 ">
                     <h3 className="text-md font-normal text-foreground tracking-tight">
                       Drop your file here
                     </h3>
@@ -551,10 +551,10 @@ export function UploadPage() {
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
                         <div className="gap-4">
-                          <div className="text-sm font-semibold">
+                          <div className="text-sm font-normal px-3">
                             Data Preview :
                           </div>
-                          <div className="bg-primary/10 text-blue-900 border border-blue-300 px-2 py-1 rounded-md w-full mt-2">
+                          <div className="bg-primary/10 text-blue-900 border border-blue-300 px-2 py-1 rounded-sm w-[98%] mt-2 mx-3">
                             <span className="text-xs">
                               Identified{" "}
                               <span className="font-semibold">
@@ -600,14 +600,14 @@ export function UploadPage() {
                           </div>
                         )} */}
 
-                        <div className="mt-4 max-h-96 rounded-md border border-border overflow-auto">
+                        <div className="max-h-96  border border-border overflow-auto mt-2">
                           <Table className="w-full min-w-[900px] ">
                             <TableHeader className=" font-bold text-sm ">
                               <TableRow>
                                 {previewHeaders.map((header) => (
                                   <TableHead
                                     key={header}
-                                    className="px-3 py-2 text-left font-medium  whitespace-nowrap bg-gray-50"
+                                    className="px-3 py-[0.35rem] text-left font-semibold  whitespace-nowrap bg-gray-50 border-r-2"
                                   >
                                     {header}
                                   </TableHead>
@@ -802,7 +802,7 @@ export function UploadPage() {
                   effectiveLeftSheet === effectiveRightSheet
                 }
                 variant="outline"
-                className="h-10 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors"
+                className="font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors py-3 px-4"
               >
                 Confirm Join Selection
               </Button>

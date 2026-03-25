@@ -23,7 +23,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               variant === "default",
             "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm hover:shadow-md":
               variant === "destructive",
-            "border border-input bg-background  hover:text-primary":
+            "border border-input bg-background  hover:text-primary !py-2":
               variant === "outline",
             "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm":
               variant === "secondary",
@@ -33,7 +33,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               variant === "link",
           },
           {
-            "h-10 px-4 py-2": size === "default",
+            "px-4 py-3": size === "default",
             "h-9 rounded-md px-3": size === "sm",
             "h-11 rounded-md px-8": size === "lg",
             "h-10 w-10": size === "icon",

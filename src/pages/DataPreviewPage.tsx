@@ -25,6 +25,7 @@ import {
   Table2,
   FileDown,
   ScanEye,
+  Eye,
 } from "lucide-react";
 import jsPDF from "jspdf";
 import * as XLSX from "xlsx";
@@ -405,17 +406,17 @@ export function DataPreviewPage() {
         </div>
 
         <Card className="shadow-lg border border-border bg-card">
-          <CardHeader className="pb-4 px-4">
+          <CardHeader className="p-2">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-start gap-4">
-                <div className="h-10 w-10 rounded-md bg-primary/10 text-primary flex items-center justify-center shadow-sm">
-                  <ScanEye className="w-6 h-6 text-primary" />
+                <div className="h-8 w-8 rounded-md bg-primary/10 text-primary flex items-center justify-center shadow-sm">
+                  <Eye className="w-4 h-4 text-primary" />
                 </div>
                 <div className="space-y-1">
                   <CardTitle className="text-sm font-normal">
                     Mapped Data Preview
                   </CardTitle>
-                  <CardDescription className="text-xs">
+                  <CardDescription className="text-[11px]">
                     Showing first {totalRows > 20 ? 20 : totalRows} rows &mdash;
                     all&nbsp;
                     <span className="font-medium text-foreground">
@@ -431,7 +432,7 @@ export function DataPreviewPage() {
                   variant="outline"
                   onClick={handleDownloadExcel}
                   disabled={!currentRows.length}
-                  className="bg-muted text-gray-800 border-border"
+                  className="bg-muted text-gray-800 border-border text-xs py-2 px-2"
                 >
                   <FileDown className="mr-2 h-4 w-4" />
                   Excel
@@ -440,7 +441,7 @@ export function DataPreviewPage() {
                   variant="outline"
                   onClick={handleDownloadMappingJSON}
                   disabled={!allEntityMappings[selectedEntity]?.length}
-                  className="bg-muted text-gray-800 border-border"
+                  className="bg-muted text-gray-800 border-border text-xs py-2 px-2"
                 >
                   <Download className="mr-2 h-4 w-4" />
                   JSON
@@ -449,7 +450,7 @@ export function DataPreviewPage() {
             </div>
           </CardHeader>
 
-          <CardContent className="space-y-3 px-4">
+          <CardContent className="space-y-3 p-0 !mt-2">
             {/* ── Entity tabs ─────────────────────────────────── */}
             {availableTabs.length > 1 && (
               <div className="flex gap-1 border-b border-border">
@@ -473,7 +474,7 @@ export function DataPreviewPage() {
             )}
 
             {/* ── Table ────────────────────────────────────────── */}
-            <div className="border border-border rounded-sm overflow-hidden shadow-sm bg-card mt-4">
+            <div className="border border-border rounded-sm overflow-hidden shadow-sm bg-card">
               <div className="max-h-[60vh] overflow-auto">
                 {previewRows.length > 0 ? (
                   <Table className="w-full text-sm">

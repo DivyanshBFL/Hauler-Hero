@@ -101,7 +101,7 @@ export default function ProcessStepper() {
           >
             <div className="flex items-center gap-1.5">
               <span
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-1 transition-colors duration-300 ${styles.icon}`}
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-1 transition-colors duration-300 ${styles.icon}`}
               >
                 {state === "completed" ? (
                   <Check size={20} strokeWidth={3} />
@@ -112,7 +112,7 @@ export default function ProcessStepper() {
 
               <div className="min-w-0">
                 <p
-                  className={`font-bold text-sm leading-tight ${styles.title}`}
+                  className={`font-normal text-sm leading-tight ${styles.title}`}
                 >
                   {step.title}
                 </p>

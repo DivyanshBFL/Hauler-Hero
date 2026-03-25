@@ -261,16 +261,16 @@ const DataAnalyticsPage = () => {
           <CardHeader className="pb-4 px-4">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-start gap-4">
-                <div className="h-12 w-12 flex items-center justify-center rounded-md bg-primary/10 text-primary shadow-sm">
-                  <ChartNoAxesCombined className="text-primary" />
+                <div className="h-8 w-8 flex items-center justify-center rounded-md bg-primary/10 text-primary shadow-sm">
+                  <ChartNoAxesCombined className="h-4 w-4 text-primary" />
                 </div>
-                <div className="space-y-1">
+                <div className="">
                   <CardTitle className="text-sm font-normal">
                     Entity Changes Preview
                   </CardTitle>
-                  <CardDescription className="text-xs text-muted-foreground">
+                  <CardDescription className="text-[11px] text-muted-foreground">
                     Data preview of the cleaned data
-                    <span className="inline-flex items-center ml-3 px-3 py-1 text-xs font-medium bg-primary/10 rounded-md borderbg-primary/10 text-blue-900 border border-blue-300 ">
+                    <span className="inline-flex items-center ml-3 px-3 py-1 text-[11px] font-normal bg-primary/10 rounded-md borderbg-primary/10 text-blue-900 border border-blue-300 ">
                       Changed rows: {changedRowsCount} | Changed cells:{" "}
                       {changedCellsCount}
                     </span>
@@ -291,8 +291,8 @@ const DataAnalyticsPage = () => {
                   variant={filterMode === "ALL" ? "default" : "outline"}
                   className={
                     filterMode === "ALL"
-                      ? "text-white"
-                      : "border-primary text-primary font-semibold  hover:bg-primary/10 transition-colors"
+                      ? "text-white text-xs py-1"
+                      : "border-primary text-primary font-normal text-xs hover:bg-primary/10 transition-colors hover:text-primary py-1"
                   }
                   onClick={() => setFilterMode("ALL")}
                 >
@@ -302,8 +302,8 @@ const DataAnalyticsPage = () => {
                   variant={filterMode === "CHANGED" ? "default" : "outline"}
                   className={
                     filterMode === "CHANGED"
-                      ? "text-white"
-                      : "border-primary text-primary font-semibold  hover:bg-primary/10 transition-colors"
+                      ? "text-white text-xs py-1"
+                      : "border-primary text-primary font-normal text-xs hover:bg-primary/10 transition-colors hover:text-primary py-1"
                   }
                   onClick={() => setFilterMode("CHANGED")}
                 >
@@ -313,8 +313,8 @@ const DataAnalyticsPage = () => {
                   variant={filterMode === "UNCHANGED" ? "default" : "outline"}
                   className={
                     filterMode === "UNCHANGED"
-                      ? "text-white"
-                      : "border-primary text-primary font-semibold  hover:bg-primary/10 transition-colors"
+                      ? "text-white text-xs py-1"
+                      : "border-primary text-primary font-normal text-xs hover:bg-primary/10 transition-colors hover:text-primary py-1"
                   }
                   onClick={() => setFilterMode("UNCHANGED")}
                 >
@@ -324,8 +324,8 @@ const DataAnalyticsPage = () => {
             </div>
           </CardHeader>
 
-          <CardContent className="px-4">
-            <div className="rounded-md border border-border overflow-hidden mt-4">
+          <CardContent className="p-0">
+            <div className="rounded-md border border-border overflow-hidden mt-2">
               <div className="max-h-[520px] min-h-[40vh] overflow-y-auto border rounded-md">
                 <Table className="w-full text-sm">
                   <TableHeader className="sticky top-0 z-10 bg-muted">

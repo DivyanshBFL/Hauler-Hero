@@ -1107,20 +1107,18 @@ export function FieldMappingPage() {
   return (
     <div className={PAGE_OUTER}>
       <div className={PAGE_CONTAINER}>
-        <div className="mb-4">
+        <div className="mb-2">
           <ProcessStepper />
         </div>
         <Card className="shadow-lg border border-border bg-card animate-in">
-          <CardHeader className="px-4">
+          <CardHeader className="">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
-                <GitMerge className="w-6 h-6 text-primary" />
+              <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
+                <GitMerge className="w-4 h-4 text-primary" />
               </div>
               <div>
-                <CardTitle className="text-md font-normal">
-                  Map Your Fields
-                </CardTitle>
-                <CardDescription className="text-xs ">
+                <CardTitle className="font-normal">Map Your Fields</CardTitle>
+                <CardDescription className="text-[11px] ">
                   Drag from a source field handle (left) to a destination field
                   handle (right) to create a mapping. Select a line and press
                   Delete to remove. Target fields marked with{" "}
@@ -1130,10 +1128,10 @@ export function FieldMappingPage() {
             </div>
           </CardHeader>
 
-          <CardContent className="gap-4 px-4 ">
+          <CardContent className="gap-4 p-0 ">
             {/* <div className="text-sm mt-4 font-semibold" >AI Auto-Mapping Summary :</div> */}
-            <div className="rounded-md border mt-2 mb-2 bg-primary/10 text-blue-900 border-blue-300">
-              <div className="px-4 py-2 flex items-center justify-between gap-2">
+            <div className="bg-primary/10 text-blue-900 border border-blue-300 px-2 py-2 rounded-sm w-[100%] mt-2">
+              <div className="flex items-center justify-between gap-2">
                 <div className="px-1 flex items-center flex-wrap gap-1 text-xs">
                   <span className="font-bold">Summary:</span>
                   <div className="flex items-center gap-1 ">
@@ -1174,7 +1172,7 @@ export function FieldMappingPage() {
               </div>
             </div>
 
-            <div className="relative">
+            <div className="relative mt-2">
               <div
                 className={
                   chatCollapsed
