@@ -147,9 +147,8 @@ function resolveFieldName(
   }
   if (partialMatches.length > 1) {
     return {
-      error: `Field "${cleaned}" matched multiple fields: ${partialMatches.slice(0, 4).join(", ")}${
-        partialMatches.length > 4 ? ", ..." : ""
-      }.`,
+      error: `Field "${cleaned}" matched multiple fields: ${partialMatches.slice(0, 4).join(", ")}${partialMatches.length > 4 ? ", ..." : ""
+        }.`,
     };
   }
 
@@ -778,9 +777,9 @@ export function FieldMappingPage() {
             effectiveSheets = loadedSheets.map((sheet, index) =>
               index === 0
                 ? {
-                    ...sheet,
-                    headers: mergedHeaders,
-                  }
+                  ...sheet,
+                  headers: mergedHeaders,
+                }
                 : sheet,
             );
           }
@@ -1189,68 +1188,27 @@ export function FieldMappingPage() {
           <ProcessStepper />
         </div>
         <Card className="shadow-lg border border-border bg-card animate-in">
-          <CardHeader className="">
+          <CardHeader className="bg-muted border-none p-1 px-2">
             <div className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
                 <GitMerge className="w-4 h-4 text-primary" />
               </div>
               <div>
-                <CardTitle className="font-normal">Map Your Fields</CardTitle>
+                <CardTitle className="font-normal">Map Fields</CardTitle>
                 <CardDescription className="text-[11px] ">
-                  Drag from a source field handle (left) to a destination field
-                  handle (right) to create a mapping. Select a line and press
-                  Delete to remove. Target fields marked with{" "}
-                  <span className="text-red-400">*</span> are required.
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-
-          <CardContent className="gap-4 p-0 ">
-            {/* <div className="text-sm mt-4 font-semibold" >AI Auto-Mapping Summary :</div> */}
-            <div className="bg-primary/10 text-blue-900 border border-blue-300 px-2 py-2 rounded-sm w-[98%] mt-2 mx-auto">
-              <div className="flex items-center justify-between gap-2">
-                <div className="px-1 flex items-center flex-wrap gap-1 text-xs">
-                  <span className="font-bold">Summary:</span>
-                  <div className="flex items-center gap-1 ">
-                    <span>AI Mapped Percentage:</span>
+                  <span className="flex items-center gap-1 ">
+                    Summary: <span>AI Mapped Percentage:</span>
                     <b>
                       {autoMappedCoveragePct}% ({autoMappedCount}/
                       {targetFieldsAll.length})
                     </b>
-                  </div>
-                  {/* <div className="flex items-center gap-0 ">
-                    <span>Unmapped Columns:</span>
-                    <span className="rounded-md px-1 py-0.5 font-semibold">
-                      {unmatchedColumnsCount}
-                    </span>
-                  </div> */}
-                  {/* <div className="flex items-center gap-2 ">
-                    <span>Data size overflow warning</span>
-                    <span className="rounded-md  px-2 py-0.5 font-semibold">
-                      {dataSizeOverflowWarningCount}
-                    </span>
-                  </div> */}
-                  {/* <div className="flex items-center gap-2 ">
-                    <span>Data type mismatch</span>
-                    <span className="rounded-md  px-2 py-0.5 font-semibold">
-                      {dataTypeMismatchCount}
-                    </span>
-                  </div> */}
-                </div>
-                {/* <label className="inline-flex items-center gap-2 text-sm text-muted-foreground ml-auto" style={{ minWidth: "150px" }}>
-                  <input
-                    type="checkbox"
-                    checked={showOnlyErrors}
-                    onChange={(e) => setShowOnlyErrors(e.target.checked)}
-                    className="h-4 w-4 rounded border-input"
-                  />
-                  Show only errors
-                </label> */}
+                  </span>
+                </CardDescription>
               </div>
             </div>
-
-            <div className="relative mt-2">
+          </CardHeader>
+          <CardContent className="gap-4 p-0">
+            <div className="relative">
               <div
                 className={
                   chatCollapsed
@@ -1267,12 +1225,12 @@ export function FieldMappingPage() {
                 >
                   <div
                     ref={flowPaneRef}
-                    className=" border border-border bg-background overflow-hidden"
+                    className=" bg-background overflow-hidden"
                     style={{ background: "white !important" }}
                   >
-                    <div className="grid grid-cols-[1fr_auto_1fr] gap-[5rem] bg-muted px-6 py-2">
+                    <div className="grid grid-cols-[1fr_auto_1fr] gap-[5rem] bg-muted px-6 py-1">
                       <div className="space-y-2">
-                        <div className="flex items-center justify-start text-sm gap-2">
+                        <div className="flex items-center justify-start text-sm gap-2 mb-[-5px]">
                           <span className="font-bold text-xs ">
                             Source Schema :
                           </span>
@@ -1289,13 +1247,13 @@ export function FieldMappingPage() {
                             placeholder="Search for field"
                             value={sourceSearch}
                             onChange={(e) => setSourceSearch(e.target.value)}
-                            className="w-full h-9 pl-8 pr-3 rounded-md border border-input bg-background text-sm"
+                            className="w-full h-7 pl-8 pr-3 rounded-md border border-input bg-background text-xs"
                           />
                         </div>
                       </div>
 
                       <div className="flex items-end justify-center pb-1">
-                        <label className="inline-flex items-center gap-2 text-sm text-foreground cursor-pointer whitespace-nowrap">
+                        <label className="inline-flex items-center gap-2 text-xs text-foreground cursor-pointer whitespace-nowrap">
                           <input
                             type="checkbox"
                             checked={showOnlyErrors}
@@ -1309,7 +1267,7 @@ export function FieldMappingPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <div className="flex justify-between">
+                        <div className="flex justify-between mb-[-5px]">
                           <div className="flex items-center justify-start text-sm gap-2">
                             <span className="font-bold text-xs">
                               Target Schema :
@@ -1333,7 +1291,7 @@ export function FieldMappingPage() {
                             placeholder="Search for field"
                             value={targetSearch}
                             onChange={(e) => setTargetSearch(e.target.value)}
-                            className="w-full h-9 pl-8 pr-3 rounded-md border border-input bg-background text-sm"
+                            className="w-full h-7 pl-8 pr-3 rounded-md border border-input bg-background text-xs"
                           />
                         </div>
                       </div>
@@ -1429,11 +1387,10 @@ export function FieldMappingPage() {
                             {chatMessages.map((message) => (
                               <div
                                 key={message.id}
-                                className={`rounded-md px-3 py-2 text-xs ${
-                                  message.role === "assistant"
-                                    ? "bg-muted text-foreground"
-                                    : "bg-primary text-primary-foreground ml-auto max-w-[90%]"
-                                }`}
+                                className={`rounded-md px-3 py-2 text-xs ${message.role === "assistant"
+                                  ? "bg-muted text-foreground"
+                                  : "bg-primary text-primary-foreground ml-auto max-w-[90%]"
+                                  }`}
                               >
                                 {message.text}
                               </div>

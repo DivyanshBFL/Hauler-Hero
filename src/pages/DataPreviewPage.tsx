@@ -406,7 +406,7 @@ export function DataPreviewPage() {
         </div>
 
         <Card className="shadow-lg border border-border bg-card">
-          <CardHeader className="p-2">
+          <CardHeader className="p-1 px-2 bg-muted">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-start gap-2">
                 <div className="h-8 w-8 rounded-md bg-primary/10 text-primary flex items-center justify-center shadow-sm">
@@ -432,7 +432,7 @@ export function DataPreviewPage() {
                   variant="outline"
                   onClick={handleDownloadExcel}
                   disabled={!currentRows.length}
-                  className="bg-muted text-xs py-1 px-4 font-normal bg-backgrround border border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                  className="bg-muted text-xs py-1 px-4 font-normal bg-white border border-primary text-primary hover:bg-primary/10 hover:text-primary"
                 >
                   <FileDown className="mr-2 h-4 w-4" />
                   Excel
@@ -441,7 +441,7 @@ export function DataPreviewPage() {
                   variant="outline"
                   onClick={handleDownloadMappingJSON}
                   disabled={!allEntityMappings[selectedEntity]?.length}
-                  className="bg-muted text-xs py-1 px-4 font-normal bg-backgrround border border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                  className="bg-muted text-xs py-1 px-4 font-normal bg-white border border-primary text-primary hover:bg-primary/10 hover:text-primary"
                 >
                   <Download className="mr-2 h-4 w-4" />
                   JSON
@@ -475,7 +475,7 @@ export function DataPreviewPage() {
 
             {/* ── Table ────────────────────────────────────────── */}
             <div className=" rounded-sm overflow-hidden shadow-sm bg-card">
-              <div className="max-h-[60vh] overflow-auto">
+              <div className="max-h-[415px] overflow-auto">
                 {previewRows.length > 0 ? (
                   <Table className="w-full text-sm">
                     <TableHeader className="sticky top-0 z-10">

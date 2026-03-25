@@ -86,27 +86,27 @@ const COLUMN_MENU_ITEMS: {
   label: string;
   icon: React.ReactNode;
 }[] = [
-  {
-    action: "replaceValues",
-    label: "Replace values",
-    icon: <Replace className="h-4 w-4" />,
-  },
-  {
-    action: "trimSpaces",
-    label: "Trim spaces",
-    icon: <Scissors className="h-4 w-4" />,
-  },
-  {
-    action: "truncateValues",
-    label: "Truncate values",
-    icon: <AlignLeft className="h-4 w-4" />,
-  },
-  {
-    action: "addPrefixOrSuffix",
-    label: "Add prefix or suffix",
-    icon: <PlusSquare className="h-4 w-4" />,
-  },
-];
+    {
+      action: "replaceValues",
+      label: "Replace values",
+      icon: <Replace className="h-4 w-4" />,
+    },
+    {
+      action: "trimSpaces",
+      label: "Trim spaces",
+      icon: <Scissors className="h-4 w-4" />,
+    },
+    {
+      action: "truncateValues",
+      label: "Truncate values",
+      icon: <AlignLeft className="h-4 w-4" />,
+    },
+    {
+      action: "addPrefixOrSuffix",
+      label: "Add prefix or suffix",
+      icon: <PlusSquare className="h-4 w-4" />,
+    },
+  ];
 
 function isCellMissing(value: unknown): boolean {
   if (value === null || value === undefined) return true;
@@ -702,10 +702,10 @@ export function DataCleaningPage() {
         const row =
           directRow && typeof directRow === "object"
             ? {
-                ...(mappedFromSource ?? {}),
-                ...directRow,
-                __rowIndex: rowIndex,
-              }
+              ...(mappedFromSource ?? {}),
+              ...directRow,
+              __rowIndex: rowIndex,
+            }
             : mappedFromSource;
 
         if (!row || typeof row !== "object") return;
@@ -765,8 +765,8 @@ export function DataCleaningPage() {
       const inferredColumns = normalizedColumns.length
         ? normalizedColumns
         : Object.keys(resultRows[0]?.row ?? {}).filter(
-            (c) => !c.startsWith("__"),
-          );
+          (c) => !c.startsWith("__"),
+        );
 
       return {
         rows: resultRows,
@@ -1894,7 +1894,7 @@ export function DataCleaningPage() {
         </div>
 
         <Card className="shadow-lg border border-border bg-card">
-          <CardHeader className="p-2">
+          <CardHeader className="p-1 px-2 bg-muted border-none">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-start gap-2">
                 <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
@@ -1902,7 +1902,7 @@ export function DataCleaningPage() {
                 </div>
                 <div>
                   <CardTitle className=" text-sm font-normal">
-                    Data Clean-up Workspace
+                    Data Cleanup Workspace
                   </CardTitle>
                   <div className="">
                     <CardDescription className="text-xs text-muted-foreground">
@@ -1969,19 +1969,18 @@ export function DataCleaningPage() {
                 )}
               </div>
 
-              <div className="relative flex-1 max-w-md">
-                <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder="Search"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 h-9"
-                />
-              </div>
-
               <div className="flex items-center gap-2">
+                <div className="relative flex-1 max-w-md">
+                  <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    placeholder="Search"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="pl-9 h-7 text-xs"
+                  />
+                </div>
                 <Button
-                  size="sm"
+                  className="h-7"
                   variant="outline"
                   disabled={!canUndo}
                   onClick={handleUndoStable}
@@ -1990,7 +1989,7 @@ export function DataCleaningPage() {
                   <Undo2 className="h-4 w-4" />
                 </Button>
                 <Button
-                  size="sm"
+                  className="h-7"
                   variant="outline"
                   disabled={!canRedo}
                   onClick={handleRedoStable}
@@ -2004,14 +2003,13 @@ export function DataCleaningPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className={`px-2 border-blue-300 hover:bg-primary/10 ${
-                        selectedIssueType !== "allIssues"
-                          ? "text-primary  bg-primary/5 "
-                          : ""
-                      }`}
+                      className={`h-7 px-2 hover:bg-primary/10 ${selectedIssueType !== "allIssues"
+                        ? "text-primary  bg-primary/5 "
+                        : ""
+                        }`}
                       title="Filter by issue type"
                     >
-                      <Filter className="h-4 w-4 text-primary " />
+                      <Filter className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
@@ -2057,7 +2055,7 @@ export function DataCleaningPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="text-blue-700 border-blue-300 hover:bg-blue-50 px-2"
+                      className="h-7 hover:bg-blue-50 px-2"
                       aria-label="Open quick actions"
                     >
                       <EllipsisVertical className="h-4 w-4" />
@@ -2106,7 +2104,7 @@ export function DataCleaningPage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="text-white text-xs border-black bg-black hover:text-white"
+                  className="h-7 text-white text-xs bg-black hover:text-white border-rouned-md"
                   disabled={!issues.length || analyzing || autoFixSubmitting}
                   onClick={() => {
                     setAutoFixError(null);
@@ -2123,7 +2121,7 @@ export function DataCleaningPage() {
           <CardContent className="p-0">
             <div className="rounded-none overflow-hidden ">
               <div
-                className="max-h-[500px] overflow-y-auto rounded-none"
+                className="max-h-[415px] overflow-y-auto rounded-none"
                 onScroll={(e) => {
                   const el = e.currentTarget;
                   if (el.scrollTop + el.clientHeight >= el.scrollHeight - 120)
@@ -2178,9 +2176,9 @@ export function DataCleaningPage() {
                   </TableHeader>
 
                   <TableBody>
-                   
-                   
-                   
+
+
+
                     {filteredVisibleRows.map((row, idx) => {
                       const rowIndex = Number(row.__rowIndex ?? idx);
                       return (
@@ -2192,8 +2190,8 @@ export function DataCleaningPage() {
                               selectedIssueType === "allIssues"
                                 ? cellIssues
                                 : cellIssues.filter(
-                                    (x) => x === selectedIssueType,
-                                  );
+                                  (x) => x === selectedIssueType,
+                                );
                             const hasCellIssue = visibleCellIssues.length > 0;
 
                             const cellKey = getCellKey(rowIndex, col);
@@ -2428,7 +2426,7 @@ export function DataCleaningPage() {
                                 name={opt.key}
                                 checked={
                                   autoFixOptions[
-                                    opt.key as keyof typeof autoFixOptions
+                                  opt.key as keyof typeof autoFixOptions
                                   ] === true
                                 }
                                 onChange={() =>
@@ -2449,7 +2447,7 @@ export function DataCleaningPage() {
                                 name={opt.key}
                                 checked={
                                   autoFixOptions[
-                                    opt.key as keyof typeof autoFixOptions
+                                  opt.key as keyof typeof autoFixOptions
                                   ] === false
                                 }
                                 onChange={() =>
@@ -2505,10 +2503,10 @@ export function DataCleaningPage() {
                                   checked={
                                     (choice.value === "null" &&
                                       autoFixOptions[
-                                        opt.key as keyof typeof autoFixOptions
+                                      opt.key as keyof typeof autoFixOptions
                                       ] === null) ||
                                     autoFixOptions[
-                                      opt.key as keyof typeof autoFixOptions
+                                    opt.key as keyof typeof autoFixOptions
                                     ] === choice.value
                                   }
                                   onChange={() =>

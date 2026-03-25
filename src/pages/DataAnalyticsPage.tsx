@@ -15,6 +15,8 @@ import {
   ChevronRight,
   ChartNoAxesCombined,
   Search,
+  Eye,
+  Filter
 } from "lucide-react";
 import { IMPORT_STATS_KEY, type ImportStats } from "@/types/importStats";
 import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
@@ -28,6 +30,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type FilterMode = "ALL" | "CHANGED" | "UNCHANGED";
 
@@ -253,46 +262,100 @@ const DataAnalyticsPage = () => {
   return (
     <div className={PAGE_OUTER}>
       <div className={PAGE_CONTAINER}>
-        <div className="mb-4">
+        <div className="mb-2">
           <ProcessStepper />
         </div>
 
         <Card className="shadow-lg border border-border bg-card">
-          <CardHeader className="p-2">
+          <CardHeader className="p-1 px-2 bg-muted border-none">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-start gap-2">
                 <div className="h-8 w-8 flex items-center justify-center rounded-md bg-primary/10 text-primary shadow-sm">
-                  <ChartNoAxesCombined className="h-4 w-4 text-primary" />
+                  <Eye className="h-4 w-4 text-primary" />
                 </div>
                 <div className="">
                   <CardTitle className="text-sm font-normal">
-                    Entity Changes Preview
+                    Data Cleanup Preview
                   </CardTitle>
                   <CardDescription className="text-[11px] text-muted-foreground">
-                    {/* Data preview of the cleaned data */}
-                    <span className="inline-flex items-center  px-2 text-[11px] font-normal bg-primary/10 rounded-md borderbg-primary/10 text-blue-900 border border-blue-300 ">
+                    <span className="inline-flex items-center text-[11px] font-normal">
                       Changed rows: {changedRowsCount} | Changed cells:{" "}
                       {changedCellsCount}
                     </span>
                   </CardDescription>
                 </div>
               </div>
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-8 "
-                />
-              </div>
               <div className="flex flex-wrap gap-2">
+                <div className="relative flex-1 max-w-md">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="pl-8 h-7 text-xs"
+                  />
+                </div>
+
+
+                {/* <DropdownMenu modal={false}>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className={`h-7 px-2 hover:bg-primary/10 ${selectedIssueType !== "allIssues"
+                        ? "text-primary  bg-primary/5 "
+                        : ""
+                        }`}
+                      title="Filter by issue type"
+                    >
+                      <Filter className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="end"
+                    sideOffset={8}
+                    className="w-56"
+                  >
+                    <DropdownMenuItem
+                      onClick={() => setSelectedIssueType("allIssues")}
+                      className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${selectedIssueType === "allIssues" ? "text-primary bg-primary/5" : ""}`}
+                    >
+                      <span className="flex-1">
+                        {toIssueLabel("allIssues")} (
+                        {Object.values(issueCountByType || {}).reduce(
+                          (acc, curr) => acc + curr,
+                          0,
+                        )}
+                        )
+                      </span>
+                      {selectedIssueType === "allIssues" && (
+                        <span className="text-primary">✓</span>
+                      )}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    {availableIssueTypes.map((type) => (
+                      <DropdownMenuItem
+                        key={type}
+                        onClick={() => setSelectedIssueType(type)}
+                        className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${selectedIssueType === type ? "text-primary bg-primary/5" : ""}`}
+                      >
+                        <span className="flex-1">
+                          {toIssueLabel(type)} ({issueCountByType[type] || 0})
+                        </span>
+                        {selectedIssueType === type && (
+                          <span className="text-primary">✓</span>
+                        )}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu> */}
+
                 <Button
                   variant={filterMode === "ALL" ? "default" : "outline"}
                   className={
                     filterMode === "ALL"
-                      ? "text-white text-xs py-1"
-                      : "border-primary text-primary font-normal text-xs hover:bg-primary/10 transition-colors hover:text-primary py-1"
+                      ? "h-7 text-white text-xs py-1"
+                      : "h-7 border-primary text-primary font-normal text-xs hover:bg-primary/10 transition-colors hover:text-primary py-1"
                   }
                   onClick={() => setFilterMode("ALL")}
                 >
@@ -302,8 +365,8 @@ const DataAnalyticsPage = () => {
                   variant={filterMode === "CHANGED" ? "default" : "outline"}
                   className={
                     filterMode === "CHANGED"
-                      ? "text-white text-xs py-1"
-                      : "border-primary text-primary font-normal text-xs hover:bg-primary/10 transition-colors hover:text-primary py-1"
+                      ? "h-7 text-white text-xs py-1"
+                      : "h-7 border-primary text-primary font-normal text-xs hover:bg-primary/10 transition-colors hover:text-primary py-1"
                   }
                   onClick={() => setFilterMode("CHANGED")}
                 >
@@ -313,8 +376,8 @@ const DataAnalyticsPage = () => {
                   variant={filterMode === "UNCHANGED" ? "default" : "outline"}
                   className={
                     filterMode === "UNCHANGED"
-                      ? "text-white text-xs py-1"
-                      : "border-primary text-primary font-normal text-xs hover:bg-primary/10 transition-colors hover:text-primary py-1"
+                      ? "h-7 text-white text-xs py-1"
+                      : "h-7 border-primary text-primary font-normal text-xs hover:bg-primary/10 transition-colors hover:text-primary py-1"
                   }
                   onClick={() => setFilterMode("UNCHANGED")}
                 >
@@ -326,14 +389,14 @@ const DataAnalyticsPage = () => {
 
           <CardContent className="p-0">
             <div className=" overflow-hidden">
-              <div className="max-h-[520px] min-h-[40vh] overflow-y-auto">
+              <div className="max-h-[415px] min-h-[40vh] overflow-y-auto">
                 <Table className="w-full text-sm">
-                  <TableHeader className="sticky top-0 z-10 bg-muted">
+                  <TableHeader className="sticky top-0 z-10">
                     <TableRow>
                       {headers.map((col) => (
                         <TableHead
                           key={col}
-                          className="font-normal bg-gray-100 px-3 py-2 text-left whitespace-nowrap border border-border"
+                          className="font-normal bg-gray-50 px-3 py-2 text-left whitespace-nowrap border border-border"
                         >
                           {col}
                         </TableHead>

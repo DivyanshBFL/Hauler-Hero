@@ -20,6 +20,7 @@ import {
 import { getDefaultImportStats, type ImportStats } from "@/types/importStats";
 import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
 import { api } from "@/services/api";
+import ProcessStepper from "@/components/ProcessStepper";
 
 function MetricCard({
   label,
@@ -116,8 +117,11 @@ export function CompletePage() {
   });
 
   return (
-    <div className={`${PAGE_OUTER} min-h-80`}>
+    <div className={`${PAGE_OUTER}`}>
       <div className={PAGE_CONTAINER}>
+      <div className="mb-2">
+          <ProcessStepper />
+        </div>
         <Card className="shadow-none border border-border bg-card animate-in overflow-hidden ">
           <CardContent className="p-8 space-y-8">
             <div className="space-y-8">

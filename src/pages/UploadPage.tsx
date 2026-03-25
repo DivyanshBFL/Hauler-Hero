@@ -127,7 +127,7 @@ export function UploadPage() {
     const isCSV = fileType === "text/csv" || fileName.endsWith(".csv");
     const isXLSX =
       fileType ===
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
       fileName.endsWith(".xlsx");
 
     if (isCSV) {
@@ -420,7 +420,7 @@ export function UploadPage() {
           <ProcessStepper />
         </div>
         <Card className="shadow-none border border-border bg-card animate-in min-h-[26rem]">
-          <CardHeader className="p-2">
+          <CardHeader className="p-1 px-2 bg-muted border-none">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
@@ -445,8 +445,78 @@ export function UploadPage() {
                     )} */}
                   </div>
                   <CardDescription className=" text-muted-foreground text-[11px]">
-                    Upload your source CSV or XLSX file to begin the data
-                    processing workflow
+
+                    {sheets.length > 0 ? (
+                      <>
+                        <div className="gap-4 mt-0">
+                          {sheets.map((sheet, index) => {
+                            const previewHeaders = sheet.headers ?? [];
+                            const previewRows = allRows.slice(0, 20);
+
+                            return (
+                              // <div
+                              //   key={sheet.name}
+                              //   className="group p-5 border border-border rounded-xl bg-card hover:shadow-md transition-all hover:border-primary/40"
+                              //   style={{ animationDelay: `${index * 100}ms` }}
+                              // >
+                              //
+                              <div
+                                key={sheet.name}
+                                className="group "
+                                style={{ animationDelay: `${index * 100}ms` }}
+                              >
+                                <div className="">
+                                  
+                                  <div>
+
+File Summary: {allRows.length} rows with {sheet.headers.length} column(s).
+
+                                    {/* <span className="text-xs">
+                                      Identified{" "}
+                                      <span className="">
+                                        {sheet.headers.length} columns
+                                      </span>{" "}
+                                      and{" "}
+                                      <span className="">
+                                        {allRows.length} rows
+                                      </span>{" "}
+                                      in this selected file.
+                                    </span> */}
+
+                                    {isJoinRequired && joinSelection && (
+                                      <span className="text-xs ml-1">
+                                        Join Configured:{" "}
+                                        <span className="">
+                                          {joinSelection.leftSheet}
+                                        </span>{" "}
+                                        (
+                                        <span className="">
+                                          {joinSelection.leftKey}
+                                        </span>
+                                        ) {"->"}{" "}
+                                        <span className="">
+                                          {joinSelection.rightSheet}
+                                        </span>{" "}
+                                        (
+                                        <span className="">
+                                          {joinSelection.rightKey}
+                                        </span>
+                                        )
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+
+
+
+
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </>
+                    ) : <>Upload your source CSV or XLSX file to begin the data
+                      processing workflow</>}
                   </CardDescription>
                 </div>
               </div>
@@ -488,10 +558,9 @@ export function UploadPage() {
                   className={`
                     w-full max-w-3xl relative group flex flex-col items-center justify-center gap-3 p-6 
                     rounded-xl border-2 border-dashed transition-all duration-300 cursor-pointer
-                    ${
-                      isDragging
-                        ? "border-primary bg-primary/10 scale-[1.02] shadow-2xl"
-                        : "border-primary/40 bg-primary/[0.03] hover:border-primary/60 hover:bg-primary/[0.06]"
+                    ${isDragging
+                      ? "border-primary bg-primary/10 scale-[1.02] shadow-2xl"
+                      : "border-primary/40 bg-primary/[0.03] hover:border-primary/60 hover:bg-primary/[0.06]"
                     }
                   `}
                   onClick={openFilePicker}
@@ -532,7 +601,6 @@ export function UploadPage() {
                 </div>
               )}
             </div>
-
             {sheets.length > 0 && (
               <>
                 <div className="gap-4 mt-0">
@@ -552,57 +620,7 @@ export function UploadPage() {
                         className="group "
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
-                        <div className="gap-4 mt-1">
-                          <div className="text-sm font-normal px-3">
-                            Data Preview :
-                          </div>
-                          <div className="bg-primary/10 text-blue-900 border border-blue-300 px-2 py-1 rounded-sm w-[98%] mt-2 mx-3">
-                            <span className="text-xs">
-                              Identified{" "}
-                              <span className="font-semibold">
-                                {sheet.headers.length} columns
-                              </span>{" "}
-                              and{" "}
-                              <span className="font-semibold">
-                                {allRows.length} rows
-                              </span>{" "}
-                              in this selected file.
-                            </span>
-
-                            {isJoinRequired && joinSelection && (
-                              <span className="text-xs ml-1">
-                                Join configured:{" "}
-                                <span className="font-semibold">
-                                  {joinSelection.leftSheet}
-                                </span>{" "}
-                                (
-                                <span className="font-semibold">
-                                  {joinSelection.leftKey}
-                                </span>
-                                ) {"->"}{" "}
-                                <span className="font-semibold">
-                                  {joinSelection.rightSheet}
-                                </span>{" "}
-                                (
-                                <span className="font-semibold">
-                                  {joinSelection.rightKey}
-                                </span>
-                                )
-                              </span>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* {isJoinRequired && joinSelection && (
-                          <div className="mt-3 rounded-md border border-blue-300 bg-primary/10 px-2 py-2 text-xs text-blue-900 ">
-                            Join configured: <span className="font-semibold">{joinSelection.leftSheet}</span>
-                            {' '}(<span className="font-semibold">{joinSelection.leftKey}</span>) {'->'}{' '}
-                            <span className="font-semibold">{joinSelection.rightSheet}</span>
-                            {' '}(<span className="font-semibold">{joinSelection.rightKey}</span>)
-                          </div>
-                        )} */}
-
-                        <div className="max-h-96 overflow-auto mt-2">
+                        <div className="max-h-[415px] overflow-auto">
                           <Table className="w-full min-w-[900px] ">
                             <TableHeader className=" font-bold text-sm ">
                               <TableRow>
@@ -626,7 +644,7 @@ export function UploadPage() {
                                     >
                                       {String(
                                         (row as Record<string, unknown>)?.[
-                                          header
+                                        header
                                         ] ?? "",
                                       )}
                                     </TableCell>
@@ -643,30 +661,31 @@ export function UploadPage() {
               </>
             )}
           </CardContent>
-          <div className="flex justify-end p-2 border-t bg-muted">
-            <Button
-              onClick={handleNext}
-              disabled={loading || !canProceed}
-              variant="outline"
-              className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
-            >
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Next
-              <svg
-                className="ml-2 w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+          {!(loading || !canProceed) && (
+            <div className="flex justify-end p-1 px-2 border-t bg-muted mt-1">
+              <Button
+                onClick={handleNext}
+                variant="outline"
+                className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </Button>
-          </div>
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Next
+                <svg
+                  className="ml-2 w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </Button>
+            </div>
+          )}
         </Card>
 
         <Dialog
