@@ -1894,14 +1894,14 @@ export function DataCleaningPage() {
           <CardHeader className="pb-3 px-4">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-start gap-4">
-                <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
-                  <ShieldAlert className="w-6 h-6 text-primary" />
+                <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
+                  <ShieldAlert className="w-4 h-4 text-primary" />
                 </div>
                 <div>
                   <CardTitle className=" text-sm font-normal">
                     Data Clean-up Workspace
                   </CardTitle>
-                  <div className="relative mt-1 inline-block">
+                  <div className="">
                     <CardDescription className="text-xs text-muted-foreground">
                       <span>
                         <button
@@ -1996,19 +1996,6 @@ export function DataCleaningPage() {
                   <Redo2 className="h-4 w-4" />
                 </Button>
 
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-white border-black bg-black hover:text-white"
-                  disabled={!issues.length || analyzing || autoFixSubmitting}
-                  onClick={() => {
-                    setAutoFixError(null);
-                    setAutoFixConfirmOpen(true);
-                  }}
-                >
-                  <Sparkles className="mr-2 h-4 w-4 text-white fill-white animate-pulse" />
-                  Auto Cleanup
-                </Button>
                 <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -2113,14 +2100,27 @@ export function DataCleaningPage() {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-white border-black bg-black hover:text-white"
+                  disabled={!issues.length || analyzing || autoFixSubmitting}
+                  onClick={() => {
+                    setAutoFixError(null);
+                    setAutoFixConfirmOpen(true);
+                  }}
+                >
+                  <Sparkles className="mr-2 h-4 w-4 text-white fill-white animate-pulse" />
+                  Auto Cleanup
+                </Button>
               </div>
             </div>
           </CardHeader>
 
           <CardContent className="p-0">
-            <div className="rounded-md border border-border overflow-hidden mt-2">
+            <div className="rounded-none overflow-hidden ">
               <div
-                className="max-h-[500px] overflow-y-auto rounded-md"
+                className="max-h-[500px] overflow-y-auto rounded-none"
                 onScroll={(e) => {
                   const el = e.currentTarget;
                   if (el.scrollTop + el.clientHeight >= el.scrollHeight - 120)
@@ -2139,7 +2139,7 @@ export function DataCleaningPage() {
                             className="font-normal relative px-2 py-[0.35rem] text-left whitespace-nowrap bg-gray-50"
                           >
                             <span
-                              className={`absolute left-0 right-0 top-0 h-1 transition-colors duration-200 mx-[1px] ${hasIssue ? "bg-red-400" : "bg-emerald-400"}`}
+                              className={`absolute left-0 right-0 top-0 h-0.5 transition-colors duration-200 mx-[1px] ${hasIssue ? "bg-red-400" : "bg-emerald-400"}`}
                             />
                             <div className="flex items-center gap-1 mt-1">
                               <span>{col}</span>
@@ -2256,10 +2256,10 @@ export function DataCleaningPage() {
               </div>
             </div>
           </CardContent>
-          <div className="flex flex-col sm:flex-row justify-between px-4 py-3 border-t bg-muted">
+          <div className="flex flex-col sm:flex-row justify-between p-2 border-t bg-muted">
             <Button
               variant="outline"
-              className="border-primary text-primary font-semibold hover:bg-primary/10 transition-colors"
+              className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
               onClick={() => navigate("/data-preview")}
             >
               <svg
@@ -2283,7 +2283,7 @@ export function DataCleaningPage() {
               }}
               disabled={submitting}
               variant="outline"
-              className="w-full sm:w-auto  border-primary text-primary font-semibold order-1 hover:bg-primary/10 transition-colors px-5 pr-3"
+              className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
             >
               {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Next
@@ -2680,7 +2680,7 @@ export function DataCleaningPage() {
           <div className="relative z-10 w-full max-w-xl rounded-md border border-border bg-background shadow-2xl overflow-hidden">
             <div className="py-4 border-b flex items-center justify-between">
               <h3 className="text-md leading-none font-light text-foreground px-4 flex gap-2 items-center">
-                <CircleAlert className="inline " />
+                <CircleAlert className="inline text-red-400" />
                 Outstanding Issues Alert
               </h3>
 

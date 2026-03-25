@@ -258,7 +258,7 @@ const DataAnalyticsPage = () => {
         </div>
 
         <Card className="shadow-lg border border-border bg-card">
-          <CardHeader className="pb-4 px-4">
+          <CardHeader className="p-2">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-start gap-4">
                 <div className="h-8 w-8 flex items-center justify-center rounded-md bg-primary/10 text-primary shadow-sm">
@@ -270,23 +270,23 @@ const DataAnalyticsPage = () => {
                   </CardTitle>
                   <CardDescription className="text-[11px] text-muted-foreground">
                     Data preview of the cleaned data
-                    <span className="inline-flex items-center ml-3 px-3 py-1 text-[11px] font-normal bg-primary/10 rounded-md borderbg-primary/10 text-blue-900 border border-blue-300 ">
+                    <span className="inline-flex items-center ml-3 px-2 text-[11px] font-normal bg-primary/10 rounded-md borderbg-primary/10 text-blue-900 border border-blue-300 ">
                       Changed rows: {changedRowsCount} | Changed cells:{" "}
                       {changedCellsCount}
                     </span>
                   </CardDescription>
                 </div>
               </div>
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-8 "
+                />
+              </div>
               <div className="flex flex-wrap gap-2">
-                <div className="relative">
-                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="w-[220px] pl-8"
-                  />
-                </div>
                 <Button
                   variant={filterMode === "ALL" ? "default" : "outline"}
                   className={
@@ -325,8 +325,8 @@ const DataAnalyticsPage = () => {
           </CardHeader>
 
           <CardContent className="p-0">
-            <div className="rounded-md border border-border overflow-hidden mt-2">
-              <div className="max-h-[520px] min-h-[40vh] overflow-y-auto border rounded-md">
+            <div className=" overflow-hidden">
+              <div className="max-h-[520px] min-h-[40vh] overflow-y-auto">
                 <Table className="w-full text-sm">
                   <TableHeader className="sticky top-0 z-10 bg-muted">
                     <TableRow>
@@ -430,10 +430,10 @@ const DataAnalyticsPage = () => {
               </div>
             </div>
           </CardContent>
-          <div className="flex flex-col sm:flex-row justify-between px-4 py-3 border-t bg-muted">
+          <div className="flex flex-col sm:flex-row justify-between p-2 border-t bg-muted">
             <Button
               variant="outline"
-              className="border-primary text-primary font-semibold hover:bg-primary/10 transition-colors"
+              className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
               onClick={() => navigate("/data-cleaning")}
             >
               <svg
@@ -454,7 +454,7 @@ const DataAnalyticsPage = () => {
 
             <Button
               variant="outline"
-              className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
+              className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
               onClick={() => {
                 const total = rows.length;
                 const updated = changedRowsCount;
