@@ -45,8 +45,8 @@ import ProcessStepper from "@/components/ProcessStepper";
 import type { MapResponse } from "@/services/api";
 import { toast } from "sonner";
 
-const ROW_HEIGHT = 44;
-const HORIZONTAL_COLUMN_MARGIN = 48;
+const ROW_HEIGHT = 38;
+const HORIZONTAL_COLUMN_MARGIN = 20;
 const MISSING_SOURCE_TEXT = "Column not found in Source";
 const NODE_TYPES = {
   sourceField: SourceFieldNode,
@@ -1112,7 +1112,7 @@ export function FieldMappingPage() {
         </div>
         <Card className="shadow-lg border border-border bg-card animate-in">
           <CardHeader className="">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
                 <GitMerge className="w-4 h-4 text-primary" />
               </div>
@@ -1130,7 +1130,7 @@ export function FieldMappingPage() {
 
           <CardContent className="gap-4 p-0 ">
             {/* <div className="text-sm mt-4 font-semibold" >AI Auto-Mapping Summary :</div> */}
-            <div className="bg-primary/10 text-blue-900 border border-blue-300 px-2 py-2 rounded-sm w-[100%] mt-2">
+            <div className="bg-primary/10 text-blue-900 border border-blue-300 px-2 py-2 rounded-sm w-[98%] mt-2 mx-auto">
               <div className="flex items-center justify-between gap-2">
                 <div className="px-1 flex items-center flex-wrap gap-1 text-xs">
                   <span className="font-bold">Summary:</span>
@@ -1189,16 +1189,16 @@ export function FieldMappingPage() {
                 >
                   <div
                     ref={flowPaneRef}
-                    className="rounded-md border border-border bg-background overflow-hidden"
+                    className=" border border-border bg-background overflow-hidden"
                     style={{ background: "white !important" }}
                   >
-                    <div className="grid grid-cols-2 gap-6 px-4 py-3">
+                    <div className="grid grid-cols-[1fr_auto_1fr] gap-[5rem] bg-muted px-6 py-3">
                       <div className="space-y-2">
                         <div className="flex items-center justify-start text-sm gap-2">
                           <span className="font-semibold text-foreground">
                             Source Schema :
                           </span>
-                          <span className="text-muted-foreground">
+                          <span className="text-muted-foreground text-xs">
                             {sourceFieldsAll.length} Columns{" "}
                           </span>
                         </div>
@@ -1215,13 +1215,27 @@ export function FieldMappingPage() {
                         </div>
                       </div>
 
+                      <div className="flex items-end justify-center pb-1">
+                        <label className="inline-flex items-center gap-2 text-sm text-foreground cursor-pointer whitespace-nowrap">
+                          <input
+                            type="checkbox"
+                            checked={showOnlyErrors}
+                            onChange={(e) =>
+                              setShowOnlyErrors(e.target.checked)
+                            }
+                            className="h-4 w-4 rounded border-input cursor-pointer accent-primary"
+                          />
+                          Show Unmapped
+                        </label>
+                      </div>
+
                       <div className="space-y-2">
                         <div className="flex justify-between">
                           <div className="flex items-center justify-start text-sm gap-2">
                             <span className="font-semibold text-foreground">
                               Target Schema :
                             </span>
-                            <span className="text-muted-foreground">
+                            <span className="text-muted-foreground text-xs">
                               {
                                 mappings.filter(
                                   (m) => m.targetField !== "Unmapped",
@@ -1230,17 +1244,6 @@ export function FieldMappingPage() {
                               /{targetFieldsAll.length} Columns Mapped
                             </span>
                           </div>
-                          {/* <div>
-                            <label className="inline-flex items-center gap-2 text-sm text-muted-foreground ml-auto" style={{ minWidth: "150px" }}>
-                              <input
-                                type="checkbox"
-                                checked={showOnlyErrors}
-                                onChange={(e) => setShowOnlyErrors(e.target.checked)}
-                                className="h-4 w-4 rounded border-input"
-                              />
-                              Show only unmapped
-                            </label>
-                          </div> */}
                         </div>
                         <div className="relative">
                           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -1255,18 +1258,6 @@ export function FieldMappingPage() {
                         </div>
                       </div>
                     </div>
-                    <label
-                      className="inline-flex items-center gap-2 text-sm text-foreground cursor-pointer ml-4"
-                      style={{ minWidth: "150px" }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={showOnlyErrors}
-                        onChange={(e) => setShowOnlyErrors(e.target.checked)}
-                        className="h-4 w-4 rounded border-input cursor-pointer accent-primary"
-                      />
-                      Show Unmapped
-                    </label>
                     <hr className="w-full mb-1 shadow-lg" />
                     <ScrollArea
                       ref={scrollAreaRef}

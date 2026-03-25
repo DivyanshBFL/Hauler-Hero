@@ -198,6 +198,7 @@ export function UploadPage() {
     const worksheet = workbook.Sheets[sheetName];
     const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(worksheet, {
       defval: "",
+      raw: false,
     });
     let headers = Object.keys(rows[0] || {});
 
@@ -205,6 +206,7 @@ export function UploadPage() {
       const matrix = XLSX.utils.sheet_to_json<string[]>(worksheet, {
         header: 1,
         defval: "",
+        raw: false,
       });
       headers = (matrix[0] || [])
         .map((value) => String(value).trim())
@@ -412,15 +414,15 @@ export function UploadPage() {
   const filteredRightKeys = rightSheetHeaders;
 
   return (
-    <div className={`${PAGE_OUTER} !min-h-0`}>
-      <div className={PAGE_CONTAINER}>
+    <div className={`${PAGE_OUTER} !min-h-[30rem]`}>
+      <div className={`${PAGE_CONTAINER} min-h-[30rem]`}>
         <div className="mb-2">
           <ProcessStepper />
         </div>
-        <Card className="shadow-none border border-border bg-card animate-in">
+        <Card className="shadow-none border border-border bg-card animate-in min-h-[26rem]">
           <CardHeader className="p-2">
             <div className="flex items-center justify-between gap-3 flex-wrap">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
                   <Upload className="h-4 w-4 text-primary" />
                 </div>
@@ -476,8 +478,8 @@ export function UploadPage() {
             </div>
           </CardHeader>
 
-          <CardContent className="p-0">
-            <div className="flex justify-center flex-col items-center my-2">
+          <CardContent className="p-0 min-h-[18rem] flex flex-col">
+            <div className="flex justify-center flex-col items-center flex-1">
               {!file && (
                 <div
                   onDragOver={handleDragOver}
@@ -550,7 +552,7 @@ export function UploadPage() {
                         className="group "
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
-                        <div className="gap-4">
+                        <div className="gap-4 mt-[-10px]">
                           <div className="text-sm font-normal px-3">
                             Data Preview :
                           </div>

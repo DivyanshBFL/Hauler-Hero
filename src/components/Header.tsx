@@ -1,17 +1,15 @@
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { LogOut, User } from 'lucide-react';
+} from "@/components/ui/dropdown-menu";
+import { LogOut, User } from "lucide-react";
 
 export function Header() {
-
-
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuth();
@@ -19,11 +17,11 @@ export function Header() {
   const handleLogout = () => {
     // sessionStorage.clear();
     logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   // Don't render header on login page
-  if (location.pathname === '/login') {
+  if (location.pathname === "/login") {
     return null;
   }
 
@@ -32,9 +30,13 @@ export function Header() {
       <div className="mx-auto w-full px-4 md:px-4 flex h-16 items-center justify-between">
         <div className="flex items-center gap-3">
           <a href="/upload">
-            <img src="https://www.haulerhero.com/hubfs/Icons/Hauler-Hero-Landscape-Logo-Black.png" alt="Hauler-Hero-Landscape-Logo-Black"
-              width="100%" style={{ maxWidth: '280px', maxHeight: '140px' }}
-              className="kl-navbar__logo" />
+            <img
+              src="https://www.haulerhero.com/hubfs/Icons/Hauler-Hero-Landscape-Logo-Black.png"
+              alt="Hauler-Hero-Landscape-Logo-Black"
+              width="100%"
+              style={{ maxWidth: "280px", maxHeight: "140px" }}
+              className="kl-navbar__logo"
+            />
           </a>
         </div>
 
@@ -44,7 +46,7 @@ export function Header() {
               <Button
                 variant="outline"
                 size="icon"
-                className="rounded-full bg-white text-primary"
+                className="rounded-full bg-black text-white hover:text-white hover:bg-gray-500"
                 aria-label="Open user menu"
               >
                 <User className="h-5 w-5" />
