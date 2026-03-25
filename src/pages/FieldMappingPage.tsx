@@ -202,7 +202,7 @@ function buildNodesAndEdges(
   targetTypeMap: Record<string, FieldDataType>,
   sourceX: number,
   targetX: number,
-  nodeWidth: number,
+  nodeWidths: { source: number; target: number },
   requiredTargetSet: Set<string>,
   onUnmapTarget: (targetField: string) => void,
   selectedEdgeId: string | null,
@@ -225,7 +225,7 @@ function buildNodesAndEdges(
         label: showMissingSourceText ? MISSING_SOURCE_TEXT : label,
         dataType: sourceTypeMap[label],
         status: mapped ? "mapped" : "unmapped",
-        nodeWidth,
+        nodeWidth: nodeWidths.source,
         hideDataType: false, // hide datatype when "Column not found in Source"
         draggable: showMissingSourceText,
       },
@@ -258,7 +258,7 @@ function buildNodesAndEdges(
         fieldName: label,
         dataType: targetTypeMap[label],
         status: mapped ? "mapped" : "unmapped",
-        nodeWidth,
+        nodeWidth: nodeWidths.target,
         isWarning: !mapped,
         onUnmap: onUnmapTarget,
       },
@@ -588,13 +588,26 @@ export function FieldMappingPage() {
   const mappingContentHeight =
     Math.max(orderedSource.length, orderedTarget.length, 1) * ROW_HEIGHT + 40;
   const flowPaneRef = useRef<HTMLDivElement | null>(null);
+  const flowInnerRef = useRef<HTMLDivElement | null>(null);
   const [flowPaneWidth, setFlowPaneWidth] = useState(900);
+
+  const sourceSearchInputRef = useRef<HTMLInputElement | null>(null);
+  const targetSearchInputRef = useRef<HTMLInputElement | null>(null);
+  const [measuredNodeLayout, setMeasuredNodeLayout] = useState<{
+    nodeWidths: { source: number; target: number };
+    sourceX: number;
+    targetX: number;
+    flowCanvasWidth: number;
+  } | null>(null);
 
   useEffect(() => {
     if (!flowPaneRef.current) return;
     const el = flowPaneRef.current;
 
-    const update = () => setFlowPaneWidth(el.clientWidth || 900);
+    const update = () => {
+      const next = el.clientWidth || 900;
+      setFlowPaneWidth((prev) => (prev === next ? prev : next));
+    };
     update();
 
     const observer = new ResizeObserver(update);
@@ -602,13 +615,78 @@ export function FieldMappingPage() {
     return () => observer.disconnect();
   }, [chatCollapsed]);
 
-  const nodeWidth = chatCollapsed ? 420 : 300;
-  const flowCanvasWidth = Math.max(
-    flowPaneWidth,
-    nodeWidth * 2 + HORIZONTAL_COLUMN_MARGIN * 2 + 300,
+  useEffect(() => {
+    const sourceEl = sourceSearchInputRef.current;
+    const targetEl = targetSearchInputRef.current;
+    const innerEl = flowInnerRef.current;
+    if (!sourceEl || !targetEl || !innerEl) return;
+
+    const raf = globalThis.requestAnimationFrame(() => {
+      const sourceRect = sourceEl.getBoundingClientRect();
+      const targetRect = targetEl.getBoundingClientRect();
+      const innerRect = innerEl.getBoundingClientRect();
+
+      const nextSourceNodeWidth = Math.floor(sourceRect.width);
+      const nextTargetNodeWidth = Math.floor(targetRect.width);
+      if (
+        !Number.isFinite(nextSourceNodeWidth) ||
+        nextSourceNodeWidth <= 0 ||
+        !Number.isFinite(nextTargetNodeWidth) ||
+        nextTargetNodeWidth <= 0
+      ) {
+        return;
+      }
+
+      const nextSourceX = Math.floor(sourceRect.left - innerRect.left);
+      const nextTargetX = Math.floor(
+        targetRect.right - innerRect.left - nextTargetNodeWidth,
+      );
+      // IMPORTANT: use the visible pane width for flowCanvasWidth.
+      // Measuring innerRect.width here creates a circular dependency (innerRect.width is
+      // driven by flowCanvasWidth from previous render), which caused the target end to be clipped.
+      const nextFlowCanvasWidth = Math.floor(
+        flowPaneRef.current?.clientWidth ?? innerRect.width,
+      );
+
+      setMeasuredNodeLayout((prev) => {
+        if (
+          prev &&
+          Math.abs(prev.sourceX - nextSourceX) <= 1 &&
+          Math.abs(prev.targetX - nextTargetX) <= 1 &&
+          Math.abs(prev.flowCanvasWidth - nextFlowCanvasWidth) <= 1 &&
+          Math.abs(prev.nodeWidths.source - nextSourceNodeWidth) <= 1 &&
+          Math.abs(prev.nodeWidths.target - nextTargetNodeWidth) <= 1
+        ) {
+          return prev;
+        }
+
+        return {
+          nodeWidths: { source: nextSourceNodeWidth, target: nextTargetNodeWidth },
+          sourceX: nextSourceX,
+          targetX: nextTargetX,
+          flowCanvasWidth: nextFlowCanvasWidth,
+        };
+      });
+    });
+
+    return () => globalThis.cancelAnimationFrame(raf);
+  }, [flowPaneWidth, chatCollapsed, selectedEntity]);
+
+  const fallbackNodeWidths = useMemo(
+    () => ({
+      source: chatCollapsed ? 420 : 300,
+      target: chatCollapsed ? 420 : 300,
+    }),
+    [chatCollapsed],
   );
-  const sourceX = HORIZONTAL_COLUMN_MARGIN;
-  const targetX = flowCanvasWidth - HORIZONTAL_COLUMN_MARGIN - nodeWidth;
+
+  const nodeWidths = measuredNodeLayout?.nodeWidths ?? fallbackNodeWidths;
+  const flowCanvasWidth =
+    measuredNodeLayout?.flowCanvasWidth ?? flowPaneWidth;
+  const sourceX = measuredNodeLayout?.sourceX ?? HORIZONTAL_COLUMN_MARGIN;
+  const targetX =
+    measuredNodeLayout?.targetX ??
+    flowCanvasWidth - HORIZONTAL_COLUMN_MARGIN - nodeWidths.target;
   const handleUnmapTarget = (targetField: string) => {
     setEntityMappings((prev) => {
       const current = prev[selectedEntity] ?? [];
@@ -627,7 +705,7 @@ export function FieldMappingPage() {
         targetTypeMap,
         sourceX,
         targetX,
-        nodeWidth,
+        nodeWidths,
         requiredTargetSet,
         handleUnmapTarget,
         selectedEdgeId,
@@ -640,7 +718,7 @@ export function FieldMappingPage() {
       targetTypeMap,
       sourceX,
       targetX,
-      nodeWidth,
+      nodeWidths,
       requiredTargetSet,
       selectedEntity,
       selectedEdgeId,
@@ -1206,6 +1284,7 @@ export function FieldMappingPage() {
                           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                           <input
                             id="source-search"
+                            ref={sourceSearchInputRef}
                             type="text"
                             placeholder="Search for field"
                             value={sourceSearch}
@@ -1249,6 +1328,7 @@ export function FieldMappingPage() {
                           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                           <input
                             id="target-search"
+                            ref={targetSearchInputRef}
                             type="text"
                             placeholder="Search for field"
                             value={targetSearch}
@@ -1265,7 +1345,8 @@ export function FieldMappingPage() {
                       style={{ height: MAPPING_VIEWPORT_HEIGHT }}
                     >
                       <div
-                        className="relative mx-auto"
+                        ref={flowInnerRef}
+                        className="relative"
                         style={{
                           height: mappingContentHeight,
                           width: flowCanvasWidth,

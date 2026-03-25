@@ -2379,7 +2379,7 @@ export function DataCleaningPage() {
             className={`absolute right-0 top-0 z-10 h-full w-full max-w-[560px] bg-white border-l border-border shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${autoFixDrawerVisible ? "translate-x-0" : "translate-x-full"}`}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="h-12 px-6 border-b border-border bg-white flex items-center justify-between shrink-0">
+            <div className="h-12 px-6 border-b border-border bg-muted flex items-center justify-between shrink-0">
               <h3 className="flex items-center gap-2 text-md leading-none font-light text-foreground">
                 <Sparkles className="h-4 w-4" />
                 Data Cleanup Rules
@@ -2558,12 +2558,12 @@ export function DataCleaningPage() {
               </div>
             </div>
 
-            <div className="shrink-0 border-t border-border bg-white p-4 flex items-center justify-end gap-2">
+            <div className="shrink-0 border-t border-border bg-muted p-4 py-2 flex items-center justify-end gap-2">
               <Button
                 variant="outline"
                 disabled={autoFixSubmitting}
                 onClick={closeAutoFixDrawer}
-                className="h-10 px-5"
+                className="h-9 text-xs px-5"
               >
                 Cancel
               </Button>
@@ -2571,7 +2571,7 @@ export function DataCleaningPage() {
                 disabled={autoFixSubmitting}
                 onClick={() => void handleAutoFixAllIssues()}
                 variant="outline"
-                className="bg-white text-primary border-primary hover:bg-blue-100 "
+                className="bg-white text-primary border-primary h-9 text-xs px-5 hover:bg-blue-100 "
               >
                 {autoFixSubmitting ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

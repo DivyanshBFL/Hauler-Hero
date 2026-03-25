@@ -6,13 +6,16 @@ import {
   ShieldAlert,
   ChartNoAxesCombined,
   Check,
+  Sparkles
 } from "lucide-react";
+import aiMagic from "../../public/AiMagic1.svg"
 
 type Step = {
   title: string;
   subtitle: string;
   path: string;
-  Icon: React.ElementType;
+  isImageIcon?: boolean;
+  Icon: any;
 };
 
 const steps: Step[] = [
@@ -26,7 +29,7 @@ const steps: Step[] = [
     title: "Field Mapping",
     subtitle: "Drag source fields to target entities",
     path: "/field-mapping",
-    Icon: GitMerge,
+    Icon: Sparkles,
   },
   // {
   //   title: "Mapped Data Preview",
@@ -106,7 +109,7 @@ export default function ProcessStepper() {
                 {state === "completed" ? (
                   <Check size={20} strokeWidth={3} />
                 ) : (
-                  <step.Icon size={18} />
+                  step?.isImageIcon ?  <img className="h-4 w-6" src={step.Icon} alt={step.title} /> : <step.Icon size={16} />
                 )}
               </span>
 

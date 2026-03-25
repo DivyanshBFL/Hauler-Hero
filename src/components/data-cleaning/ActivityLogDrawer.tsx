@@ -1,6 +1,7 @@
 import { Bot, Download, FileClock, FileText, Loader2, Sparkles, Type, UserCircle2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { ActivityLogItem } from './types';
+import { Button } from '../ui/button';
 
 type Props = {
     open: boolean;
@@ -35,7 +36,7 @@ export default function ActivityLogDrawer({ open, loading, error, items, onClose
                 className={`absolute right-0 top-0 h-full w-full max-w-[560px] bg-white border-l border-border shadow-2xl transition-transform duration-300 ease-in-out ${visible ? 'translate-x-0' : 'translate-x-full'}`}
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className="h-12 px-6 border-b border-border bg-white flex items-center justify-between">
+                <div className="h-12 px-6 border-b border-border bg-muted flex items-center justify-between">
                     <h2 className="flex items-center text-md leading-none font-light text-foreground">
                         <FileClock className="mr-2 h-4 w-4" />
                         <span>Activity Log</span>
@@ -44,7 +45,7 @@ export default function ActivityLogDrawer({ open, loading, error, items, onClose
                         <X className="h-4 w-4" />
                     </button>
                 </div>
-                <div className="p-6 space-y-4 overflow-y-auto h-[calc(100%-64px)]">
+                <div className="p-6 space-y-4 overflow-y-auto h-[calc(100%-104px)]">
                     {loading && (
                         <div className="rounded-xl bg-white border border-[#d7dbe1] p-6 text-sm text-muted-foreground">
                             <Loader2 className="h-4 w-4 animate-spin inline mr-2" />
@@ -94,6 +95,15 @@ export default function ActivityLogDrawer({ open, loading, error, items, onClose
                             No activity yet.
                         </div>
                     )}
+                </div>
+                <div className="shrink-0 border-t border-border bg-muted p-4 py-2 flex items-center justify-end gap-2">
+                    <Button
+                        variant="outline"
+                        onClick={onClose}
+                        className="h-9 text-xs px-5"
+                    >
+                        Cancel
+                    </Button>
                 </div>
             </div>
         </div>

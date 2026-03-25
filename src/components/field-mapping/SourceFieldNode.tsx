@@ -19,7 +19,7 @@ function SourceFieldNodeComponent({ data }: NodeProps<SourceFieldNodeType>) {
   return (
     <div
       className="h-[30px] flex items-center gap-2 px-3 rounded-md border border-border shadow-sm "
-      style={{ width }}
+      style={{ width, boxSizing: "border-box" }}
     >
       <span className="min-w-0 flex-1 text-xs font-medium text-foreground truncate">
         {data.label}
