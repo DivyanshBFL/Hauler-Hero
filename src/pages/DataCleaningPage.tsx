@@ -54,6 +54,7 @@ import IssueCellDetailsDrawer from "@/components/data-cleaning/IssueCellDetailsD
 import ColumnActionDialog from "@/components/data-cleaning/ColumnActionDialog";
 import DedupeOverlay from "@/components/data-cleaning/DedupeOverlay";
 import ActivityLogDrawer from "@/components/data-cleaning/ActivityLogDrawer";
+import { EditableIssueCell } from "@/components/data-cleaning/EditableIssueCell";
 import type {
   ActivityLogItem,
   ColumnAction,
@@ -236,6 +237,9 @@ export function DataCleaningPage() {
     column: string;
   } | null>(null);
   const [editedValue, setEditedValue] = useState<string>("");
+  const [everEditableCells, setEverEditableCells] = useState<Set<string>>(
+    () => new Set(),
+  );
 
   const [fixingAddresses, setFixingAddresses] = useState(false);
   const [originalRows, setOriginalRows] = useState<Record<string, any>[]>([]);
@@ -446,6 +450,63 @@ export function DataCleaningPage() {
       sessionStorage.getItem("session_id")
     );
   }, [location.search]);
+
+  const activeSessionId = useMemo(() => getActiveSessionId(), [getActiveSessionId]);
+  const everEditableStorageKey = useMemo(() => {
+    if (!activeSessionId) return null;
+    return `dataCleaning:everEditableCells:${activeSessionId}`;
+  }, [activeSessionId]);
+
+  useEffect(() => {
+    if (!everEditableStorageKey) {
+      setEverEditableCells(new Set());
+      return;
+    }
+    try {
+      const raw = localStorage.getItem(everEditableStorageKey);
+      if (!raw) {
+        setEverEditableCells(new Set());
+        return;
+      }
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        const items = parsed.filter((x) => typeof x === "string") as string[];
+        setEverEditableCells(new Set(items));
+        return;
+      }
+      setEverEditableCells(new Set());
+    } catch {
+      setEverEditableCells(new Set());
+    }
+  }, [everEditableStorageKey]);
+
+  const persistEverEditableCells = useCallback(
+    (next: Set<string>) => {
+      if (!everEditableStorageKey) return;
+      try {
+        localStorage.setItem(
+          everEditableStorageKey,
+          JSON.stringify(Array.from(next)),
+        );
+      } catch {
+        // ignore localStorage failures (private mode/quota)
+      }
+    },
+    [everEditableStorageKey],
+  );
+
+  const markEverEditable = useCallback(
+    (cellKey: string) => {
+      setEverEditableCells((prev) => {
+        if (prev.has(cellKey)) return prev;
+        const next = new Set(prev);
+        next.add(cellKey);
+        persistEverEditableCells(next);
+        return next;
+      });
+    },
+    [persistEverEditableCells],
+  );
 
   const processIssuesData = useCallback((issuesData: any) => {
     const rows = issuesData?.rows || [];
@@ -2114,6 +2175,9 @@ export function DataCleaningPage() {
                   </TableHeader>
 
                   <TableBody>
+                   
+                   
+                   
                     {filteredVisibleRows.map((row, idx) => {
                       const rowIndex = Number(row.__rowIndex ?? idx);
                       return (
@@ -2127,70 +2191,55 @@ export function DataCleaningPage() {
                                 : cellIssues.filter(
                                     (x) => x === selectedIssueType,
                                   );
-                            let hasCellIssue = visibleCellIssues.length > 0;
+                            const hasCellIssue = visibleCellIssues.length > 0;
 
                             const cellKey = getCellKey(rowIndex, col);
                             const isWorkedOn = workedOnCells.has(cellKey);
                             const isMissingValue = isCellMissing(row[col]);
-                            const bgClass = isWorkedOn
-                              ? "bg-yellow-100"
-                              : hasCellIssue || isMissingValue
-                                ? "bg-red-50"
-                                : "";
+                            const isEverEditable = everEditableCells.has(cellKey);
+                            const issueTitle = hasCellIssue
+                              ? visibleCellIssues.map(toIssueLabel).join(", ")
+                              : undefined;
+                            const isEditing =
+                              editingCell?.rowIndex === rowIndex &&
+                              editingCell?.column === col;
+                            const displayText = displayValue(row[col]) || "";
 
                             return (
-                              <TableCell
+                              <EditableIssueCell
                                 key={`c-${rowIndex}-${col}`}
-                                className={`px-1 py-2 whitespace-nowrap ${bgClass} ${hasCellIssue ? "cursor-pointer bg-clip-content" : "bg-clip-content"}`}
-                                title={
-                                  hasCellIssue
-                                    ? visibleCellIssues
-                                        .map(toIssueLabel)
-                                        .join(", ")
-                                    : undefined
-                                }
-                                onClick={() => {
-                                  if (!hasCellIssue) return;
-                                  setEditingCell({ rowIndex, column: col });
-                                  setEditedValue(displayValue(row[col]));
+                                cellKey={cellKey}
+                                rowIndex={rowIndex}
+                                column={col}
+                                displayText={displayText}
+                                isWorkedOn={isWorkedOn}
+                                hasIssue={hasCellIssue}
+                                isMissingValue={isMissingValue}
+                                issueTitle={issueTitle}
+                                isEverEditable={isEverEditable}
+                                isEditing={isEditing}
+                                editedValue={editedValue}
+                                setEditedValue={setEditedValue}
+                                markEverEditable={markEverEditable}
+                                onStartEdit={(ri, c, initial) => {
+                                  setEditingCell({ rowIndex: ri, column: c });
+                                  setEditedValue(initial);
                                 }}
-                              >
-                                {editingCell?.rowIndex === rowIndex &&
-                                editingCell?.column === col ? (
-                                  <input
-                                    type="text"
-                                    value={editedValue}
-                                    onChange={(e) =>
-                                      setEditedValue(e.target.value)
-                                    }
-                                    onBlur={() => {
-                                      applyCellEdit(rowIndex, col, editedValue);
-                                    }}
-                                    onKeyDown={(e) => {
-                                      if (e.key === "Enter") {
-                                        applyCellEdit(
-                                          rowIndex,
-                                          col,
-                                          editedValue,
-                                        );
-                                      } else if (e.key === "Escape") {
-                                        setEditingCell(null);
-                                      }
-                                    }}
-                                    autoFocus
-                                    className="w-full px-2 py-1 border border-gray-300 rounded"
-                                  />
-                                ) : (
-                                  <span style={{ padding: "5px" }}>
-                                    {displayValue(row[col]) || ""}
-                                  </span>
-                                )}
-                              </TableCell>
+                                onCommit={(ri, c, next) => {
+                                  void applyCellEdit(ri, c, next);
+                                }}
+                                onCancel={() => setEditingCell(null)}
+                              />
                             );
                           })}
                         </TableRow>
                       );
                     })}
+
+
+
+
+
                     {fetchingPage && (
                       <TableRow>
                         <TableCell
