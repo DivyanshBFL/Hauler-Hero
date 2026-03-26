@@ -10,15 +10,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Loader2,
   ChevronLeft,
   ChevronRight,
-  ChartNoAxesCombined,
   Search,
   Eye,
   Filter
 } from "lucide-react";
-import { IMPORT_STATS_KEY, type ImportStats } from "@/types/importStats";
+import {
+  getDefaultImportStats,
+  IMPORT_STATS_KEY,
+  type ImportStats,
+} from "@/types/importStats";
 import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
 import ProcessStepper from "@/components/ProcessStepper";
 import { api } from "@/services/api";
@@ -37,8 +39,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Loader from "@/components/Loader";
 
 type FilterMode = "ALL" | "CHANGED" | "UNCHANGED";
+
+function toIssueLabel(value: string): string {
+  if (value === "allIssues") return "All issues";
+  return value
+    .replaceAll(/([A-Z])/g, " $1")
+    .replaceAll(/_/g, " ")
+    .trim()
+    .replace(/^./, (c) => c.toUpperCase());
+}
 
 type PreviewCell = {
   value: unknown;
@@ -65,11 +77,17 @@ const DataAnalyticsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [rows, setRows] = useState<PreviewRow[]>([]);
   const [headers, setHeaders] = useState<string[]>([]);
   const [search, setSearch] = useState("");
   const [filterMode, setFilterMode] = useState<FilterMode>("ALL");
+
+  // Placeholder (keeps the dropdown functional; analytics preview doesn't currently load issue breakdowns)
+  const [selectedIssueType, setSelectedIssueType] =
+    useState<string>("allIssues");
+  const availableIssueTypes = useMemo(() => [] as string[], []);
+  const issueCountByType = useMemo(() => ({} as Record<string, number>), []);
 
   const entityStr = sessionStorage.getItem("selectedEntity");
 
@@ -246,26 +264,13 @@ const DataAnalyticsPage = () => {
     [rowDiffMeta],
   );
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
-          <p className="mt-4 text-muted-foreground">
-            Loading analytics data...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
+  return (<>
+    <Loader open={loading} />
     <div className={PAGE_OUTER}>
       <div className={PAGE_CONTAINER}>
         <div className="mb-2">
           <ProcessStepper />
         </div>
-
         <Card className="shadow-lg border border-border bg-card">
           <CardHeader className="p-1 px-2 bg-muted border-none">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
@@ -287,7 +292,7 @@ const DataAnalyticsPage = () => {
               </div>
               <div className="flex flex-wrap gap-2">
                 <div className="relative flex-1 max-w-md">
-                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute top-[14px] left-2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Search"
                     value={search}
@@ -295,18 +300,12 @@ const DataAnalyticsPage = () => {
                     className="pl-8 h-7 text-xs"
                   />
                 </div>
-
-
-                {/* <DropdownMenu modal={false}>
+                <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>
                     <Button
-                      size="sm"
                       variant="outline"
-                      className={`h-7 px-2 hover:bg-primary/10 ${selectedIssueType !== "allIssues"
-                        ? "text-primary  bg-primary/5 "
-                        : ""
-                        }`}
-                      title="Filter by issue type"
+                      className={`px-2 !h-7 hover:bg-primary/10 ${selectedIssueType !== "allIssues" ? "text-primary  bg-primary/5 " : ""}`}
+                      title="Filters"
                     >
                       <Filter className="h-4 w-4" />
                     </Button>
@@ -323,7 +322,7 @@ const DataAnalyticsPage = () => {
                       <span className="flex-1">
                         {toIssueLabel("allIssues")} (
                         {Object.values(issueCountByType || {}).reduce(
-                          (acc, curr) => acc + curr,
+                          (acc: number, curr: number) => acc + curr,
                           0,
                         )}
                         )
@@ -347,42 +346,38 @@ const DataAnalyticsPage = () => {
                         )}
                       </DropdownMenuItem>
                     ))}
-                  </DropdownMenuContent>
-                </DropdownMenu> */}
 
-                <Button
-                  variant={filterMode === "ALL" ? "default" : "outline"}
-                  className={
-                    filterMode === "ALL"
-                      ? "h-7 text-white text-xs py-1"
-                      : "h-7 border-primary text-primary font-normal text-xs hover:bg-primary/10 transition-colors hover:text-primary py-1"
-                  }
-                  onClick={() => setFilterMode("ALL")}
-                >
-                  All
-                </Button>
-                <Button
-                  variant={filterMode === "CHANGED" ? "default" : "outline"}
-                  className={
-                    filterMode === "CHANGED"
-                      ? "h-7 text-white text-xs py-1"
-                      : "h-7 border-primary text-primary font-normal text-xs hover:bg-primary/10 transition-colors hover:text-primary py-1"
-                  }
-                  onClick={() => setFilterMode("CHANGED")}
-                >
-                  Changed
-                </Button>
-                <Button
-                  variant={filterMode === "UNCHANGED" ? "default" : "outline"}
-                  className={
-                    filterMode === "UNCHANGED"
-                      ? "h-7 text-white text-xs py-1"
-                      : "h-7 border-primary text-primary font-normal text-xs hover:bg-primary/10 transition-colors hover:text-primary py-1"
-                  }
-                  onClick={() => setFilterMode("UNCHANGED")}
-                >
-                  Unchanged
-                </Button>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => setFilterMode("ALL")}
+                      className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${filterMode === "ALL" ? "text-primary bg-primary/5" : ""}`}
+                    >
+                      <span className="flex-1">All rows</span>
+                      {filterMode === "ALL" && (
+                        <span className="text-primary">✓</span>
+                      )}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setFilterMode("CHANGED")}
+                      className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${filterMode === "CHANGED" ? "text-primary bg-primary/5" : ""}`}
+                    >
+                      <span className="flex-1">Changed rows</span>
+                      {filterMode === "CHANGED" && (
+                        <span className="text-primary">✓</span>
+                      )}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setFilterMode("UNCHANGED")}
+                      className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${filterMode === "UNCHANGED" ? "text-primary bg-primary/5" : ""}`}
+                    >
+                      <span className="flex-1">Unchanged rows</span>
+                      {filterMode === "UNCHANGED" && (
+                        <span className="text-primary">✓</span>
+                      )}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
               </div>
             </div>
           </CardHeader>
@@ -525,15 +520,28 @@ const DataAnalyticsPage = () => {
                 const total = rows.length;
                 const updated = changedRowsCount;
                 const unchanged = Math.max(0, total - updated);
-
-                const stats: ImportStats = {
-                  entity: entityStr || null,
-                  totalRows: total,
-                  inserted: 0,
-                  updated,
-                  unchanged,
-                  duplicatesInFile: 0,
-                  timestamp: new Date().toISOString(),
+                const stats: ImportStats = getDefaultImportStats();
+                const totalFields = Math.max(0, total * headers.length);
+                stats.total_processed = { rows: total, fields: totalFields };
+                stats.records_affected = {
+                  rows: updated,
+                  rows_pct: total ? (updated / total) * 100 : 0,
+                  fields: changedCellsCount,
+                  fields_pct: totalFields
+                    ? (changedCellsCount / totalFields) * 100
+                    : 0,
+                };
+                stats.updated = {
+                  description: entityStr ?? "",
+                  fields: changedCellsCount,
+                  total_fields: totalFields,
+                  pct: totalFields ? (changedCellsCount / totalFields) * 100 : 0,
+                };
+                stats.unchanged_data = {
+                  description: "",
+                  rows: unchanged,
+                  total_rows: total,
+                  pct: total ? (unchanged / total) * 100 : 0,
                 };
                 sessionStorage.setItem(IMPORT_STATS_KEY, JSON.stringify(stats));
                 navigate("/complete");
@@ -572,14 +580,26 @@ const DataAnalyticsPage = () => {
           const updated = changedRowsCount;
           const unchanged = Math.max(0, total - updated);
 
-          const stats: ImportStats = {
-            entity: entityStr || null,
-            totalRows: total,
-            inserted: 0,
-            updated,
-            unchanged,
-            duplicatesInFile: 0,
-            timestamp: new Date().toISOString(),
+          const stats: ImportStats = getDefaultImportStats();
+          const totalFields = Math.max(0, total * headers.length);
+          stats.total_processed = { rows: total, fields: totalFields };
+          stats.records_affected = {
+            rows: updated,
+            rows_pct: total ? (updated / total) * 100 : 0,
+            fields: changedCellsCount,
+            fields_pct: totalFields ? (changedCellsCount / totalFields) * 100 : 0,
+          };
+          stats.updated = {
+            description: entityStr ?? "",
+            fields: changedCellsCount,
+            total_fields: totalFields,
+            pct: totalFields ? (changedCellsCount / totalFields) * 100 : 0,
+          };
+          stats.unchanged_data = {
+            description: "",
+            rows: unchanged,
+            total_rows: total,
+            pct: total ? (unchanged / total) * 100 : 0,
           };
           sessionStorage.setItem(IMPORT_STATS_KEY, JSON.stringify(stats));
           navigate("/complete");
@@ -590,7 +610,7 @@ const DataAnalyticsPage = () => {
         <ChevronRight className="h-6 w-6" />
       </button>
     </div>
-  );
+  </>);
 };
 
 export default DataAnalyticsPage;

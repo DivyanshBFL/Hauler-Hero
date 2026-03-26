@@ -10,7 +10,7 @@ import {
 type Step = {
   title: string;
   subtitle: string;
-  path: string;
+  path: string[];
   isImageIcon?: boolean;
   Icon: any;
 };
@@ -19,31 +19,25 @@ const steps: Step[] = [
   {
     title: "Upload Data",
     subtitle: "Upload and process your CSV files",
-    path: "/upload",
+    path: ["/upload"],
     Icon: Upload,
   },
   {
     title: "Field Mapping",
     subtitle: "Drag source fields to target fields",
-    path: "/field-mapping",
+    path: ["/field-mapping"],
     Icon: Sparkles,
   },
-  // {
-  //   title: "Mapped Data Preview",
-  //   // subtitle: "Review data for processing",
-  //   path: "/data-preview",
-  //   Icon: Table2,
-  // },
   {
     title: "Data Cleaning",
     subtitle: "Grouped issues with audit trail",
-    path: "/data-cleaning",
+    path: ["/data-cleaning", "/data-analytics"],
     Icon: ShieldAlert,
   },
   {
     title: "Data Analytics",
     subtitle: "View the data as per the changes",
-    path: "/data-analytics",
+    path: ["/complete"],
     Icon: ChartNoAxesCombined,
   },
 ];
@@ -52,23 +46,24 @@ export default function ProcessStepper() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  const currentStepIndex = steps.findIndex((s) => pathname.startsWith(s.path));
-  const currentStep =
-    currentStepIndex === -1 && pathname.startsWith("/data-preview")
-      ? 1
-      : currentStepIndex === -1
-        ? 0
-        : currentStepIndex;
+  const currentStepIndex = steps.findIndex((s) =>
+    s.path.some((p) => pathname.startsWith(p)),
+  );
+  let currentStep = currentStepIndex;
+  if (currentStepIndex === -1) {
+    currentStep = pathname.startsWith("/data-preview") ? 1 : 0;
+  }
+
+  console.log(pathname)
+  console.log(currentStepIndex)
+  console.log(currentStepIndex)
 
   return (
     <div className="grid md:grid-cols-4 gap-3">
       {steps.map((step, i) => {
-        const state =
-          i < currentStep
-            ? "completed"
-            : i === currentStep
-              ? "active"
-              : "upcoming";
+        let state: "completed" | "active" | "upcoming" = "upcoming";
+        if (i < currentStep) state = "completed";
+        else if (i === currentStep) state = "active";
 
         const styles = {
           completed: {
@@ -93,8 +88,13 @@ export default function ProcessStepper() {
 
         return (
           <button
-            key={step.path}
-            onClick={() => i <= currentStep && navigate(step.path)}
+            key={step.path[0] ?? step.title}
+            onClick={() => {
+              const firstPath = step.path[0];
+              if (!firstPath) return;
+              if (i > currentStep) return;
+              navigate(firstPath);
+            }}
             className={`w-full p-1 px-2 rounded-lg border text-left transition-all duration-300 ${styles.card} ${
               state === "active" ? "" : "hover:border-primary/50"
             }`}
@@ -105,10 +105,18 @@ export default function ProcessStepper() {
               >
                 {state === "completed" ? (
                   <Check size={20} strokeWidth={3} />
-                ) : step?.isImageIcon ? (
-                  <img className="h-4 w-6" src={step.Icon} alt={step.title} />
                 ) : (
-                  <step.Icon size={16} />
+                  (() => {
+                    if (step?.isImageIcon)
+                      return (
+                        <img
+                          className="h-4 w-6"
+                          src={step.Icon}
+                          alt={step.title}
+                        />
+                      );
+                    return <step.Icon size={16} />;
+                  })()
                 )}
               </span>
 

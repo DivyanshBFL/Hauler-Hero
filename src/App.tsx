@@ -11,69 +11,73 @@ import { DataCleaningPage } from '@/pages/DataCleaningPage';
 import { CompletePage } from '@/pages/CompletePage';
 import DataAnalyticsPage from './pages/DataAnalyticsPage';
 import { Toaster } from 'sonner';
+import { TooltipProvider } from "@/components/ui/tooltip"
+
 
 function App() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="app-theme">
       <AuthProvider>
-        <BrowserRouter>
-          <Layout>
-            <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route
-                path="/upload"
-                element={
-                  <ProtectedRoute>
-                    <UploadPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/field-mapping"
-                element={
-                  <ProtectedRoute>
-                    <FieldMappingPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/data-preview"
-                element={
-                  <ProtectedRoute>
-                    <DataPreviewPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/data-cleaning"
-                element={
-                  <ProtectedRoute>
-                    <DataCleaningPage />
-                  </ProtectedRoute>
-                }
-              />
+        <TooltipProvider>
+          <BrowserRouter>
+            <Layout>
+              <Routes>
+                <Route path="/login" element={<LoginPage />} />
+                <Route
+                  path="/upload"
+                  element={
+                    <ProtectedRoute>
+                      <UploadPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/field-mapping"
+                  element={
+                    <ProtectedRoute>
+                      <FieldMappingPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/data-preview"
+                  element={
+                    <ProtectedRoute>
+                      <DataPreviewPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/data-cleaning"
+                  element={
+                    <ProtectedRoute>
+                      <DataCleaningPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/data-analytics"
-                element={
-                  <ProtectedRoute>
-                    <DataAnalyticsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/complete"
-                element={
-                  <ProtectedRoute>
-                    <CompletePage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/" element={<Navigate to="/login" replace />} />
-            </Routes>
-            <Toaster position="bottom-right" richColors closeButton />
-          </Layout>
-        </BrowserRouter>
+                <Route
+                  path="/data-analytics"
+                  element={
+                    <ProtectedRoute>
+                      <DataAnalyticsPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/complete"
+                  element={
+                    <ProtectedRoute>
+                      <CompletePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/" element={<Navigate to="/login" replace />} />
+              </Routes>
+              <Toaster position="bottom-right" richColors closeButton />
+            </Layout>
+          </BrowserRouter>
+        </TooltipProvider>
       </AuthProvider>
     </ThemeProvider>
 

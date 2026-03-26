@@ -33,6 +33,7 @@ import * as XLSX from "xlsx";
 import type { FieldMapping } from "@/services/api";
 import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
 import ProcessStepper from "@/components/ProcessStepper";
+import Loader from "@/components/Loader";
 
 const ENTITIES = ["Account", "Contact", "Opportunity"];
 
@@ -388,18 +389,8 @@ export function DataPreviewPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
-          <p className="mt-4 text-muted-foreground">Loading data preview...</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
+  return (<>
+    <Loader open={loading} />
     <div className={`${PAGE_OUTER} min-h-32`}>
       <div className={PAGE_CONTAINER}>
         <div className="mb-2">
@@ -459,11 +450,10 @@ export function DataPreviewPage() {
                   <button
                     key={entity}
                     onClick={() => setSelectedEntity(entity)}
-                    className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                      selectedEntity === entity
+                    className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${selectedEntity === entity
                         ? "border-primary text-primary"
                         : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`}
+                      }`}
                   >
                     {entity}
                     <span className="ml-2 text-xs bg-muted rounded-full px-2 py-0.5">
@@ -590,5 +580,5 @@ export function DataPreviewPage() {
         <ChevronRight className="h-6 w-6" />
       </button>
     </div>
-  );
+  </>);
 }
