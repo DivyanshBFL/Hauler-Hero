@@ -701,7 +701,10 @@ export function UploadPage() {
             }
           }}
         >
-          <DialogContent className="w-[50vw] max-w-[80vw] p-0 !animate-none !duration-0 overflow-hidden">
+          <DialogContent
+            className="w-[50vw] max-w-[80vw] p-0 !animate-none 
+          !duration-0 overflow-hidden gap-0"
+          >
             <DialogHeader className="border-b p-4 bg-muted space-y-0">
               <DialogTitle className="text-md">
                 Select Sheets To Join
@@ -711,9 +714,9 @@ export function UploadPage() {
               </DialogDescription>
             </DialogHeader>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+            <div className="grid grid-cols-[22vw_2vw_22vw]  p-4 flex-wrap">
               {/* Left Side */}
-              <div className="rounded-lg border border-border bg-muted/20 p-4 space-y-3">
+              <div className="rounded-lg p-4 space-y-3 ">
                 {/* <div className="text-sm font-semibold text-foreground">Primary Data</div> */}
                 <div className="space-y-1">
                   <label className="text-sm font-medium text-muted-foreground">
@@ -777,9 +780,19 @@ export function UploadPage() {
                   </Select>
                 </div>
               </div>
-
+              <div className="flex justify-center">
+                <div
+                  className=""
+                  style={{
+                    width: "1px",
+                    background: "#909090",
+                    // height: "50px",
+                    // margin: "0 10px",
+                  }}
+                ></div>
+              </div>
               {/* Right Side */}
-              <div className="rounded-lg border border-border bg-muted/20 p-4 space-y-3">
+              <div className="rounded-lg  p-4 space-y-3 ">
                 {/* <div className="text-sm font-semibold text-foreground">Seconday Data</div> */}
                 <div className="space-y-1">
                   <label className="text-sm font-medium text-muted-foreground">
@@ -808,7 +821,7 @@ export function UploadPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <label className="text-sm font-medium text-muted-foreground">
                     Related Column
                   </label>
