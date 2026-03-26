@@ -40,6 +40,7 @@ import type { SheetData } from "@/services/api";
 import ProcessStepper from "@/components/ProcessStepper";
 import { joinSheets, mapFields, uploadFile } from "@/services/api";
 import { setSessionId } from "@/store/sessionSlice";
+import Loader from "@/components/Loader";
 
 type JoinSelection = {
   leftSheet: string;
@@ -135,7 +136,7 @@ export function UploadPage() {
     const isCSV = fileType === "text/csv" || fileName.endsWith(".csv");
     const isXLSX =
       fileType ===
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
       fileName.endsWith(".xlsx");
 
     if (isCSV) {
@@ -421,7 +422,8 @@ export function UploadPage() {
   const filteredLeftKeys = leftSheetHeaders;
   const filteredRightKeys = rightSheetHeaders;
 
-  return (
+  return (<>
+    <Loader open={loading} />
     <div className={`${PAGE_OUTER} !min-h-[30rem]`}>
       <div className={`${PAGE_CONTAINER} min-h-[30rem]`}>
         <div className="mb-2">
@@ -564,10 +566,9 @@ export function UploadPage() {
                   className={`
                     w-full max-w-3xl relative group flex flex-col items-center justify-center gap-3 p-6 
                     rounded-xl border-2 border-dashed transition-all duration-300 cursor-pointer
-                    ${
-                      isDragging
-                        ? "border-primary bg-primary/10 scale-[1.02] shadow-2xl"
-                        : "border-primary/40 bg-primary/[0.03] hover:border-primary/60 hover:bg-primary/[0.06]"
+                    ${isDragging
+                      ? "border-primary bg-primary/10 scale-[1.02] shadow-2xl"
+                      : "border-primary/40 bg-primary/[0.03] hover:border-primary/60 hover:bg-primary/[0.06]"
                     }
                   `}
                   onClick={openFilePicker}
@@ -651,7 +652,7 @@ export function UploadPage() {
                                     >
                                       {String(
                                         (row as Record<string, unknown>)?.[
-                                          header
+                                        header
                                         ] ?? "",
                                       )}
                                     </TableCell>
@@ -676,7 +677,6 @@ export function UploadPage() {
                 variant="outline"
                 className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
               >
-                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Next
                 <svg
                   className="ml-2 w-4 h-4"
@@ -894,5 +894,5 @@ export function UploadPage() {
         </button>
       )}
     </div>
-  );
+  </>);
 }

@@ -72,6 +72,8 @@ import type {
   CommitMeta,
 } from "@/components/data-cleaning/types";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import Loader from "@/components/Loader";
 
 const sessionStartRequestCache = new Map<string, Promise<any>>();
 
@@ -86,27 +88,27 @@ const COLUMN_MENU_ITEMS: {
   label: string;
   icon: React.ReactNode;
 }[] = [
-  {
-    action: "replaceValues",
-    label: "Replace values",
-    icon: <Replace className="h-4 w-4" />,
-  },
-  {
-    action: "trimSpaces",
-    label: "Trim spaces",
-    icon: <Scissors className="h-4 w-4" />,
-  },
-  {
-    action: "truncateValues",
-    label: "Truncate values",
-    icon: <AlignLeft className="h-4 w-4" />,
-  },
-  {
-    action: "addPrefixOrSuffix",
-    label: "Add prefix or suffix",
-    icon: <PlusSquare className="h-4 w-4" />,
-  },
-];
+    {
+      action: "replaceValues",
+      label: "Replace values",
+      icon: <Replace className="h-4 w-4" />,
+    },
+    {
+      action: "trimSpaces",
+      label: "Trim spaces",
+      icon: <Scissors className="h-4 w-4" />,
+    },
+    {
+      action: "truncateValues",
+      label: "Truncate values",
+      icon: <AlignLeft className="h-4 w-4" />,
+    },
+    {
+      action: "addPrefixOrSuffix",
+      label: "Add prefix or suffix",
+      icon: <PlusSquare className="h-4 w-4" />,
+    },
+  ];
 
 function isCellMissing(value: unknown): boolean {
   if (value === null || value === undefined) return true;
@@ -705,10 +707,10 @@ export function DataCleaningPage() {
         const row =
           directRow && typeof directRow === "object"
             ? {
-                ...(mappedFromSource ?? {}),
-                ...directRow,
-                __rowIndex: rowIndex,
-              }
+              ...(mappedFromSource ?? {}),
+              ...directRow,
+              __rowIndex: rowIndex,
+            }
             : mappedFromSource;
 
         if (!row || typeof row !== "object") return;
@@ -768,8 +770,8 @@ export function DataCleaningPage() {
       const inferredColumns = normalizedColumns.length
         ? normalizedColumns
         : Object.keys(resultRows[0]?.row ?? {}).filter(
-            (c) => !c.startsWith("__"),
-          );
+          (c) => !c.startsWith("__"),
+        );
 
       return {
         rows: resultRows,
@@ -1875,20 +1877,8 @@ export function DataCleaningPage() {
     ],
   );
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
-          <p className="mt-4 text-muted-foreground">
-            Loading data cleaning workspace...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
+  return (<>
+    <Loader open={loading} />
     <div className={PAGE_OUTER}>
       <div className={PAGE_CONTAINER}>
         <div className="mb-2">
@@ -1909,58 +1899,57 @@ export function DataCleaningPage() {
                   <div className="">
                     <CardDescription className="text-xs text-muted-foreground">
                       <span>
-                        <button
+                        <Tooltip>
+                          <TooltipTrigger>Issue Summary</TooltipTrigger>
+                          <TooltipContent side="bottom" className="m-0 p-0 bg-background px-3 pt-3 text-xs rounded-md border border-border shadow-xl" >
+                            <p className="font-semibold text-foreground mb-2 flex items-center justify-between gap-4">
+                              <span>Total Issues</span>
+                              <span className="px-2 py-0.5 rounded bg-muted text-xs font-medium ml-auto">
+                                {Object.values(issueCountByType || {}).reduce(
+                                  (acc, curr) => acc + curr,
+                                  0,
+                                )}
+                              </span>
+                            </p>
+                            {Object.keys(issueCountByType).length ? (
+                              <div className="space-y-1 mb-3">
+                                {Object.entries(issueCountByType).map(
+                                  ([issueType, count]) => (
+                                    <div
+                                      key={issueType}
+                                      className="flex items-center justify-between gap-3"
+                                    >
+                                      <span className="text-muted-foreground">
+                                        {toIssueLabel(issueType)}
+                                      </span>
+                                      <span className="font-medium text-foreground ml-auto pr-2">
+                                        {count}
+                                      </span>
+                                    </div>
+                                  ),
+                                )}
+                              </div>
+                            ) : (
+                              <p className="text-muted-foreground mb-3">
+                                No issue detail available.
+                              </p>
+                            )}
+                          </TooltipContent>
+                        </Tooltip>
+                        {/* <button
                           type="button"
                           className="text-primary underline underline-offset-2 hover:text-primary/80"
                           onMouseEnter={() => setIssueSummaryOpen(true)}
                           onMouseLeave={() => setIssueSummaryOpen(false)}
                         >
-                          Issue Summary
-                        </button>{" "}
+
+                        </button> */}
+
+                        {" "}
                         | {uniqueAffectedRows} affected rows | {allRows.length}{" "}
                         total rows
                       </span>
                     </CardDescription>
-
-                    {issueSummaryOpen && (
-                      <div
-                        ref={issueSummaryRef}
-                        className="absolute left-0 top-full z-30 mt-2 w-[260px] max-w-[90vw] rounded-md border border-border bg-background p-3 text-xs shadow-xl"
-                      >
-                        <p className="font-semibold text-foreground mb-2 flex items-center justify-between gap-4">
-                          <span>Total Issues</span>
-                          <span className="px-2 py-0.5 rounded bg-muted text-xs font-medium ml-auto">
-                            {Object.values(issueCountByType || {}).reduce(
-                              (acc, curr) => acc + curr,
-                              0,
-                            )}
-                          </span>
-                        </p>
-                        {Object.keys(issueCountByType).length ? (
-                          <div className="space-y-1 mb-3">
-                            {Object.entries(issueCountByType).map(
-                              ([issueType, count]) => (
-                                <div
-                                  key={issueType}
-                                  className="flex items-center justify-between gap-3"
-                                >
-                                  <span className="text-muted-foreground">
-                                    {toIssueLabel(issueType)}
-                                  </span>
-                                  <span className="font-medium text-foreground ml-auto pr-2">
-                                    {count}
-                                  </span>
-                                </div>
-                              ),
-                            )}
-                          </div>
-                        ) : (
-                          <p className="text-muted-foreground mb-3">
-                            No issue detail available.
-                          </p>
-                        )}
-                      </div>
-                    )}
                   </div>
                 </div>
                 {analyzing && (
@@ -2005,11 +1994,10 @@ export function DataCleaningPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className={`h-7 px-2 hover:bg-primary/10 ${
-                        selectedIssueType !== "allIssues"
-                          ? "text-primary  bg-primary/5 "
-                          : ""
-                      }`}
+                      className={`h-7 px-2 hover:bg-primary/10 ${selectedIssueType !== "allIssues"
+                        ? "text-primary  bg-primary/5 "
+                        : ""
+                        }`}
                       title="Filter by issue type"
                     >
                       <Filter className="h-4 w-4" />
@@ -2189,8 +2177,8 @@ export function DataCleaningPage() {
                               selectedIssueType === "allIssues"
                                 ? cellIssues
                                 : cellIssues.filter(
-                                    (x) => x === selectedIssueType,
-                                  );
+                                  (x) => x === selectedIssueType,
+                                );
                             const hasCellIssue = visibleCellIssues.length > 0;
 
                             const cellKey = getCellKey(rowIndex, col);
@@ -2422,7 +2410,7 @@ export function DataCleaningPage() {
                                 name={opt.key}
                                 checked={
                                   autoFixOptions[
-                                    opt.key as keyof typeof autoFixOptions
+                                  opt.key as keyof typeof autoFixOptions
                                   ] === true
                                 }
                                 onChange={() =>
@@ -2443,7 +2431,7 @@ export function DataCleaningPage() {
                                 name={opt.key}
                                 checked={
                                   autoFixOptions[
-                                    opt.key as keyof typeof autoFixOptions
+                                  opt.key as keyof typeof autoFixOptions
                                   ] === false
                                 }
                                 onChange={() =>
@@ -2499,10 +2487,10 @@ export function DataCleaningPage() {
                                   checked={
                                     (choice.value === "null" &&
                                       autoFixOptions[
-                                        opt.key as keyof typeof autoFixOptions
+                                      opt.key as keyof typeof autoFixOptions
                                       ] === null) ||
                                     autoFixOptions[
-                                      opt.key as keyof typeof autoFixOptions
+                                    opt.key as keyof typeof autoFixOptions
                                     ] === choice.value
                                   }
                                   onChange={() =>
@@ -2745,5 +2733,5 @@ export function DataCleaningPage() {
         <ChevronRight className="h-6 w-6" />
       </button>
     </div>
-  );
+  </>);
 }

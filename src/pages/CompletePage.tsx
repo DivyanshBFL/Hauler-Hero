@@ -21,6 +21,7 @@ import { getDefaultImportStats, type ImportStats } from "@/types/importStats";
 import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
 import { api } from "@/services/api";
 import ProcessStepper from "@/components/ProcessStepper";
+import Loader from "@/components/Loader";
 
 function MetricCard({
   label,
@@ -99,27 +100,17 @@ export function CompletePage() {
     }
   };
 
-  if (!stats) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
-          <p className="mt-4 text-muted-foreground">Loading Statistics</p>
-        </div>
-      </div>
-    );
-  }
-
   const s = stats ?? getDefaultImportStats();
   const importDate = new Date().toLocaleString(undefined, {
     dateStyle: "medium",
     timeStyle: "short",
   });
 
-  return (
+  return (<>
+    <Loader open={!stats} />
     <div className={`${PAGE_OUTER}`}>
       <div className={PAGE_CONTAINER}>
-      <div className="mb-2">
+        <div className="mb-2">
           <ProcessStepper />
         </div>
         <Card className="shadow-none border border-border bg-card animate-in overflow-hidden ">
@@ -246,5 +237,5 @@ export function CompletePage() {
         </Card>
       </div>
     </div>
-  );
+  </>);
 }

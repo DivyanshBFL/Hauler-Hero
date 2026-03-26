@@ -44,6 +44,7 @@ import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
 import ProcessStepper from "@/components/ProcessStepper";
 import type { MapResponse } from "@/services/api";
 import { toast } from "sonner";
+import Loader from "@/components/Loader";
 
 const ROW_HEIGHT = 38;
 const HORIZONTAL_COLUMN_MARGIN = 20;
@@ -1170,18 +1171,8 @@ export function FieldMappingPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
-          <p className="mt-4 text-muted-foreground">Loading mappings...</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
+  return (<>
+    <Loader open={loading || processing} />
     <div className={PAGE_OUTER}>
       <div className={PAGE_CONTAINER}>
         <div className="mb-2">
@@ -1507,5 +1498,5 @@ export function FieldMappingPage() {
         <ChevronRight className="h-6 w-6" />
       </button>
     </div>
-  );
+  </>);
 }

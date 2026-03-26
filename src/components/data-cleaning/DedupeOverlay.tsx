@@ -488,7 +488,7 @@ export default function DedupeOverlay(props: Props) {
                   dedupeMode === "column" &&
                   duplicateIndicatorCount > 0 && (
                     <div className="mt-4">
-                      <p className="text-sm font-medium mb-2">Keep strategy</p>
+                      <p className="text-sm font-medium mb-2 text-muted-foreground">Keep strategy</p>
                       <div className="flex flex-wrap gap-4 text-sm mt-2">
                         <label className="inline-flex items-center gap-2">
                           <input
