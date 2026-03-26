@@ -117,6 +117,17 @@ export default function DedupeOverlay(props: Props) {
     return () => window.clearTimeout(timeoutId);
   }, [drawer, renderDrawer]);
 
+  useEffect(() => {
+    if (drawer || previewOpen || renderDrawer) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [drawer, previewOpen, renderDrawer]);
+
   if (!(drawer || previewOpen || renderDrawer)) return null;
 
   return (
@@ -141,14 +152,14 @@ export default function DedupeOverlay(props: Props) {
               <X className="h-4 w-4" />
             </button>
           </div>
-          <div className="p-4 h-[calc(100%-40px)] overflow-auto">
-            <Table className="min-w-full text-sm">
-              <TableHeader className="bg-muted sticky top-0">
+          <div className="p-0 px-4 h-[calc(100%-40px)] overflow-auto">
+            <Table className="min-w-full text-sm ">
+              <TableHeader className="bg-muted sticky top-0 z-10 shadow-sm">
                 <TableRow>
                   {previewColumns.map((c) => (
                     <TableHead
                       key={c}
-                      className="px-3 py-2 border-b text-left uppercase tracking-wide text-muted-foreground whitespace-nowrap"
+                      className="px-3 py-2 border-b text-left uppercase tracking-wide text-muted-foreground whitespace-nowrap bg-muted "
                     >
                       {c}
                     </TableHead>
@@ -170,14 +181,14 @@ export default function DedupeOverlay(props: Props) {
                   return (
                     <TableRow
                       key={String(r.rowIndex) + "-" + String(i)}
-                      className={rowClass}
+                      className={`${rowClass} h-8`}
                     >
                       {previewColumns.map((c) => (
                         <TableCell
                           key={String(r.rowIndex) + "-" + c}
                           className="px-3 py-2 border-b whitespace-nowrap"
                         >
-                          {displayValue(r.row[c]) || ""}
+                          {displayValue(r.row[c]) || "NULL"}
                         </TableCell>
                       ))}
                     </TableRow>
