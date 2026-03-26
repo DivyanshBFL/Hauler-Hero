@@ -34,7 +34,16 @@ export function Header() {
               src="https://www.haulerhero.com/hubfs/Icons/Hauler-Hero-Landscape-Logo-Black.png"
               alt="Hauler-Hero-Landscape-Logo-Black"
               width="100%"
-              style={{ maxWidth: "280px", maxHeight: "140px" }}
+              style={{ maxWidth: "280px", maxHeight: "120px" }}
+              className="kl-navbar__logo"
+            />
+          </a>
+          <a href="">
+            <img
+              src="https://www.theblueflamelabs.com/wp-content/themes/BFL_Custom_Template/images/BlueflameLabslogo1.png"
+              alt="Blueflame Labs"
+              width="100%"
+              style={{ maxWidth: "115px", maxHeight: "120px" }}
               className="kl-navbar__logo"
             />
           </a>
