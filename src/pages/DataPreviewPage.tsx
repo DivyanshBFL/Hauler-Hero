@@ -389,196 +389,201 @@ export function DataPreviewPage() {
     }
   };
 
-  return (<>
-    <Loader open={loading} />
-    <div className={`${PAGE_OUTER} min-h-32`}>
-      <div className={PAGE_CONTAINER}>
-        <div className="mb-2">
-          <ProcessStepper />
-        </div>
+  return (
+    <>
+      <div className={`${PAGE_OUTER} min-h-[calc(100vh-100px)] flex flex-col`}>
+        <div className={`${PAGE_CONTAINER} flex flex-col flex-1`}>
+          <div className="mb-2 shrink-0">
+            <ProcessStepper />
+          </div>
 
-        <Card className="shadow-lg border border-border bg-card">
-          <CardHeader className="p-1 px-2 bg-muted">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              <div className="flex items-start gap-2">
-                <div className="h-8 w-8 rounded-md bg-primary/10 text-primary flex items-center justify-center shadow-sm">
-                  <Eye className="w-4 h-4 text-primary" />
+          <Card className="shadow-lg border border-border bg-card relative flex-1 flex flex-col">
+            <Loader open={loading} inline className="rounded-lg" />
+            <CardHeader className="p-1 px-2 bg-muted shrink-0">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div className="flex items-start gap-2">
+                  <div className="h-8 w-8 rounded-md bg-primary/10 text-primary flex items-center justify-center shadow-sm">
+                    <Eye className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="">
+                    <CardTitle className="text-sm font-normal">
+                      Mapped Data Preview
+                    </CardTitle>
+                    <CardDescription className="text-[11px]">
+                      Showing first {totalRows > 20 ? 20 : totalRows} rows
+                      &mdash; all&nbsp;
+                      <span className="font-medium text-foreground">
+                        {totalRows}
+                      </span>
+                      &nbsp;rows will be processed
+                    </CardDescription>
+                  </div>
                 </div>
-                <div className="">
-                  <CardTitle className="text-sm font-normal">
-                    Mapped Data Preview
-                  </CardTitle>
-                  <CardDescription className="text-[11px]">
-                    Showing first {totalRows > 20 ? 20 : totalRows} rows &mdash;
-                    all&nbsp;
-                    <span className="font-medium text-foreground">
-                      {totalRows}
-                    </span>
-                    &nbsp;rows will be processed
-                  </CardDescription>
-                </div>
-              </div>
 
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  variant="outline"
-                  onClick={handleDownloadExcel}
-                  disabled={!currentRows.length}
-                  className="bg-muted text-xs py-1 px-4 font-normal bg-white border border-primary text-primary hover:bg-primary/10 hover:text-primary"
-                >
-                  <FileDown className="mr-2 h-4 w-4" />
-                  Excel
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleDownloadMappingJSON}
-                  disabled={!allEntityMappings[selectedEntity]?.length}
-                  className="bg-muted text-xs py-1 px-4 font-normal bg-white border border-primary text-primary hover:bg-primary/10 hover:text-primary"
-                >
-                  <Download className="mr-2 h-4 w-4" />
-                  JSON
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
-
-          <CardContent className="space-y-3 p-0">
-            {/* ── Entity tabs ─────────────────────────────────── */}
-            {availableTabs.length > 1 && (
-              <div className="flex gap-1 border-b border-border">
-                {availableTabs.map((entity) => (
-                  <button
-                    key={entity}
-                    onClick={() => setSelectedEntity(entity)}
-                    className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${selectedEntity === entity
-                        ? "border-primary text-primary"
-                        : "border-transparent text-muted-foreground hover:text-foreground"
-                      }`}
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={handleDownloadExcel}
+                    disabled={!currentRows.length}
+                    className="bg-muted text-xs py-1 px-4 font-normal bg-white border border-primary text-primary hover:bg-primary/10 hover:text-primary"
                   >
-                    {entity}
-                    <span className="ml-2 text-xs bg-muted rounded-full px-2 py-0.5">
-                      {allEntityData[entity]?.length ?? 0} rows
-                    </span>
-                  </button>
-                ))}
+                    <FileDown className="mr-2 h-4 w-4" />
+                    Excel
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={handleDownloadMappingJSON}
+                    disabled={!allEntityMappings[selectedEntity]?.length}
+                    className="bg-muted text-xs py-1 px-4 font-normal bg-white border border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    JSON
+                  </Button>
+                </div>
               </div>
-            )}
+            </CardHeader>
 
-            {/* ── Table ────────────────────────────────────────── */}
-            <div className=" rounded-sm overflow-hidden shadow-sm bg-card">
-              <div className="max-h-[415px] overflow-auto">
-                {previewRows.length > 0 ? (
-                  <Table className="w-full text-sm">
-                    <TableHeader className="sticky top-0 z-10">
-                      <TableRow>
-                        {currentHeaders.map((h) => (
-                          <TableHead
-                            key={h}
-                            className="px-3 py-2 text-left font-medium  whitespace-nowrap bg-gray-50 border border-border"
-                          >
-                            {h}
-                          </TableHead>
-                        ))}
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {previewRows.map((row, rowIndex) => (
-                        <TableRow
-                          key={rowIndex}
-                          className="hover:bg-muted/50 transition-colors"
-                        >
+            <CardContent className="space-y-3 p-0 flex-1 flex flex-col">
+              {/* ── Entity tabs ─────────────────────────────────── */}
+              {availableTabs.length > 1 && (
+                <div className="flex gap-1 border-b border-border">
+                  {availableTabs.map((entity) => (
+                    <button
+                      key={entity}
+                      onClick={() => setSelectedEntity(entity)}
+                      className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                        selectedEntity === entity
+                          ? "border-primary text-primary"
+                          : "border-transparent text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {entity}
+                      <span className="ml-2 text-xs bg-muted rounded-full px-2 py-0.5">
+                        {allEntityData[entity]?.length ?? 0} rows
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* ── Table ────────────────────────────────────────── */}
+              <div className=" rounded-sm overflow-hidden shadow-sm bg-card">
+                <div className="max-h-[415px] overflow-auto">
+                  {previewRows.length > 0 ? (
+                    <Table className="w-full text-sm">
+                      <TableHeader className="sticky top-0 z-10">
+                        <TableRow>
                           {currentHeaders.map((h) => (
-                            <TableCell
+                            <TableHead
                               key={h}
-                              className="whitespace-nowrap px-3 py-2"
+                              className="px-3 py-2 text-left font-medium  whitespace-nowrap bg-gray-50 border border-border"
                             >
-                              {row[h] ?? ""}
-                            </TableCell>
+                              {h}
+                            </TableHead>
                           ))}
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                ) : (
-                  <div className="p-12 text-center text-muted-foreground text-sm">
-                    No mapped data available for{" "}
-                    <strong>{selectedEntity}</strong>.
-                  </div>
-                )}
+                      </TableHeader>
+                      <TableBody>
+                        {previewRows.map((row, rowIndex) => (
+                          <TableRow
+                            key={rowIndex}
+                            className="hover:bg-muted/50 transition-colors"
+                          >
+                            {currentHeaders.map((h) => (
+                              <TableCell
+                                key={h}
+                                className="whitespace-nowrap px-3 py-2"
+                              >
+                                {row[h] ?? ""}
+                              </TableCell>
+                            ))}
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  ) : (
+                    <div className="p-12 text-center text-muted-foreground text-sm">
+                      No mapped data available for{" "}
+                      <strong>{selectedEntity}</strong>.
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
 
-            {/* {currentRows.length > 20 && (
+              {/* {currentRows.length > 20 && (
               <p className="text-xs text-muted-foreground text-right">
                 Showing 20 of {currentRows.length} rows — all rows will be
                 included when processing
               </p>
             )} */}
-          </CardContent>
+            </CardContent>
 
-          <div className="flex flex-col sm:flex-row justify-between gap-3 p-2 border-t bg-muted">
-            <Button
-              variant="outline"
-              onClick={() => navigate("/field-mapping")}
-              className="px-4 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
-            >
-              <svg
-                className="mr-2 w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <div className="flex flex-col sm:flex-row justify-between gap-3 p-2 border-t bg-muted shrink-0">
+              <Button
+                variant="outline"
+                onClick={() => navigate("/field-mapping")}
+                className="px-4 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              Back
-            </Button>
-            <Button
-              onClick={handleNext}
-              disabled={processing || !totalRows}
-              variant="outline"
-              className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
-            >
-              {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Next
-              <svg
-                className="ml-2 w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+                <svg
+                  className="mr-2 w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+                Back
+              </Button>
+              <Button
+                onClick={handleNext}
+                disabled={processing || !totalRows}
+                variant="outline"
+                className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </Button>
-          </div>
-        </Card>
+                {processing && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Next
+                <svg
+                  className="ml-2 w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </Button>
+            </div>
+          </Card>
+        </div>
+        {/* Navigation Arrows */}
+        <button
+          onClick={() => navigate("/field-mapping")}
+          className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
+          title="Previous: Upload"
+        >
+          <ChevronLeft className="h-6 w-6" />
+        </button>
+
+        <button
+          onClick={handleNext}
+          disabled={processing}
+          className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
+          title="Next: Data Cleaning"
+        >
+          <ChevronRight className="h-6 w-6" />
+        </button>
       </div>
-      {/* Navigation Arrows */}
-      <button
-        onClick={() => navigate("/field-mapping")}
-        className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
-        title="Previous: Upload"
-      >
-        <ChevronLeft className="h-6 w-6" />
-      </button>
-
-      <button
-        onClick={handleNext}
-        disabled={processing}
-        className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
-        title="Next: Data Cleaning"
-      >
-        <ChevronRight className="h-6 w-6" />
-      </button>
-    </div>
-  </>);
+    </>
+  );
 }

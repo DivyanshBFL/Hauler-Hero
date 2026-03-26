@@ -1,6 +1,5 @@
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
@@ -38,8 +37,6 @@ import {
 } from "@/components/ui/table";
 import type { SheetData } from "@/services/api";
 import ProcessStepper from "@/components/ProcessStepper";
-import { joinSheets, mapFields, uploadFile } from "@/services/api";
-import { setSessionId } from "@/store/sessionSlice";
 import Loader from "@/components/Loader";
 
 type JoinSelection = {
@@ -54,7 +51,6 @@ export function UploadPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [sheets, setSheets] = useState<SheetData[]>([]);
   const [allRows, setAllRows] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
   const [showSheetSelector, setShowSheetSelector] = useState(false);
   const [availableSheetNames, setAvailableSheetNames] = useState<string[]>([]);
   const [sheetHeadersByName, setSheetHeadersByName] = useState<
@@ -75,7 +71,6 @@ export function UploadPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const workbookRef = useRef<XLSX.WorkBook | null>(null);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const resetUploadState = () => {
     setFile(null);
@@ -136,7 +131,7 @@ export function UploadPage() {
     const isCSV = fileType === "text/csv" || fileName.endsWith(".csv");
     const isXLSX =
       fileType ===
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
       fileName.endsWith(".xlsx");
 
     if (isCSV) {
@@ -345,61 +340,26 @@ export function UploadPage() {
       return;
     }
 
-    setLoading(true);
-    try {
-      const entityName = sheets[0]?.name ?? "string";
+    sessionStorage.setItem("sheets", JSON.stringify(sheets));
+    sessionStorage.setItem("allRows", JSON.stringify(allRows));
 
-      const uploadResponse = await uploadFile(file);
-      const sessionId = uploadResponse?.session_id;
-
-      if (!sessionId) {
-        throw new Error("session_id was not returned from /upload-file");
-      }
-
-      dispatch(setSessionId(sessionId));
-      sessionStorage.setItem("session_id", sessionId);
-
-      if (isJoinRequired && joinSelection) {
-        await joinSheets({
-          session_id: sessionId,
-          left_sheet: joinSelection.leftSheet,
-          right_sheet: joinSelection.rightSheet,
-          left_key: joinSelection.leftKey,
-          right_key: joinSelection.rightKey,
-        });
-
-        sessionStorage.setItem("joinSelection", JSON.stringify(joinSelection));
-        sessionStorage.setItem(
-          "sheetHeadersByName",
-          JSON.stringify(sheetHeadersByName),
-        );
-      } else {
-        sessionStorage.removeItem("joinSelection");
-        sessionStorage.removeItem("sheetHeadersByName");
-      }
-
-      const mappingResponse = await mapFields({
-        session_id: sessionId,
-        entityName,
-      });
-
-      sessionStorage.setItem("sheets", JSON.stringify(sheets));
-      sessionStorage.setItem("allRows", JSON.stringify(allRows));
+    if (isJoinRequired && joinSelection) {
+      sessionStorage.setItem("joinSelection", JSON.stringify(joinSelection));
       sessionStorage.setItem(
-        "mappingResponse",
-        JSON.stringify(mappingResponse),
+        "sheetHeadersByName",
+        JSON.stringify(sheetHeadersByName),
       );
-
-      navigate("/field-mapping");
-    } catch (error) {
-      console.error(
-        "Error uploading file, joining sheets, or fetching mappings:",
-        error,
-      );
-      toast.error("Something Went Wrong.");
-    } finally {
-      setLoading(false);
+    } else {
+      sessionStorage.removeItem("joinSelection");
+      sessionStorage.removeItem("sheetHeadersByName");
     }
+
+    navigate("/field-mapping", {
+      state: {
+        fileToUpload: file,
+        entityName: sheets[0]?.name ?? "string",
+      },
+    });
   };
 
   const canProceed =
@@ -422,26 +382,26 @@ export function UploadPage() {
   const filteredLeftKeys = leftSheetHeaders;
   const filteredRightKeys = rightSheetHeaders;
 
-  return (<>
-    <Loader open={loading} />
-    <div className={`${PAGE_OUTER} !min-h-[30rem]`}>
-      <div className={`${PAGE_CONTAINER} min-h-[30rem]`}>
-        <div className="mb-2">
-          <ProcessStepper />
-        </div>
-        <Card className="shadow-none border border-border bg-card animate-in min-h-[26rem] flex flex-col">
-          <CardHeader className="p-1 px-2 bg-muted border-none shrink-0">
-            <div className="flex items-center justify-between gap-3 flex-wrap">
-              <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
-                  <Upload className="h-4 w-4 text-primary" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-3">
-                    <CardTitle className="text-sm font-normal">
-                      Upload File
-                    </CardTitle>
-                    {/* {file && (
+  return (
+    <>
+      <div className={`${PAGE_OUTER} !min-h-[30rem]`}>
+        <div className={`${PAGE_CONTAINER} min-h-[30rem]`}>
+          <div className="mb-2">
+            <ProcessStepper />
+          </div>
+          <Card className="shadow-none border border-border bg-card animate-in min-h-[26rem] flex flex-col relative">
+            <CardHeader className="p-1 px-2 bg-muted border-none shrink-0">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
+                    <Upload className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-3">
+                      <CardTitle className="text-sm font-normal">
+                        Upload File
+                      </CardTitle>
+                      {/* {file && (
                       <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-full text-xs font-medium animate-in fade-in slide-in-from-left-2">
                         <span>📄 {file.name}</span>
                         <X
@@ -453,32 +413,32 @@ export function UploadPage() {
                         />
                       </div>
                     )} */}
-                  </div>
-                  <CardDescription className=" text-muted-foreground text-[11px]">
-                    {sheets.length > 0 ? (
-                      <>
-                        <div className="gap-4 mt-0">
-                          {sheets.map((sheet, index) => {
-                            const previewHeaders = sheet.headers ?? [];
-                            const previewRows = allRows.slice(0, 20);
+                    </div>
+                    <CardDescription className=" text-muted-foreground text-[11px]">
+                      {sheets.length > 0 ? (
+                        <>
+                          <div className="gap-4 mt-0">
+                            {sheets.map((sheet, index) => {
+                              const previewHeaders = sheet.headers ?? [];
+                              const previewRows = allRows.slice(0, 20);
 
-                            return (
-                              // <div
-                              //   key={sheet.name}
-                              //   className="group p-5 border border-border rounded-xl bg-card hover:shadow-md transition-all hover:border-primary/40"
-                              //   style={{ animationDelay: `${index * 100}ms` }}
-                              // >
-                              //
-                              <div
-                                key={sheet.name}
-                                className="group "
-                                style={{ animationDelay: `${index * 100}ms` }}
-                              >
-                                <div className="">
-                                  <div>
-                                    File Summary: {allRows.length} rows with{" "}
-                                    {sheet.headers.length} column(s).
-                                    {/* <span className="text-xs">
+                              return (
+                                // <div
+                                //   key={sheet.name}
+                                //   className="group p-5 border border-border rounded-xl bg-card hover:shadow-md transition-all hover:border-primary/40"
+                                //   style={{ animationDelay: `${index * 100}ms` }}
+                                // >
+                                //
+                                <div
+                                  key={sheet.name}
+                                  className="group "
+                                  style={{ animationDelay: `${index * 100}ms` }}
+                                >
+                                  <div className="">
+                                    <div>
+                                      File Summary: {allRows.length} rows with{" "}
+                                      {sheet.headers.length} column(s).
+                                      {/* <span className="text-xs">
                                       Identified{" "}
                                       <span className="">
                                         {sheet.headers.length} columns
@@ -489,410 +449,412 @@ export function UploadPage() {
                                       </span>{" "}
                                       in this selected file.
                                     </span> */}
-                                    {isJoinRequired && joinSelection && (
-                                      <span className="text-xs ml-1">
-                                        Join Configured:{" "}
-                                        <span className="">
-                                          {joinSelection.leftSheet}
-                                        </span>{" "}
-                                        (
-                                        <span className="">
-                                          {joinSelection.leftKey}
+                                      {isJoinRequired && joinSelection && (
+                                        <span className="text-xs ml-1">
+                                          Join Configured:{" "}
+                                          <span className="">
+                                            {joinSelection.leftSheet}
+                                          </span>{" "}
+                                          (
+                                          <span className="">
+                                            {joinSelection.leftKey}
+                                          </span>
+                                          ) {"->"}{" "}
+                                          <span className="">
+                                            {joinSelection.rightSheet}
+                                          </span>{" "}
+                                          (
+                                          <span className="">
+                                            {joinSelection.rightKey}
+                                          </span>
+                                          )
                                         </span>
-                                        ) {"->"}{" "}
-                                        <span className="">
-                                          {joinSelection.rightSheet}
-                                        </span>{" "}
-                                        (
-                                        <span className="">
-                                          {joinSelection.rightKey}
-                                        </span>
-                                        )
-                                      </span>
-                                    )}
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        Upload your source CSV or XLSX file to begin the data
-                        processing workflow
-                      </>
-                    )}
-                  </CardDescription>
+                              );
+                            })}
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          Upload your source CSV or XLSX file to begin the data
+                          processing workflow
+                        </>
+                      )}
+                    </CardDescription>
+                  </div>
+                </div>
+                <div className="float-right">
+                  {file && (
+                    <div className="flex gap-2">
+                      {availableSheetNames.length > 1 && (
+                        <Button
+                          variant="outline"
+                          className="font-normal text-xs border-primary text-primary hover:bg-primary/10 transition-colors hover:text-primary py-1"
+                          onClick={() => {
+                            setShowSheetSelector(true);
+                          }}
+                        >
+                          Re-Join Sheets
+                        </Button>
+                      )}
+                      <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-sm text-xs font-medium animate-in fade-in slide-in-from-left-2">
+                        <span>📄 {file.name}</span>
+                        <X
+                          className="h-3 w-3 cursor-pointer hover:text-red-500 transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            resetUploadState();
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className="float-right">
-                {file && (
-                  <div className="flex gap-2">
-                    {availableSheetNames.length > 1 && (
-                      <Button
-                        variant="outline"
-                        className="font-normal text-xs border-primary text-primary hover:bg-primary/10 transition-colors hover:text-primary py-1"
-                        onClick={() => {
-                          setShowSheetSelector(true);
-                        }}
-                      >
-                        Re-Join Sheets
-                      </Button>
-                    )}
-                    <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-sm text-xs font-medium animate-in fade-in slide-in-from-left-2">
-                      <span>📄 {file.name}</span>
-                      <X
-                        className="h-3 w-3 cursor-pointer hover:text-red-500 transition-colors"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          resetUploadState();
-                        }}
-                      />
+            </CardHeader>
+
+            <CardContent className="p-0 min-h-[18rem] flex flex-col flex-1">
+              <div className="flex justify-center flex-col items-center flex-1 w-full h-full pb-4">
+                {!file && (
+                  <div
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    className={`
+                    w-full max-w-3xl relative group flex flex-col items-center justify-center gap-3 p-6 
+                    rounded-xl border-2 border-dashed transition-all duration-300 cursor-pointer
+                    ${
+                      isDragging
+                        ? "border-primary bg-primary/10 scale-[1.02] shadow-2xl"
+                        : "border-primary/40 bg-primary/[0.03] hover:border-primary/60 hover:bg-primary/[0.06]"
+                    }
+                  `}
+                    onClick={openFilePicker}
+                  >
+                    <div className="relative">
+                      <div className="h-10 w-10 rounded-full flex items-center justify-center shadow-md transform group-hover:scale-110 transition-transform duration-300 bg-primary/10">
+                        <Upload className="h-6 w-6 text-primary" />
+                      </div>
+                      <div className="absolute -inset-4 bg-primary/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     </div>
+
+                    <div className="text-center space-y-2 ">
+                      <h3 className="text-md font-normal text-foreground tracking-tight">
+                        Drop your file here
+                      </h3>
+                      <p className="text-sm font-normal  text-muted-foreground  opacity-60">
+                        Or Click To Browse
+                      </p>
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      className="relative overflow-hidden px-3 h-10 border-primary text-primary hover:bg-primary/10 font-bold rounded-md shadow-primary/10 transition-all active:scale-95"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Upload className="h-5 w-5" />
+                        Choose File (CSV Or XLSX)
+                      </div>
+                    </Button>
+
+                    <input
+                      type="file"
+                      accept=".csv,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                      onChange={handleFileChange}
+                      ref={fileInputRef}
+                      className="hidden"
+                    />
                   </div>
                 )}
               </div>
-            </div>
-          </CardHeader>
+              {sheets.length > 0 && (
+                <>
+                  <div className="gap-4 mt-0">
+                    {sheets.map((sheet, index) => {
+                      const previewHeaders = sheet.headers ?? [];
+                      const previewRows = allRows.slice(0, 20);
 
-          <CardContent className="p-0 min-h-[18rem] flex flex-col flex-1">
-            <div className="flex justify-center flex-col items-center flex-1 w-full h-full pb-4">
-              {!file && (
-                <div
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
-                  className={`
-                    w-full max-w-3xl relative group flex flex-col items-center justify-center gap-3 p-6 
-                    rounded-xl border-2 border-dashed transition-all duration-300 cursor-pointer
-                    ${isDragging
-                      ? "border-primary bg-primary/10 scale-[1.02] shadow-2xl"
-                      : "border-primary/40 bg-primary/[0.03] hover:border-primary/60 hover:bg-primary/[0.06]"
-                    }
-                  `}
-                  onClick={openFilePicker}
-                >
-                  <div className="relative">
-                    <div className="h-10 w-10 rounded-full flex items-center justify-center shadow-md transform group-hover:scale-110 transition-transform duration-300 bg-primary/10">
-                      <Upload className="h-6 w-6 text-primary" />
-                    </div>
-                    <div className="absolute -inset-4 bg-primary/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  </div>
-
-                  <div className="text-center space-y-2 ">
-                    <h3 className="text-md font-normal text-foreground tracking-tight">
-                      Drop your file here
-                    </h3>
-                    <p className="text-sm font-normal  text-muted-foreground  opacity-60">
-                      Or Click To Browse
-                    </p>
-                  </div>
-
-                  <Button
-                    variant="outline"
-                    className="relative overflow-hidden px-3 h-10 border-primary text-primary hover:bg-primary/10 font-bold rounded-md shadow-primary/10 transition-all active:scale-95"
-                  >
-                    <div className="flex items-center gap-3">
-                      <Upload className="h-5 w-5" />
-                      Choose File (CSV Or XLSX)
-                    </div>
-                  </Button>
-
-                  <input
-                    type="file"
-                    accept=".csv,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    onChange={handleFileChange}
-                    ref={fileInputRef}
-                    className="hidden"
-                  />
-                </div>
-              )}
-            </div>
-            {sheets.length > 0 && (
-              <>
-                <div className="gap-4 mt-0">
-                  {sheets.map((sheet, index) => {
-                    const previewHeaders = sheet.headers ?? [];
-                    const previewRows = allRows.slice(0, 20);
-
-                    return (
-                      // <div
-                      //   key={sheet.name}
-                      //   className="group p-5 border border-border rounded-xl bg-card hover:shadow-md transition-all hover:border-primary/40"
-                      //   style={{ animationDelay: `${index * 100}ms` }}
-                      // >
-                      //
-                      <div
-                        key={sheet.name}
-                        className="group "
-                        style={{ animationDelay: `${index * 100}ms` }}
-                      >
-                        <div className="max-h-[415px] overflow-auto">
-                          <Table className="w-full min-w-[900px] ">
-                            <TableHeader className=" font-bold text-sm ">
-                              <TableRow>
-                                {previewHeaders.map((header) => (
-                                  <TableHead
-                                    key={header}
-                                    className="px-3 py-[0.35rem] text-left font-semibold whitespace-nowrap bg-gray-50 border border-border"
-                                  >
-                                    {header}
-                                  </TableHead>
-                                ))}
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              {previewRows.map((row, rowIndex) => (
-                                <TableRow key={rowIndex} className="">
+                      return (
+                        // <div
+                        //   key={sheet.name}
+                        //   className="group p-5 border border-border rounded-xl bg-card hover:shadow-md transition-all hover:border-primary/40"
+                        //   style={{ animationDelay: `${index * 100}ms` }}
+                        // >
+                        //
+                        <div
+                          key={sheet.name}
+                          className="group "
+                          style={{ animationDelay: `${index * 100}ms` }}
+                        >
+                          <div className="max-h-[415px] overflow-auto">
+                            <Table className="w-full min-w-[900px] ">
+                              <TableHeader className=" font-bold text-sm ">
+                                <TableRow>
                                   {previewHeaders.map((header) => (
-                                    <TableCell
-                                      key={`${rowIndex}-${header}`}
-                                      className="px-3 py-2 whitespace-nowrap"
+                                    <TableHead
+                                      key={header}
+                                      className="px-3 py-[0.35rem] text-left font-semibold whitespace-nowrap bg-gray-50 border border-border"
                                     >
-                                      {String(
-                                        (row as Record<string, unknown>)?.[
-                                        header
-                                        ] ?? "",
-                                      )}
-                                    </TableCell>
+                                      {header}
+                                    </TableHead>
                                   ))}
                                 </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
+                              </TableHeader>
+                              <TableBody>
+                                {previewRows.map((row, rowIndex) => (
+                                  <TableRow key={rowIndex} className="">
+                                    {previewHeaders.map((header) => (
+                                      <TableCell
+                                        key={`${rowIndex}-${header}`}
+                                        className="px-3 py-2 whitespace-nowrap"
+                                      >
+                                        {String(
+                                          (row as Record<string, unknown>)?.[
+                                            header
+                                          ] ?? "",
+                                        )}
+                                      </TableCell>
+                                    ))}
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </>
-            )}
-          </CardContent>
-          {canProceed && (
-            <div className="flex justify-end p-1 px-2 border-t bg-muted shrink-0">
-              <Button
-                onClick={handleNext}
-                disabled={loading}
-                variant="outline"
-                className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
-              >
-                Next
-                <svg
-                  className="ml-2 w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </Button>
-            </div>
-          )}
-        </Card>
-
-        <Dialog
-          open={showSheetSelector}
-          onOpenChange={(open) => {
-            setShowSheetSelector(open);
-            if (!open && sheets.length === 0) {
-              resetUploadState();
-            }
-          }}
-        >
-          <DialogContent
-            className="w-[50vw] max-w-[80vw] p-0 !animate-none 
-          !duration-0 overflow-hidden gap-0"
-          >
-            <DialogHeader className="border-b p-4 bg-muted space-y-0">
-              <DialogTitle className="text-md">
-                Select Sheets To Join
-              </DialogTitle>
-              <DialogDescription className="text-xs">
-                Pick two different sheets and choose a join key for each.
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="grid grid-cols-[22vw_2vw_22vw]  p-4 flex-wrap">
-              {/* Left Side */}
-              <div className="rounded-lg p-4 space-y-3 ">
-                {/* <div className="text-sm font-semibold text-foreground">Primary Data</div> */}
-                <div className="space-y-1">
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Primary Sheet
-                  </label>
-                  <Select
-                    value={leftSheetName}
-                    onValueChange={(nextLeft) => {
-                      setLeftSheetName(nextLeft);
-                      const nextRightOptions = availableSheetNames.filter(
-                        (n) => n !== nextLeft,
                       );
-                      const nextRight =
-                        nextLeft === rightSheetName
-                          ? (nextRightOptions[0] ?? "")
-                          : rightSheetName;
-                      setRightSheetName(nextRight);
-                      setLeftKey(sheetHeadersByName[nextLeft]?.[0] ?? "");
-                      setRightKey(sheetHeadersByName[nextRight]?.[0] ?? "");
-                    }}
+                    })}
+                  </div>
+                </>
+              )}
+            </CardContent>
+            {canProceed && (
+              <div className="flex justify-end p-1 px-2 border-t bg-muted shrink-0">
+                <Button
+                  onClick={handleNext}
+                  disabled={false}
+                  variant="outline"
+                  className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
+                >
+                  Next
+                  <svg
+                    className="ml-2 w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    <SelectTrigger className="w-full h-9 rounded-sm border-gray-200 bg-background px-3 text-xs font-normal shadow-none hover:bg-gray-50 transition-colors">
-                      <SelectValue placeholder="Select primary sheet" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-sm border-gray-200 shadow-md">
-                      {filteredLeftSheets.map((name) => (
-                        <SelectItem
-                          key={name}
-                          value={name}
-                          className="text-xs rounded-sm"
-                        >
-                          {name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </Button>
+              </div>
+            )}
+          </Card>
+
+          <Dialog
+            open={showSheetSelector}
+            onOpenChange={(open) => {
+              setShowSheetSelector(open);
+              if (!open && sheets.length === 0) {
+                resetUploadState();
+              }
+            }}
+          >
+            <DialogContent
+              className="w-[50vw] max-w-[80vw] p-0 !animate-none 
+          !duration-0 overflow-hidden gap-0"
+            >
+              <DialogHeader className="border-b p-4 bg-muted space-y-0">
+                <DialogTitle className="text-md">
+                  Select Sheets To Join
+                </DialogTitle>
+                <DialogDescription className="text-xs">
+                  Pick two different sheets and choose a join key for each.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="grid grid-cols-[22vw_2vw_22vw]  p-4 flex-wrap">
+                {/* Left Side */}
+                <div className="rounded-lg p-4 space-y-3 ">
+                  {/* <div className="text-sm font-semibold text-foreground">Primary Data</div> */}
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Primary Sheet
+                    </label>
+                    <Select
+                      value={leftSheetName}
+                      onValueChange={(nextLeft) => {
+                        setLeftSheetName(nextLeft);
+                        const nextRightOptions = availableSheetNames.filter(
+                          (n) => n !== nextLeft,
+                        );
+                        const nextRight =
+                          nextLeft === rightSheetName
+                            ? (nextRightOptions[0] ?? "")
+                            : rightSheetName;
+                        setRightSheetName(nextRight);
+                        setLeftKey(sheetHeadersByName[nextLeft]?.[0] ?? "");
+                        setRightKey(sheetHeadersByName[nextRight]?.[0] ?? "");
+                      }}
+                    >
+                      <SelectTrigger className="w-full h-9 rounded-sm border-gray-200 bg-background px-3 text-xs font-normal shadow-none hover:bg-gray-50 transition-colors">
+                        <SelectValue placeholder="Select primary sheet" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-sm border-gray-200 shadow-md">
+                        {filteredLeftSheets.map((name) => (
+                          <SelectItem
+                            key={name}
+                            value={name}
+                            className="text-xs rounded-sm"
+                          >
+                            {name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Column
+                    </label>
+                    <Select
+                      value={leftKey}
+                      onValueChange={(val) => setLeftKey(val)}
+                      disabled={!effectiveLeftSheet}
+                    >
+                      <SelectTrigger className="w-full h-9 rounded-sm border-gray-200 bg-background px-3 text-xs font-normal shadow-none hover:bg-gray-50 transition-colors">
+                        <SelectValue placeholder="Select column" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-sm border-gray-200 shadow-md">
+                        {filteredLeftKeys.map((h) => (
+                          <SelectItem
+                            key={h}
+                            value={h}
+                            className="text-xs rounded-sm"
+                          >
+                            {h}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Column
-                  </label>
-                  <Select
-                    value={leftKey}
-                    onValueChange={(val) => setLeftKey(val)}
-                    disabled={!effectiveLeftSheet}
-                  >
-                    <SelectTrigger className="w-full h-9 rounded-sm border-gray-200 bg-background px-3 text-xs font-normal shadow-none hover:bg-gray-50 transition-colors">
-                      <SelectValue placeholder="Select column" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-sm border-gray-200 shadow-md">
-                      {filteredLeftKeys.map((h) => (
-                        <SelectItem
-                          key={h}
-                          value={h}
-                          className="text-xs rounded-sm"
-                        >
-                          {h}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <div className="flex justify-center">
+                  <div
+                    className=""
+                    style={{
+                      width: "1px",
+                      background: "#909090",
+                    }}
+                  ></div>
+                </div>
+                {/* Right Side */}
+                <div className="rounded-lg  p-4 space-y-3 ">
+                  {/* <div className="text-sm font-semibold text-foreground">Seconday Data</div> */}
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Reference Sheet
+                    </label>
+                    <Select
+                      value={rightSheetName}
+                      onValueChange={(nextRight) => {
+                        setRightSheetName(nextRight);
+                        setRightKey(sheetHeadersByName[nextRight]?.[0] ?? "");
+                      }}
+                    >
+                      <SelectTrigger className="w-full h-9 rounded-sm border-gray-200 bg-background px-3 text-xs font-normal shadow-none hover:bg-gray-50 transition-colors">
+                        <SelectValue placeholder="Select reference sheet" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-sm border-gray-200 shadow-md">
+                        {filteredRightSheets.map((name) => (
+                          <SelectItem
+                            key={name}
+                            value={name}
+                            className="text-xs rounded-sm"
+                          >
+                            {name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Related Column
+                    </label>
+                    <Select
+                      value={rightKey}
+                      onValueChange={(val) => setRightKey(val)}
+                      disabled={!effectiveRightSheet}
+                    >
+                      <SelectTrigger className="w-full h-9 rounded-sm border-gray-200 bg-background px-3 text-xs font-normal shadow-none hover:bg-gray-50 transition-colors">
+                        <SelectValue placeholder="Select related column" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-sm border-gray-200 shadow-md">
+                        {filteredRightKeys.map((h) => (
+                          <SelectItem
+                            key={h}
+                            value={h}
+                            className="text-xs rounded-sm"
+                          >
+                            {h}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
-              <div className="flex justify-center">
-                <div
-                  className=""
-                  style={{
-                    width: "1px",
-                    background: "#909090",
+              <div className="w-full border-b"></div>
+              <div className="flex gap-2 bg-muted p-4 py-2 justify-end">
+                <Button
+                  type="button"
+                  onClick={() => {
+                    resetUploadState();
+                    setShowSheetSelector(false);
                   }}
-                ></div>
+                  variant="outline"
+                  className="h-9 text-xs px-5 font-semibold transition-colors"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  onClick={handleConfirmJoinSelection}
+                  disabled={
+                    !effectiveLeftSheet ||
+                    !effectiveRightSheet ||
+                    !isLeftKeyValid ||
+                    !isRightKeyValid ||
+                    effectiveLeftSheet === effectiveRightSheet
+                  }
+                  variant="outline"
+                  className="font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors h-9 text-xs px-5"
+                >
+                  Confirm Join Selection
+                </Button>
               </div>
-              {/* Right Side */}
-              <div className="rounded-lg  p-4 space-y-3 ">
-                {/* <div className="text-sm font-semibold text-foreground">Seconday Data</div> */}
-                <div className="space-y-1">
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Reference Sheet
-                  </label>
-                  <Select
-                    value={rightSheetName}
-                    onValueChange={(nextRight) => {
-                      setRightSheetName(nextRight);
-                      setRightKey(sheetHeadersByName[nextRight]?.[0] ?? "");
-                    }}
-                  >
-                    <SelectTrigger className="w-full h-9 rounded-sm border-gray-200 bg-background px-3 text-xs font-normal shadow-none hover:bg-gray-50 transition-colors">
-                      <SelectValue placeholder="Select reference sheet" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-sm border-gray-200 shadow-md">
-                      {filteredRightSheets.map((name) => (
-                        <SelectItem
-                          key={name}
-                          value={name}
-                          className="text-xs rounded-sm"
-                        >
-                          {name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Related Column
-                  </label>
-                  <Select
-                    value={rightKey}
-                    onValueChange={(val) => setRightKey(val)}
-                    disabled={!effectiveRightSheet}
-                  >
-                    <SelectTrigger className="w-full h-9 rounded-sm border-gray-200 bg-background px-3 text-xs font-normal shadow-none hover:bg-gray-50 transition-colors">
-                      <SelectValue placeholder="Select related column" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-sm border-gray-200 shadow-md">
-                      {filteredRightKeys.map((h) => (
-                        <SelectItem
-                          key={h}
-                          value={h}
-                          className="text-xs rounded-sm"
-                        >
-                          {h}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-            <div className="w-full border-b"></div>
-            <div className="flex gap-2 bg-muted p-4 py-2 justify-end">
-              <Button
-                type="button"
-                onClick={() => {
-                  resetUploadState();
-                  setShowSheetSelector(false);
-                }}
-                variant="outline"
-                className="h-9 text-xs px-5 font-semibold transition-colors"
-              >
-                Cancel
-              </Button>
-              <Button
-                type="button"
-                onClick={handleConfirmJoinSelection}
-                disabled={
-                  !effectiveLeftSheet ||
-                  !effectiveRightSheet ||
-                  !isLeftKeyValid ||
-                  !isRightKeyValid ||
-                  effectiveLeftSheet === effectiveRightSheet
-                }
-                variant="outline"
-                className="font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors h-9 text-xs px-5"
-              >
-                Confirm Join Selection
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+            </DialogContent>
+          </Dialog>
+        </div>
+        {/* Next Arrow - Only show if file is ready */}
+        {canProceed && (
+          <button
+            onClick={handleNext}
+            disabled={false}
+            className="fixed right-0 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
+            title="Next: Field Mapping"
+          >
+            <ChevronRight className="h-6 w-6" />
+          </button>
+        )}
       </div>
-      {/* Next Arrow - Only show if file is ready */}
-      {canProceed && (
-        <button
-          onClick={handleNext}
-          disabled={loading}
-          className="fixed right-0 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
-          title="Next: Field Mapping"
-        >
-          <ChevronRight className="h-6 w-6" />
-        </button>
-      )}
-    </div>
-  </>);
+    </>
+  );
 }

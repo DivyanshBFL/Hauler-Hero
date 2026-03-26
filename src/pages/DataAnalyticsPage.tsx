@@ -9,13 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Search,
-  Eye,
-  Filter
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, Eye, Filter } from "lucide-react";
 import {
   getDefaultImportStats,
   IMPORT_STATS_KEY,
@@ -87,7 +81,7 @@ const DataAnalyticsPage = () => {
   const [selectedIssueType, setSelectedIssueType] =
     useState<string>("allIssues");
   const availableIssueTypes = useMemo(() => [] as string[], []);
-  const issueCountByType = useMemo(() => ({} as Record<string, number>), []);
+  const issueCountByType = useMemo(() => ({}) as Record<string, number>, []);
 
   const entityStr = sessionStorage.getItem("selectedEntity");
 
@@ -264,353 +258,361 @@ const DataAnalyticsPage = () => {
     [rowDiffMeta],
   );
 
-  return (<>
-    <Loader open={loading} />
-    <div className={PAGE_OUTER}>
-      <div className={PAGE_CONTAINER}>
-        <div className="mb-2">
-          <ProcessStepper />
-        </div>
-        <Card className="shadow-lg border border-border bg-card">
-          <CardHeader className="p-1 px-2 bg-muted border-none">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              <div className="flex items-start gap-2">
-                <div className="h-8 w-8 flex items-center justify-center rounded-md bg-primary/10 text-primary shadow-sm">
-                  <Eye className="h-4 w-4 text-primary" />
-                </div>
-                <div className="">
-                  <CardTitle className="text-sm font-normal">
-                    Data Cleanup Preview
-                  </CardTitle>
-                  <CardDescription className="text-[11px] text-muted-foreground">
-                    <span className="inline-flex items-center text-[11px] font-normal">
-                      Changed rows: {changedRowsCount} | Changed cells:{" "}
-                      {changedCellsCount}
-                    </span>
-                  </CardDescription>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <div className="relative flex-1 max-w-md">
-                  <Search className="absolute top-[14px] left-2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="pl-8 h-7 text-xs"
-                  />
-                </div>
-                <DropdownMenu modal={false}>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={`px-2 !h-7 hover:bg-primary/10 ${selectedIssueType !== "allIssues" ? "text-primary  bg-primary/5 " : ""}`}
-                      title="Filters"
-                    >
-                      <Filter className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    sideOffset={8}
-                    className="w-56"
-                  >
-                    <DropdownMenuItem
-                      onClick={() => setSelectedIssueType("allIssues")}
-                      className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${selectedIssueType === "allIssues" ? "text-primary bg-primary/5" : ""}`}
-                    >
-                      <span className="flex-1">
-                        {toIssueLabel("allIssues")} (
-                        {Object.values(issueCountByType || {}).reduce(
-                          (acc: number, curr: number) => acc + curr,
-                          0,
-                        )}
-                        )
+  return (
+    <>
+      <div className={PAGE_OUTER}>
+        <div className={PAGE_CONTAINER}>
+          <div className="mb-2">
+            <ProcessStepper />
+          </div>
+          <Card className="shadow-lg border border-border bg-card relative">
+            <Loader open={loading} inline className="rounded-lg" />
+            <CardHeader className="p-1 px-2 bg-muted border-none">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div className="flex items-start gap-2">
+                  <div className="h-8 w-8 flex items-center justify-center rounded-md bg-primary/10 text-primary shadow-sm">
+                    <Eye className="h-4 w-4 text-primary" />
+                  </div>
+                  <div className="">
+                    <CardTitle className="text-sm font-normal">
+                      Data Cleanup Preview
+                    </CardTitle>
+                    <CardDescription className="text-[11px] text-muted-foreground">
+                      <span className="inline-flex items-center text-[11px] font-normal">
+                        Changed rows: {changedRowsCount} | Changed cells:{" "}
+                        {changedCellsCount}
                       </span>
-                      {selectedIssueType === "allIssues" && (
-                        <span className="text-primary">✓</span>
-                      )}
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    {availableIssueTypes.map((type) => (
+                    </CardDescription>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <div className="relative flex-1 max-w-md">
+                    <Search className="absolute top-[14px] left-2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="pl-8 h-7 text-xs"
+                    />
+                  </div>
+                  <DropdownMenu modal={false}>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={`px-2 !h-7 hover:bg-primary/10 ${selectedIssueType !== "allIssues" ? "text-primary  bg-primary/5 " : ""}`}
+                        title="Filters"
+                      >
+                        <Filter className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="end"
+                      sideOffset={8}
+                      className="w-56"
+                    >
                       <DropdownMenuItem
-                        key={type}
-                        onClick={() => setSelectedIssueType(type)}
-                        className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${selectedIssueType === type ? "text-primary bg-primary/5" : ""}`}
+                        onClick={() => setSelectedIssueType("allIssues")}
+                        className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${selectedIssueType === "allIssues" ? "text-primary bg-primary/5" : ""}`}
                       >
                         <span className="flex-1">
-                          {toIssueLabel(type)} ({issueCountByType[type] || 0})
+                          {toIssueLabel("allIssues")} (
+                          {Object.values(issueCountByType || {}).reduce(
+                            (acc: number, curr: number) => acc + curr,
+                            0,
+                          )}
+                          )
                         </span>
-                        {selectedIssueType === type && (
+                        {selectedIssueType === "allIssues" && (
                           <span className="text-primary">✓</span>
                         )}
                       </DropdownMenuItem>
-                    ))}
-
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() => setFilterMode("ALL")}
-                      className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${filterMode === "ALL" ? "text-primary bg-primary/5" : ""}`}
-                    >
-                      <span className="flex-1">All rows</span>
-                      {filterMode === "ALL" && (
-                        <span className="text-primary">✓</span>
-                      )}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => setFilterMode("CHANGED")}
-                      className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${filterMode === "CHANGED" ? "text-primary bg-primary/5" : ""}`}
-                    >
-                      <span className="flex-1">Changed rows</span>
-                      {filterMode === "CHANGED" && (
-                        <span className="text-primary">✓</span>
-                      )}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => setFilterMode("UNCHANGED")}
-                      className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${filterMode === "UNCHANGED" ? "text-primary bg-primary/5" : ""}`}
-                    >
-                      <span className="flex-1">Unchanged rows</span>
-                      {filterMode === "UNCHANGED" && (
-                        <span className="text-primary">✓</span>
-                      )}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-              </div>
-            </div>
-          </CardHeader>
-
-          <CardContent className="p-0">
-            <div className=" overflow-hidden">
-              <div className="max-h-[415px] min-h-[40vh] overflow-y-auto">
-                <Table className="w-full text-sm">
-                  <TableHeader className="sticky top-0 z-10">
-                    <TableRow>
-                      {headers.map((col) => (
-                        <TableHead
-                          key={col}
-                          className="font-normal bg-gray-50 px-3 py-2 text-left whitespace-nowrap border border-border"
+                      <DropdownMenuSeparator />
+                      {availableIssueTypes.map((type) => (
+                        <DropdownMenuItem
+                          key={type}
+                          onClick={() => setSelectedIssueType(type)}
+                          className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${selectedIssueType === type ? "text-primary bg-primary/5" : ""}`}
                         >
-                          {col}
-                        </TableHead>
-                      ))}
-                    </TableRow>
-                  </TableHeader>
-
-                  <TableBody>
-                    {visibleRows.map(({ row, isChanged, isDeleted, idx }) => (
-                      <TableRow
-                        key={`row-${row.row_id ?? idx}`}
-                        className={
-                          isDeleted
-                            ? "bg-red-50 text-red-600"
-                            : isChanged
-                              ? "bg-amber-50/40"
-                              : ""
-                        }
-                      >
-                        {headers.map((col) => {
-                          const isAttr = col.toLowerCase() === "attribution";
-                          const cell = row.data?.[col];
-                          const oldVal = displayValue(cell?.old_value);
-                          const newVal = displayValue(cell?.value);
-                          const changed = Boolean(cell?.changed);
-
-                          if (isAttr) {
-                            const attrRaw =
-                              row.attribution ||
-                              (row.data as any)?.attribution ||
-                              (row.data as any)?.["Attribution"];
-                            const attrValue =
-                              typeof attrRaw === "object" && attrRaw !== null
-                                ? attrRaw.value || attrRaw.old_value || "—"
-                                : attrRaw || "—";
-
-                            return (
-                              <TableCell
-                                key={`${row.row_id}-${col}`}
-                                className={`px-3 py-2 whitespace-nowrap align-top ${isDeleted ? "line-through" : ""}`}
-                              >
-                                <span>{attrValue}</span>
-                              </TableCell>
-                            );
-                          }
-
-                          if (isDeleted) {
-                            const deletedVal = oldVal || newVal || "—";
-                            return (
-                              <TableCell
-                                key={`${row.row_id}-${col}`}
-                                className="px-3 py-2 whitespace-nowrap align-top line-through"
-                              >
-                                <span>{deletedVal}</span>
-                              </TableCell>
-                            );
-                          }
-
-                          return (
-                            <TableCell
-                              key={`${row.row_id}-${col}`}
-                              className="px-3 py-2 whitespace-nowrap align-top"
-                            >
-                              {changed ? (
-                                <div className="inline-flex items-center gap-2 leading-tight">
-                                  <span className="text-red-500 line-through">
-                                    {oldVal || "—"}
-                                  </span>
-                                  <span className="font-bold text-green-700">
-                                    {newVal || "—"}
-                                  </span>
-                                </div>
-                              ) : (
-                                <span>{newVal || "—"}</span>
-                              )}
-                            </TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    ))}
-
-                    {!visibleRows.length && (
-                      <TableRow className="h-40">
-                        <TableCell
-                          colSpan={Math.max(headers.length, 1)}
-                          className="p-6 text-center text-muted-foreground "
-                        >
-                          <span className=" p-6 bg-red-400 border-2 border-red-500 mt-4 opacity-40 text-white max-w-[200px]">
-                            {" "}
-                            No rows found.
+                          <span className="flex-1">
+                            {toIssueLabel(type)} ({issueCountByType[type] || 0})
                           </span>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
+                          {selectedIssueType === type && (
+                            <span className="text-primary">✓</span>
+                          )}
+                        </DropdownMenuItem>
+                      ))}
+
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => setFilterMode("ALL")}
+                        className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${filterMode === "ALL" ? "text-primary bg-primary/5" : ""}`}
+                      >
+                        <span className="flex-1">All rows</span>
+                        {filterMode === "ALL" && (
+                          <span className="text-primary">✓</span>
+                        )}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setFilterMode("CHANGED")}
+                        className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${filterMode === "CHANGED" ? "text-primary bg-primary/5" : ""}`}
+                      >
+                        <span className="flex-1">Changed rows</span>
+                        {filterMode === "CHANGED" && (
+                          <span className="text-primary">✓</span>
+                        )}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setFilterMode("UNCHANGED")}
+                        className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${filterMode === "UNCHANGED" ? "text-primary bg-primary/5" : ""}`}
+                      >
+                        <span className="flex-1">Unchanged rows</span>
+                        {filterMode === "UNCHANGED" && (
+                          <span className="text-primary">✓</span>
+                        )}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
+            </CardHeader>
+
+            <CardContent className="p-0 relative min-h-[calc(100vh-280px)]">
+              <div className=" overflow-hidden">
+                <div className="max-h-[calc(100vh-280px)] min-h-[calc(100vh-280px)] overflow-y-auto">
+                  <Table className="w-full text-sm">
+                    <TableHeader className="sticky top-0 z-10">
+                      <TableRow>
+                        {headers.map((col) => (
+                          <TableHead
+                            key={col}
+                            className="font-normal bg-gray-50 px-3 py-2 text-left whitespace-nowrap border border-border"
+                          >
+                            {col}
+                          </TableHead>
+                        ))}
+                      </TableRow>
+                    </TableHeader>
+
+                    <TableBody>
+                      {visibleRows.map(({ row, isChanged, isDeleted, idx }) => (
+                        <TableRow
+                          key={`row-${row.row_id ?? idx}`}
+                          className={
+                            isDeleted
+                              ? "bg-red-50 text-red-600"
+                              : isChanged
+                                ? "bg-amber-50/40"
+                                : ""
+                          }
+                        >
+                          {headers.map((col) => {
+                            const isAttr = col.toLowerCase() === "attribution";
+                            const cell = row.data?.[col];
+                            const oldVal = displayValue(cell?.old_value);
+                            const newVal = displayValue(cell?.value);
+                            const changed = Boolean(cell?.changed);
+
+                            if (isAttr) {
+                              const attrRaw =
+                                row.attribution ||
+                                (row.data as any)?.attribution ||
+                                (row.data as any)?.["Attribution"];
+                              const attrValue =
+                                typeof attrRaw === "object" && attrRaw !== null
+                                  ? attrRaw.value || attrRaw.old_value || "—"
+                                  : attrRaw || "—";
+
+                              return (
+                                <TableCell
+                                  key={`${row.row_id}-${col}`}
+                                  className={`px-3 py-2 whitespace-nowrap align-top ${isDeleted ? "line-through" : ""}`}
+                                >
+                                  <span>{attrValue}</span>
+                                </TableCell>
+                              );
+                            }
+
+                            if (isDeleted) {
+                              const deletedVal = oldVal || newVal || "—";
+                              return (
+                                <TableCell
+                                  key={`${row.row_id}-${col}`}
+                                  className="px-3 py-2 whitespace-nowrap align-top line-through"
+                                >
+                                  <span>{deletedVal}</span>
+                                </TableCell>
+                              );
+                            }
+
+                            return (
+                              <TableCell
+                                key={`${row.row_id}-${col}`}
+                                className="px-3 py-2 whitespace-nowrap align-top"
+                              >
+                                {changed ? (
+                                  <div className="inline-flex items-center gap-2 leading-tight">
+                                    <span className="text-red-500 line-through">
+                                      {oldVal || "—"}
+                                    </span>
+                                    <span className="font-bold text-green-700">
+                                      {newVal || "—"}
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <span>{newVal || "—"}</span>
+                                )}
+                              </TableCell>
+                            );
+                          })}
+                        </TableRow>
+                      ))}
+
+                      {!visibleRows.length && (
+                        <TableRow className="h-40">
+                          <TableCell
+                            colSpan={Math.max(headers.length, 1)}
+                            className="p-6 text-center text-muted-foreground "
+                          >
+                            <span className=" p-6 bg-red-400 border-2 border-red-500 mt-4 opacity-40 text-white max-w-[200px]">
+                              {" "}
+                              No rows found.
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            </CardContent>
+            <div className="flex flex-col sm:flex-row justify-between p-2 border-t bg-muted">
+              <Button
+                variant="outline"
+                className="px-4 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
+                onClick={() => navigate("/data-cleaning")}
+              >
+                <svg
+                  className="mr-2 w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+                Back
+              </Button>
+
+              <Button
+                variant="outline"
+                className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
+                onClick={() => {
+                  const total = rows.length;
+                  const updated = changedRowsCount;
+                  const unchanged = Math.max(0, total - updated);
+                  const stats: ImportStats = getDefaultImportStats();
+                  const totalFields = Math.max(0, total * headers.length);
+                  stats.total_processed = { rows: total, fields: totalFields };
+                  stats.records_affected = {
+                    rows: updated,
+                    rows_pct: total ? (updated / total) * 100 : 0,
+                    fields: changedCellsCount,
+                    fields_pct: totalFields
+                      ? (changedCellsCount / totalFields) * 100
+                      : 0,
+                  };
+                  stats.updated = {
+                    description: entityStr ?? "",
+                    fields: changedCellsCount,
+                    total_fields: totalFields,
+                    pct: totalFields
+                      ? (changedCellsCount / totalFields) * 100
+                      : 0,
+                  };
+                  stats.unchanged_data = {
+                    description: "",
+                    rows: unchanged,
+                    total_rows: total,
+                    pct: total ? (unchanged / total) * 100 : 0,
+                  };
+                  sessionStorage.setItem(
+                    IMPORT_STATS_KEY,
+                    JSON.stringify(stats),
+                  );
+                  navigate("/complete");
+                }}
+              >
+                Next
+                <svg
+                  className="ml-2 w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </Button>
             </div>
-          </CardContent>
-          <div className="flex flex-col sm:flex-row justify-between p-2 border-t bg-muted">
-            <Button
-              variant="outline"
-              className="px-4 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
-              onClick={() => navigate("/data-cleaning")}
-            >
-              <svg
-                className="mr-2 w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              Back
-            </Button>
+          </Card>
+        </div>
+        {/* Navigation Arrows */}
+        <button
+          onClick={() => navigate("/data-cleaning")}
+          className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
+          title="Previous: Data Cleaning"
+        >
+          <ChevronLeft className="h-6 w-6" />
+        </button>
 
-            <Button
-              variant="outline"
-              className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
-              onClick={() => {
-                const total = rows.length;
-                const updated = changedRowsCount;
-                const unchanged = Math.max(0, total - updated);
-                const stats: ImportStats = getDefaultImportStats();
-                const totalFields = Math.max(0, total * headers.length);
-                stats.total_processed = { rows: total, fields: totalFields };
-                stats.records_affected = {
-                  rows: updated,
-                  rows_pct: total ? (updated / total) * 100 : 0,
-                  fields: changedCellsCount,
-                  fields_pct: totalFields
-                    ? (changedCellsCount / totalFields) * 100
-                    : 0,
-                };
-                stats.updated = {
-                  description: entityStr ?? "",
-                  fields: changedCellsCount,
-                  total_fields: totalFields,
-                  pct: totalFields ? (changedCellsCount / totalFields) * 100 : 0,
-                };
-                stats.unchanged_data = {
-                  description: "",
-                  rows: unchanged,
-                  total_rows: total,
-                  pct: total ? (unchanged / total) * 100 : 0,
-                };
-                sessionStorage.setItem(IMPORT_STATS_KEY, JSON.stringify(stats));
-                navigate("/complete");
-              }}
-            >
-              Next
-              <svg
-                className="ml-2 w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </Button>
-          </div>
-        </Card>
+        <button
+          onClick={() => {
+            const total = rows.length;
+            const updated = changedRowsCount;
+            const unchanged = Math.max(0, total - updated);
+
+            const stats: ImportStats = getDefaultImportStats();
+            const totalFields = Math.max(0, total * headers.length);
+            stats.total_processed = { rows: total, fields: totalFields };
+            stats.records_affected = {
+              rows: updated,
+              rows_pct: total ? (updated / total) * 100 : 0,
+              fields: changedCellsCount,
+              fields_pct: totalFields
+                ? (changedCellsCount / totalFields) * 100
+                : 0,
+            };
+            stats.updated = {
+              description: entityStr ?? "",
+              fields: changedCellsCount,
+              total_fields: totalFields,
+              pct: totalFields ? (changedCellsCount / totalFields) * 100 : 0,
+            };
+            stats.unchanged_data = {
+              description: "",
+              rows: unchanged,
+              total_rows: total,
+              pct: total ? (unchanged / total) * 100 : 0,
+            };
+            sessionStorage.setItem(IMPORT_STATS_KEY, JSON.stringify(stats));
+            navigate("/complete");
+          }}
+          className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
+          title="Next: Complete"
+        >
+          <ChevronRight className="h-6 w-6" />
+        </button>
       </div>
-      {/* Navigation Arrows */}
-      <button
-        onClick={() => navigate("/data-cleaning")}
-        className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
-        title="Previous: Data Cleaning"
-      >
-        <ChevronLeft className="h-6 w-6" />
-      </button>
-
-      <button
-        onClick={() => {
-          const total = rows.length;
-          const updated = changedRowsCount;
-          const unchanged = Math.max(0, total - updated);
-
-          const stats: ImportStats = getDefaultImportStats();
-          const totalFields = Math.max(0, total * headers.length);
-          stats.total_processed = { rows: total, fields: totalFields };
-          stats.records_affected = {
-            rows: updated,
-            rows_pct: total ? (updated / total) * 100 : 0,
-            fields: changedCellsCount,
-            fields_pct: totalFields ? (changedCellsCount / totalFields) * 100 : 0,
-          };
-          stats.updated = {
-            description: entityStr ?? "",
-            fields: changedCellsCount,
-            total_fields: totalFields,
-            pct: totalFields ? (changedCellsCount / totalFields) * 100 : 0,
-          };
-          stats.unchanged_data = {
-            description: "",
-            rows: unchanged,
-            total_rows: total,
-            pct: total ? (unchanged / total) * 100 : 0,
-          };
-          sessionStorage.setItem(IMPORT_STATS_KEY, JSON.stringify(stats));
-          navigate("/complete");
-        }}
-        className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
-        title="Next: Complete"
-      >
-        <ChevronRight className="h-6 w-6" />
-      </button>
-    </div>
-  </>);
+    </>
+  );
 };
 
 export default DataAnalyticsPage;

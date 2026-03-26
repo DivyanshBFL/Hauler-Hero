@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import {
   ReactFlow,
   Background,
@@ -23,9 +24,10 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { api } from "@/services/api";
+import { api, joinSheets, mapFields, uploadFile } from "@/services/api";
 import type { CorrectionRequest, CorrectionManualChange } from "@/services/api";
 import type { FieldMapping, SheetData } from "@/services/api";
+import { setSessionId } from "@/store/sessionSlice";
 import {
   Loader2,
   Search,
@@ -450,6 +452,8 @@ export function FieldMappingPage() {
   }>({});
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
 
   const currentSheet = useMemo(
     () => sheets.find((s) => s.name === selectedEntity),
@@ -746,6 +750,43 @@ export function FieldMappingPage() {
       if (!sheetsStr) {
         navigate("/upload");
         return;
+      }
+
+      const fileToUpload = location.state?.fileToUpload;
+      const entityName = location.state?.entityName;
+
+      if (fileToUpload) {
+        try {
+          const uploadResponse = await uploadFile(fileToUpload);
+          const sessionId = uploadResponse?.session_id;
+          if (!sessionId) throw new Error("session_id was not returned from /upload-file");
+          
+          dispatch(setSessionId(sessionId));
+          sessionStorage.setItem("session_id", sessionId);
+
+          const joinSelectionStr = sessionStorage.getItem("joinSelection");
+          if (joinSelectionStr) {
+            const parsedJoin = JSON.parse(joinSelectionStr);
+            await joinSheets({
+              session_id: sessionId,
+              left_sheet: parsedJoin.leftSheet,
+              right_sheet: parsedJoin.rightSheet,
+              left_key: parsedJoin.leftKey,
+              right_key: parsedJoin.rightKey,
+            });
+          }
+
+          const mappingResponse = await mapFields({
+            session_id: sessionId,
+            entityName: entityName ?? "string",
+          });
+          sessionStorage.setItem("mappingResponse", JSON.stringify(mappingResponse));
+          
+          navigate("/field-mapping", { replace: true, state: {} });
+        } catch (error) {
+          console.error("Error Processing Upload:", error);
+          toast.error("Upload failed in background.");
+        }
       }
 
       const loadedSheets = JSON.parse(sheetsStr) as SheetData[];
@@ -1183,258 +1224,265 @@ export function FieldMappingPage() {
     }
   };
 
-  return (<>
-    <Loader open={loading || processing} />
-    <div className={PAGE_OUTER}>
-      <div className={PAGE_CONTAINER}>
-        <div className="mb-2">
-          <ProcessStepper />
-        </div>
-        <Card className="shadow-lg border border-border bg-card animate-in">
-          <CardHeader className="bg-muted border-none p-1 px-2">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
-                <GitMerge className="w-4 h-4 text-primary" />
+  return (
+    <>
+      <div className={PAGE_OUTER}>
+        <div className={PAGE_CONTAINER}>
+          <div className="mb-2">
+            <ProcessStepper />
+          </div>
+          <Card className="shadow-lg border border-border bg-card animate-in relative">
+            <Loader
+              open={loading || processing}
+              inline
+              className="rounded-lg"
+            />
+            <CardHeader className="bg-muted border-none p-1 px-2">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
+                  <GitMerge className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="font-normal">Map Fields</CardTitle>
+                  <CardDescription className="text-[11px] ">
+                    <span className="flex items-center gap-1 ">
+                      Summary: <span>AI Mapped Percentage:</span>
+                      <b>
+                        {autoMappedCoveragePct}% ({autoMappedCount}/
+                        {targetFieldsAll.length})
+                      </b>
+                    </span>
+                  </CardDescription>
+                </div>
               </div>
-              <div>
-                <CardTitle className="font-normal">Map Fields</CardTitle>
-                <CardDescription className="text-[11px] ">
-                  <span className="flex items-center gap-1 ">
-                    Summary: <span>AI Mapped Percentage:</span>
-                    <b>
-                      {autoMappedCoveragePct}% ({autoMappedCount}/
-                      {targetFieldsAll.length})
-                    </b>
-                  </span>
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="gap-4 p-0">
-            <div className="relative">
-              <div
-                className={
-                  chatCollapsed
-                    ? "grid grid-cols-1 min-h-[700px]"
-                    : "grid grid-cols-1 lg:grid-cols-4 gap-6 min-h-[700px]"
-                }
-              >
+            </CardHeader>
+            <CardContent className="gap-4 p-0">
+              <div className="relative">
                 <div
                   className={
                     chatCollapsed
-                      ? "col-span-1 w-full space-y-4"
-                      : "lg:col-span-3 space-y-4"
+                      ? "grid grid-cols-1 min-h-[700px]"
+                      : "grid grid-cols-1 lg:grid-cols-4 gap-6 min-h-[700px]"
                   }
                 >
                   <div
-                    ref={flowPaneRef}
-                    className=" bg-background overflow-hidden"
-                    style={{ background: "white !important" }}
+                    className={
+                      chatCollapsed
+                        ? "col-span-1 w-full space-y-4"
+                        : "lg:col-span-3 space-y-4"
+                    }
                   >
-                    <div className="grid grid-cols-[1fr_auto_1fr] gap-[5rem] bg-muted px-6 py-1">
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-start text-sm gap-2 mb-[-5px]">
-                          <span className="font-bold text-xs ">
-                            Source Schema :
-                          </span>
-                          <span className="text-muted-foreground text-xs">
-                            {sourceFieldsAll.length} Columns{" "}
-                          </span>
-                        </div>
-                        <div className="relative">
-                          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <input
-                            id="source-search"
-                            ref={sourceSearchInputRef}
-                            type="text"
-                            placeholder="Search for field"
-                            value={sourceSearch}
-                            onChange={(e) => setSourceSearch(e.target.value)}
-                            className="w-full h-7 pl-8 pr-3 rounded-md border border-input bg-background text-xs"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="flex items-end justify-center pb-1">
-                        <label className="inline-flex items-center gap-2 text-xs text-foreground cursor-pointer whitespace-nowrap">
-                          <input
-                            type="checkbox"
-                            checked={showOnlyErrors}
-                            onChange={(e) =>
-                              setShowOnlyErrors(e.target.checked)
-                            }
-                            className="h-4 w-4 rounded border-input cursor-pointer accent-primary"
-                          />
-                          Show Unmapped
-                        </label>
-                      </div>
-
-                      <div className="space-y-2">
-                        <div className="flex justify-between mb-[-5px]">
-                          <div className="flex items-center justify-start text-sm gap-2">
-                            <span className="font-bold text-xs">
-                              Target Schema :
+                    <div
+                      ref={flowPaneRef}
+                      className=" bg-background overflow-hidden"
+                      style={{ background: "white !important" }}
+                    >
+                      <div className="grid grid-cols-[1fr_auto_1fr] gap-[5rem] bg-muted px-6 py-1">
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-start text-sm gap-2 mb-[-5px]">
+                            <span className="font-bold text-xs ">
+                              Source Schema :
                             </span>
                             <span className="text-muted-foreground text-xs">
-                              {
-                                mappings.filter(
-                                  (m) => m.targetField !== "Unmapped",
-                                ).length
-                              }
-                              /{targetFieldsAll.length} Columns Mapped
+                              {sourceFieldsAll.length} Columns{" "}
                             </span>
                           </div>
+                          <div className="relative">
+                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <input
+                              id="source-search"
+                              ref={sourceSearchInputRef}
+                              type="text"
+                              placeholder="Search for field"
+                              value={sourceSearch}
+                              onChange={(e) => setSourceSearch(e.target.value)}
+                              className="w-full h-7 pl-8 pr-3 rounded-md border border-input bg-background text-xs"
+                            />
+                          </div>
                         </div>
-                        <div className="relative">
-                          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <input
-                            id="target-search"
-                            ref={targetSearchInputRef}
-                            type="text"
-                            placeholder="Search for field"
-                            value={targetSearch}
-                            onChange={(e) => setTargetSearch(e.target.value)}
-                            className="w-full h-7 pl-8 pr-3 rounded-md border border-input bg-background text-xs"
-                          />
+
+                        <div className="flex items-end justify-center pb-1">
+                          <label className="inline-flex items-center gap-2 text-xs text-foreground cursor-pointer whitespace-nowrap">
+                            <input
+                              type="checkbox"
+                              checked={showOnlyErrors}
+                              onChange={(e) =>
+                                setShowOnlyErrors(e.target.checked)
+                              }
+                              className="h-4 w-4 rounded border-input cursor-pointer accent-primary"
+                            />
+                            Show Unmapped
+                          </label>
+                        </div>
+
+                        <div className="space-y-2">
+                          <div className="flex justify-between mb-[-5px]">
+                            <div className="flex items-center justify-start text-sm gap-2">
+                              <span className="font-bold text-xs">
+                                Target Schema :
+                              </span>
+                              <span className="text-muted-foreground text-xs">
+                                {
+                                  mappings.filter(
+                                    (m) => m.targetField !== "Unmapped",
+                                  ).length
+                                }
+                                /{targetFieldsAll.length} Columns Mapped
+                              </span>
+                            </div>
+                          </div>
+                          <div className="relative">
+                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <input
+                              id="target-search"
+                              ref={targetSearchInputRef}
+                              type="text"
+                              placeholder="Search for field"
+                              value={targetSearch}
+                              onChange={(e) => setTargetSearch(e.target.value)}
+                              className="w-full h-7 pl-8 pr-3 rounded-md border border-input bg-background text-xs"
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <hr className="w-full mb-1 shadow-lg" />
-                    <ScrollArea
-                      ref={scrollAreaRef}
-                      className="w-full [&_[data-radix-scroll-area-viewport]]:overflow-x-hidden [&_[data-radix-scroll-area-viewport]]:overflow-y-auto"
-                      style={{ height: MAPPING_VIEWPORT_HEIGHT }}
-                    >
-                      <div
-                        ref={flowInnerRef}
-                        className="relative"
-                        style={{
-                          height: mappingContentHeight,
-                          width: flowCanvasWidth,
-                          minWidth: flowCanvasWidth,
-                        }}
-                        onPointerMove={(e) => {
-                          lastPointerY.current = e.clientY;
-                        }}
+                      <hr className="w-full mb-1 shadow-lg" />
+                      <ScrollArea
+                        ref={scrollAreaRef}
+                        className="w-full [&_[data-radix-scroll-area-viewport]]:overflow-x-hidden [&_[data-radix-scroll-area-viewport]]:overflow-y-auto"
+                        style={{ height: MAPPING_VIEWPORT_HEIGHT }}
                       >
-                        <ReactFlow
-                          nodes={nodes}
-                          edges={edges}
-                          onNodesChange={onNodesChange}
-                          onEdgesChange={onEdgesChange}
-                          onConnect={onConnect}
-                          onEdgesDelete={onEdgesDelete}
-                          onEdgeClick={(_, edge) => setSelectedEdgeId(edge.id)}
-                          onPaneClick={() => setSelectedEdgeId(null)}
-                          onConnectStart={() => setIsDraggingConnection(true)}
-                          onConnectEnd={() => setIsDraggingConnection(false)}
-                          deleteKeyCode={["Backspace", "Delete"]}
-                          isValidConnection={() => true}
-                          nodeTypes={NODE_TYPES}
-                          zoomOnScroll={false}
-                          zoomOnPinch={false}
-                          zoomOnDoubleClick={false}
-                          panOnDrag={false}
-                          panOnScroll={false}
-                          preventScrolling={false}
-                          minZoom={1}
-                          maxZoom={1}
-                          nodesDraggable={false}
-                          nodesConnectable={true}
-                          elementsSelectable={true}
-                          edgesReconnectable={false}
-                          defaultEdgeOptions={{
-                            type: "default",
-                            deletable: true,
+                        <div
+                          ref={flowInnerRef}
+                          className="relative"
+                          style={{
+                            height: mappingContentHeight,
+                            width: flowCanvasWidth,
+                            minWidth: flowCanvasWidth,
                           }}
-                          proOptions={{ hideAttribution: true }}
-                          defaultViewport={{ x: 0, y: 0, zoom: 1 }}
-                          fitView={false}
-                          style={{ background: "transparent" }}
+                          onPointerMove={(e) => {
+                            lastPointerY.current = e.clientY;
+                          }}
                         >
-                          <Background gap={8} size={1} color="#00000" />
-                          {/* <Panel position="top-left" className="m-2 mx-4 text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded shadow">
+                          <ReactFlow
+                            nodes={nodes}
+                            edges={edges}
+                            onNodesChange={onNodesChange}
+                            onEdgesChange={onEdgesChange}
+                            onConnect={onConnect}
+                            onEdgesDelete={onEdgesDelete}
+                            onEdgeClick={(_, edge) =>
+                              setSelectedEdgeId(edge.id)
+                            }
+                            onPaneClick={() => setSelectedEdgeId(null)}
+                            onConnectStart={() => setIsDraggingConnection(true)}
+                            onConnectEnd={() => setIsDraggingConnection(false)}
+                            deleteKeyCode={["Backspace", "Delete"]}
+                            isValidConnection={() => true}
+                            nodeTypes={NODE_TYPES}
+                            zoomOnScroll={false}
+                            zoomOnPinch={false}
+                            zoomOnDoubleClick={false}
+                            panOnDrag={false}
+                            panOnScroll={false}
+                            preventScrolling={false}
+                            minZoom={1}
+                            maxZoom={1}
+                            nodesDraggable={false}
+                            nodesConnectable={true}
+                            elementsSelectable={true}
+                            edgesReconnectable={false}
+                            defaultEdgeOptions={{
+                              type: "default",
+                              deletable: true,
+                            }}
+                            proOptions={{ hideAttribution: true }}
+                            defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+                            fitView={false}
+                            style={{ background: "transparent" }}
+                          >
+                            <Background gap={8} size={1} color="#00000" />
+                            {/* <Panel position="top-left" className="m-2 mx-4 text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded shadow">
                             {mappings.filter((m) => m.targetField !== 'Unmapped').length} mappings
                           </Panel> */}
-                        </ReactFlow>
-                      </div>
-                    </ScrollArea>
-                  </div>
-                </div>
-
-                {!chatCollapsed && (
-                  <div className="lg:col-span-1">
-                    <div className="rounded-xl border border-border bg-background h-full flex flex-col">
-                      <div className="p-4 border-b border-border flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Bot className="h-4 w-4 text-primary" />
-                          <h3 className="text-sm font-normal text-foreground">
-                            Mapping Bot
-                          </h3>
+                          </ReactFlow>
                         </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setChatCollapsed(true)}
-                          className="h-8 w-8"
-                          aria-label="Collapse chatbot"
-                        >
-                          <ChevronRight className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      </ScrollArea>
+                    </div>
+                  </div>
 
-                      <div className="flex-1 p-4 overflow-hidden flex flex-col space-y-3">
-                        <ScrollArea className="flex-1 rounded-md border border-border bg-muted/20 p-3">
-                          <div className="space-y-2 pr-2">
-                            {chatMessages.map((message) => (
-                              <div
-                                key={message.id}
-                                className={`rounded-md px-3 py-2 text-xs ${
-                                  message.role === "assistant"
-                                    ? "bg-muted text-foreground"
-                                    : "bg-primary text-primary-foreground ml-auto max-w-[90%]"
-                                }`}
-                              >
-                                {message.text}
-                              </div>
-                            ))}
+                  {!chatCollapsed && (
+                    <div className="lg:col-span-1">
+                      <div className="rounded-xl border border-border bg-background h-full flex flex-col">
+                        <div className="p-4 border-b border-border flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Bot className="h-4 w-4 text-primary" />
+                            <h3 className="text-sm font-normal text-foreground">
+                              Mapping Bot
+                            </h3>
                           </div>
-                        </ScrollArea>
-
-                        <p className="text-xs text-muted-foreground">
-                          Commands: map &lt;source&gt; to &lt;target&gt;, unmap,
-                          auto map, clear, show.
-                        </p>
-
-                        <div className="flex gap-2">
-                          <Input
-                            value={chatInput}
-                            onChange={(e) => setChatInput(e.target.value)}
-                            placeholder="Type a command"
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                e.preventDefault();
-                                handleSendChat();
-                              }
-                            }}
-                            className="text-sm"
-                          />
                           <Button
                             type="button"
-                            onClick={handleSendChat}
-                            className="shrink-0 h-9 w-9 p-0"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setChatCollapsed(true)}
+                            className="h-8 w-8"
+                            aria-label="Collapse chatbot"
                           >
-                            <Send className="h-4 w-4" />
+                            <ChevronRight className="h-4 w-4" />
                           </Button>
+                        </div>
+
+                        <div className="flex-1 p-4 overflow-hidden flex flex-col space-y-3">
+                          <ScrollArea className="flex-1 rounded-md border border-border bg-muted/20 p-3">
+                            <div className="space-y-2 pr-2">
+                              {chatMessages.map((message) => (
+                                <div
+                                  key={message.id}
+                                  className={`rounded-md px-3 py-2 text-xs ${
+                                    message.role === "assistant"
+                                      ? "bg-muted text-foreground"
+                                      : "bg-primary text-primary-foreground ml-auto max-w-[90%]"
+                                  }`}
+                                >
+                                  {message.text}
+                                </div>
+                              ))}
+                            </div>
+                          </ScrollArea>
+
+                          <p className="text-xs text-muted-foreground">
+                            Commands: map &lt;source&gt; to &lt;target&gt;,
+                            unmap, auto map, clear, show.
+                          </p>
+
+                          <div className="flex gap-2">
+                            <Input
+                              value={chatInput}
+                              onChange={(e) => setChatInput(e.target.value)}
+                              placeholder="Type a command"
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  handleSendChat();
+                                }
+                              }}
+                              className="text-sm"
+                            />
+                            <Button
+                              type="button"
+                              onClick={handleSendChat}
+                              className="shrink-0 h-9 w-9 p-0"
+                            >
+                              <Send className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
 
-              {/* {chatCollapsed && (
+                {/* {chatCollapsed && (
                 <button
                   type="button"
                   onClick={() => setChatCollapsed(false)}
@@ -1444,72 +1492,75 @@ export function FieldMappingPage() {
                   <Bot className="h-6 w-6 text-white" />
                 </button>
               )} */}
+              </div>
+            </CardContent>
+            <div className="flex flex-col sm:flex-row justify-between gap-3 p-2 border-t bg-muted">
+              <Button
+                variant="outline"
+                onClick={() => navigate("/upload")}
+                className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
+              >
+                <svg
+                  className="mr-2 w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+                Back
+              </Button>
+
+              <Button
+                onClick={handleNext}
+                disabled={processing}
+                variant="outline"
+                className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
+              >
+                {processing && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Next
+                <svg
+                  className="ml-2 w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </Button>
             </div>
-          </CardContent>
-          <div className="flex flex-col sm:flex-row justify-between gap-3 p-2 border-t bg-muted">
-            <Button
-              variant="outline"
-              onClick={() => navigate("/upload")}
-              className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
-            >
-              <svg
-                className="mr-2 w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              Back
-            </Button>
+          </Card>
+        </div>
+        {/* Navigation Arrows */}
+        <button
+          onClick={() => navigate("/upload")}
+          className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
+          title="Previous: Data Preview"
+        >
+          <ChevronLeft className="h-6 w-6" />
+        </button>
 
-            <Button
-              onClick={handleNext}
-              disabled={processing}
-              variant="outline"
-              className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
-            >
-              {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Next
-              <svg
-                className="ml-2 w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </Button>
-          </div>
-        </Card>
+        <button
+          onClick={handleNext}
+          disabled={processing}
+          className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
+          title="Next: Data Analytics"
+        >
+          <ChevronRight className="h-6 w-6" />
+        </button>
       </div>
-      {/* Navigation Arrows */}
-      <button
-        onClick={() => navigate("/upload")}
-        className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
-        title="Previous: Data Preview"
-      >
-        <ChevronLeft className="h-6 w-6" />
-      </button>
-
-      <button
-        onClick={handleNext}
-        disabled={processing}
-        className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
-        title="Next: Data Analytics"
-      >
-        <ChevronRight className="h-6 w-6" />
-      </button>
-    </div>
-  </>);
+    </>
+  );
 }

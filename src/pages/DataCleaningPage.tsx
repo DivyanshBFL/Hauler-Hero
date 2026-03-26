@@ -1884,15 +1884,15 @@ export function DataCleaningPage() {
 
   return (
     <>
-      <Loader open={loading} />
-      <div className={PAGE_OUTER}>
-        <div className={PAGE_CONTAINER}>
-          <div className="mb-2">
+      <div className={`${PAGE_OUTER} min-h-[calc(100vh-100px)] flex flex-col`}>
+        <div className={`${PAGE_CONTAINER} flex flex-col flex-1`}>
+          <div className="mb-2 shrink-0">
             <ProcessStepper />
           </div>
 
-          <Card className="shadow-lg border border-border bg-card">
-            <CardHeader className="p-1 px-2 bg-muted border-none">
+          <Card className="shadow-lg border border-border bg-card relative flex-1 flex flex-col">
+            <Loader open={loading} inline className="rounded-lg" />
+            <CardHeader className="p-1 px-2 bg-muted border-none shrink-0">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <div className="flex items-start gap-2">
                   <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
@@ -2117,8 +2117,8 @@ export function DataCleaningPage() {
               </div>
             </CardHeader>
 
-            <CardContent className="p-0">
-              <div className="rounded-none overflow-hidden ">
+            <CardContent className="p-0 flex-1 flex flex-col">
+              <div className="rounded-none overflow-hidden flex-1 flex flex-col">
                 <div
                   className="max-h-[415px] overflow-y-auto rounded-none"
                   onScroll={(e) => {
@@ -2249,7 +2249,7 @@ export function DataCleaningPage() {
                 </div>
               </div>
             </CardContent>
-            <div className="flex flex-col sm:flex-row justify-between p-2 border-t bg-muted">
+            <div className="flex flex-col sm:flex-row justify-between p-2 border-t bg-muted shrink-0">
               <Button
                 variant="outline"
                 className="px-4 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"

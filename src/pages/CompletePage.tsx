@@ -333,13 +333,14 @@ export function CompletePage() {
 
   return (
     <>
-      <Loader open={!stats} />
       <div className={PAGE_OUTER}>
         <div className={PAGE_CONTAINER}>
           <div className="mb-2">
             <ProcessStepper />
           </div>
           <Card className="shadow-none border border-border bg-card animate-in overflow-hidden">
+            <Loader open={!stats} />
+
             <CardContent className="p-3 md:p-4 space-y-4">
               <div className="bg-white rounded-xl border border-border p-3 md:p-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
