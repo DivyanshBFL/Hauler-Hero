@@ -297,10 +297,12 @@ export default function IssueCellDetailsDrawer({
   };
 
   return (
-    <div className={`fixed inset-0 z-50 transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0'}`}>
+    <div
+      className={`fixed inset-0 z-50 transition-opacity duration-300 ${visible ? "opacity-100" : "opacity-0"}`}
+    >
       <div className="absolute inset-0 bg-black/20" onClick={onClose} />
       <div
-        className={`absolute right-0 top-0 h-full w-full max-w-[440px] bg-white border-l border-border shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${visible ? 'translate-x-0' : 'translate-x-full'}`}
+        className={`absolute right-0 top-0 h-full w-full max-w-[440px] bg-white border-l border-border shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${visible ? "translate-x-0" : "translate-x-full"}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -794,7 +796,7 @@ export default function IssueCellDetailsDrawer({
                                   <Button
                                     size="sm"
                                     variant="outline"
-                                    className="h-7 text-xs px-3"
+                                    className="!h-7 py-0 text-xs px-3 text-red-600"
                                     onClick={resetOperationState}
                                   >
                                     Cancel
@@ -832,10 +834,7 @@ export default function IssueCellDetailsDrawer({
 
         {/* Footer */}
         <div className="shrink-0 border-t border-border bg-white p-4 flex items-center justify-end">
-          <Button
-            variant="outline"
-            onClick={onClose}
-          >
+          <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
         </div>

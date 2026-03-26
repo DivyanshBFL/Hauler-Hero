@@ -47,6 +47,7 @@ import {
   X,
   CircleAlert,
   Filter,
+  TriangleAlert,
 } from "lucide-react";
 import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
 import ProcessStepper from "@/components/ProcessStepper";
@@ -72,7 +73,11 @@ import type {
   CommitMeta,
 } from "@/components/data-cleaning/types";
 import { toast } from "sonner";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import Loader from "@/components/Loader";
 
 const sessionStartRequestCache = new Map<string, Promise<any>>();
@@ -88,27 +93,27 @@ const COLUMN_MENU_ITEMS: {
   label: string;
   icon: React.ReactNode;
 }[] = [
-    {
-      action: "replaceValues",
-      label: "Replace values",
-      icon: <Replace className="h-4 w-4" />,
-    },
-    {
-      action: "trimSpaces",
-      label: "Trim spaces",
-      icon: <Scissors className="h-4 w-4" />,
-    },
-    {
-      action: "truncateValues",
-      label: "Truncate values",
-      icon: <AlignLeft className="h-4 w-4" />,
-    },
-    {
-      action: "addPrefixOrSuffix",
-      label: "Add prefix or suffix",
-      icon: <PlusSquare className="h-4 w-4" />,
-    },
-  ];
+  {
+    action: "replaceValues",
+    label: "Replace values",
+    icon: <Replace className="h-4 w-4" />,
+  },
+  {
+    action: "trimSpaces",
+    label: "Trim spaces",
+    icon: <Scissors className="h-4 w-4" />,
+  },
+  {
+    action: "truncateValues",
+    label: "Truncate values",
+    icon: <AlignLeft className="h-4 w-4" />,
+  },
+  {
+    action: "addPrefixOrSuffix",
+    label: "Add prefix or suffix",
+    icon: <PlusSquare className="h-4 w-4" />,
+  },
+];
 
 function isCellMissing(value: unknown): boolean {
   if (value === null || value === undefined) return true;
@@ -707,10 +712,10 @@ export function DataCleaningPage() {
         const row =
           directRow && typeof directRow === "object"
             ? {
-              ...(mappedFromSource ?? {}),
-              ...directRow,
-              __rowIndex: rowIndex,
-            }
+                ...(mappedFromSource ?? {}),
+                ...directRow,
+                __rowIndex: rowIndex,
+              }
             : mappedFromSource;
 
         if (!row || typeof row !== "object") return;
@@ -770,8 +775,8 @@ export function DataCleaningPage() {
       const inferredColumns = normalizedColumns.length
         ? normalizedColumns
         : Object.keys(resultRows[0]?.row ?? {}).filter(
-          (c) => !c.startsWith("__"),
-        );
+            (c) => !c.startsWith("__"),
+          );
 
       return {
         rows: resultRows,
@@ -1877,663 +1882,752 @@ export function DataCleaningPage() {
     ],
   );
 
-  return (<>
-    <Loader open={loading} />
-    <div className={PAGE_OUTER}>
-      <div className={PAGE_CONTAINER}>
-        <div className="mb-2">
-          <ProcessStepper />
-        </div>
+  return (
+    <>
+      <Loader open={loading} />
+      <div className={PAGE_OUTER}>
+        <div className={PAGE_CONTAINER}>
+          <div className="mb-2">
+            <ProcessStepper />
+          </div>
 
-        <Card className="shadow-lg border border-border bg-card">
-          <CardHeader className="p-1 px-2 bg-muted border-none">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              <div className="flex items-start gap-2">
-                <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
-                  <ShieldAlert className="w-4 h-4 text-primary" />
-                </div>
-                <div>
-                  <CardTitle className=" text-sm font-normal">
-                    Data Cleanup Workspace
-                  </CardTitle>
-                  <div className="">
-                    <CardDescription className="text-xs text-muted-foreground">
-                      <span>
-                        <Tooltip>
-                          <TooltipTrigger>Issue Summary</TooltipTrigger>
-                          <TooltipContent side="bottom" className="m-0 p-0 bg-background px-3 pt-3 text-xs rounded-md border border-border shadow-xl" >
-                            <p className="font-semibold text-foreground mb-2 flex items-center justify-between gap-4">
-                              <span>Total Issues</span>
-                              <span className="px-2 py-0.5 rounded bg-muted text-xs font-medium ml-auto">
-                                {Object.values(issueCountByType || {}).reduce(
-                                  (acc, curr) => acc + curr,
-                                  0,
-                                )}
-                              </span>
-                            </p>
-                            {Object.keys(issueCountByType).length ? (
-                              <div className="space-y-1 mb-3">
-                                {Object.entries(issueCountByType).map(
-                                  ([issueType, count]) => (
-                                    <div
-                                      key={issueType}
-                                      className="flex items-center justify-between gap-3"
-                                    >
-                                      <span className="text-muted-foreground">
-                                        {toIssueLabel(issueType)}
-                                      </span>
-                                      <span className="font-medium text-foreground ml-auto pr-2">
-                                        {count}
-                                      </span>
-                                    </div>
-                                  ),
-                                )}
-                              </div>
-                            ) : (
-                              <p className="text-muted-foreground mb-3">
-                                No issue detail available.
+          <Card className="shadow-lg border border-border bg-card">
+            <CardHeader className="p-1 px-2 bg-muted border-none">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div className="flex items-start gap-2">
+                  <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
+                    <ShieldAlert className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle className=" text-sm font-normal">
+                      Data Cleanup Workspace
+                    </CardTitle>
+                    <div className="">
+                      <CardDescription className="text-xs text-muted-foreground">
+                        <span>
+                          <Tooltip>
+                            <TooltipTrigger>Issue Summary</TooltipTrigger>
+                            <TooltipContent
+                              side="bottom"
+                              className="m-0 p-0 bg-background px-3 pt-3 text-xs rounded-md border border-border shadow-xl"
+                            >
+                              <p className="font-semibold text-foreground mb-2 flex items-center justify-between gap-4">
+                                <span>Total Issues</span>
+                                <span className="px-2 py-0.5 rounded bg-muted text-xs font-medium ml-auto">
+                                  {Object.values(issueCountByType || {}).reduce(
+                                    (acc, curr) => acc + curr,
+                                    0,
+                                  )}
+                                </span>
                               </p>
-                            )}
-                          </TooltipContent>
-                        </Tooltip>
-                        {/* <button
+                              {Object.keys(issueCountByType).length ? (
+                                <div className="space-y-1 mb-3">
+                                  {Object.entries(issueCountByType).map(
+                                    ([issueType, count]) => (
+                                      <div
+                                        key={issueType}
+                                        className="flex items-center justify-between gap-3"
+                                      >
+                                        <span className="text-muted-foreground">
+                                          {toIssueLabel(issueType)}
+                                        </span>
+                                        <span className="font-medium text-foreground ml-auto pr-2">
+                                          {count}
+                                        </span>
+                                      </div>
+                                    ),
+                                  )}
+                                </div>
+                              ) : (
+                                <p className="text-muted-foreground mb-3">
+                                  No issue detail available.
+                                </p>
+                              )}
+                            </TooltipContent>
+                          </Tooltip>
+                          {/* <button
                           type="button"
                           className="text-primary underline underline-offset-2 hover:text-primary/80"
                           onMouseEnter={() => setIssueSummaryOpen(true)}
                           onMouseLeave={() => setIssueSummaryOpen(false)}
                         >
 
-                        </button> */}
-
-                        {" "}
-                        | {uniqueAffectedRows} affected rows | {allRows.length}{" "}
-                        total rows
-                      </span>
-                    </CardDescription>
+                        </button> */}{" "}
+                          | {uniqueAffectedRows} affected rows |{" "}
+                          {allRows.length} total rows
+                        </span>
+                      </CardDescription>
+                    </div>
                   </div>
+                  {analyzing && (
+                    <p className="text-xs text-primary mt-1 inline-flex items-center">
+                      <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                      Re-analyzing...
+                    </p>
+                  )}
                 </div>
-                {analyzing && (
-                  <p className="text-xs text-primary mt-1 inline-flex items-center">
-                    <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
-                    Re-analyzing...
-                  </p>
-                )}
-              </div>
 
-              <div className="flex items-center gap-2">
-                <div className="relative flex-1 max-w-md">
-                  <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    placeholder="Search"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="pl-9 h-7 text-xs"
-                  />
-                </div>
-                <Button
-                  className="h-7"
-                  variant="outline"
-                  disabled={!canUndo}
-                  onClick={handleUndoStable}
-                  title="Undo"
-                >
-                  <Undo2 className="h-4 w-4" />
-                </Button>
-                <Button
-                  className="h-7"
-                  variant="outline"
-                  disabled={!canRedo}
-                  onClick={handleRedoStable}
-                  title="Redo"
-                >
-                  <Redo2 className="h-4 w-4" />
-                </Button>
-
-                <DropdownMenu modal={false}>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className={`h-7 px-2 hover:bg-primary/10 ${selectedIssueType !== "allIssues"
-                        ? "text-primary  bg-primary/5 "
-                        : ""
-                        }`}
-                      title="Filter by issue type"
-                    >
-                      <Filter className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    sideOffset={8}
-                    className="w-56"
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1 max-w-md">
+                    <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      placeholder="Search"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="pl-9 h-7 text-xs"
+                    />
+                  </div>
+                  <Button
+                    className="h-7"
+                    variant="outline"
+                    disabled={!canUndo}
+                    onClick={handleUndoStable}
+                    title="Undo"
                   >
-                    <DropdownMenuItem
-                      onClick={() => setSelectedIssueType("allIssues")}
-                      className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${selectedIssueType === "allIssues" ? "text-primary bg-primary/5" : ""}`}
+                    <Undo2 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    className="h-7"
+                    variant="outline"
+                    disabled={!canRedo}
+                    onClick={handleRedoStable}
+                    title="Redo"
+                  >
+                    <Redo2 className="h-4 w-4" />
+                  </Button>
+
+                  <DropdownMenu modal={false}>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className={`h-7 px-2 hover:bg-primary/10 ${
+                          selectedIssueType !== "allIssues"
+                            ? "text-primary  bg-primary/5 "
+                            : ""
+                        }`}
+                        title="Filter by issue type"
+                      >
+                        <Filter className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="end"
+                      sideOffset={8}
+                      className="w-56"
                     >
-                      <span className="flex-1">
-                        {toIssueLabel("allIssues")} (
-                        {Object.values(issueCountByType || {}).reduce(
-                          (acc, curr) => acc + curr,
-                          0,
-                        )}
-                        )
-                      </span>
-                      {selectedIssueType === "allIssues" && (
-                        <span className="text-primary">✓</span>
-                      )}
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    {availableIssueTypes.map((type) => (
                       <DropdownMenuItem
-                        key={type}
-                        onClick={() => setSelectedIssueType(type)}
-                        className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${selectedIssueType === type ? "text-primary bg-primary/5" : ""}`}
+                        onClick={() => setSelectedIssueType("allIssues")}
+                        className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${selectedIssueType === "allIssues" ? "text-primary bg-primary/5" : ""}`}
                       >
                         <span className="flex-1">
-                          {toIssueLabel(type)} ({issueCountByType[type] || 0})
+                          {toIssueLabel("allIssues")} (
+                          {Object.values(issueCountByType || {}).reduce(
+                            (acc, curr) => acc + curr,
+                            0,
+                          )}
+                          )
                         </span>
-                        {selectedIssueType === type && (
+                        {selectedIssueType === "allIssues" && (
                           <span className="text-primary">✓</span>
                         )}
                       </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <DropdownMenu modal={false}>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-7 hover:bg-blue-50 px-2"
-                      aria-label="Open quick actions"
+                      <DropdownMenuSeparator />
+                      {availableIssueTypes.map((type) => (
+                        <DropdownMenuItem
+                          key={type}
+                          onClick={() => setSelectedIssueType(type)}
+                          className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${selectedIssueType === type ? "text-primary bg-primary/5" : ""}`}
+                        >
+                          <span className="flex-1">
+                            {toIssueLabel(type)} ({issueCountByType[type] || 0})
+                          </span>
+                          {selectedIssueType === type && (
+                            <span className="text-primary">✓</span>
+                          )}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <DropdownMenu modal={false}>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-7 hover:bg-blue-50 px-2"
+                        aria-label="Open quick actions"
+                      >
+                        <EllipsisVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="end"
+                      sideOffset={8}
+                      className="w-52"
                     >
-                      <EllipsisVertical className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    sideOffset={8}
-                    className="w-52"
+                      <DropdownMenuItem
+                        onClick={() => void handleOpenActivityLog()}
+                        className="cursor-pointer focus:text-blue-700 focus:bg-blue-50 data-[highlighted]:bg-blue-50"
+                      >
+                        <FileClock className="mr-2 h-4 w-4" />
+                        Activity Log
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setPreviewDuplicateCount(0);
+                          setDedupeError(null);
+                          setPreviewRows([]);
+                          setPreviewColumns([]);
+                          setPreviewOpen(false);
+                          setDrawer("dedupe");
+                        }}
+                        className="cursor-pointer focus:text-blue-700 focus:bg-blue-50 data-[highlighted]:bg-blue-50"
+                      >
+                        <Copy className="mr-2 h-4 w-4" />
+                        Deduplicate
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setAutoFixError(null);
+                          setAddressFixConfirmOpen(true);
+                        }}
+                        className="cursor-pointer focus:text-blue-700 focus:bg-blue-50 data-[highlighted]:bg-blue-50"
+                      >
+                        <MapPin className="mr-2 h-4 w-4" />
+                        Fix Addresses
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 text-white text-xs bg-black hover:text-white border-rouned-md"
+                    disabled={!issues.length || analyzing || autoFixSubmitting}
+                    onClick={() => {
+                      setAutoFixError(null);
+                      setAutoFixConfirmOpen(true);
+                    }}
                   >
-                    <DropdownMenuItem
-                      onClick={() => void handleOpenActivityLog()}
-                      className="cursor-pointer focus:text-blue-700 focus:bg-blue-50 data-[highlighted]:bg-blue-50"
-                    >
-                      <FileClock className="mr-2 h-4 w-4" />
-                      Activity Log
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() => {
-                        setPreviewDuplicateCount(0);
-                        setDedupeError(null);
-                        setPreviewRows([]);
-                        setPreviewColumns([]);
-                        setPreviewOpen(false);
-                        setDrawer("dedupe");
-                      }}
-                      className="cursor-pointer focus:text-blue-700 focus:bg-blue-50 data-[highlighted]:bg-blue-50"
-                    >
-                      <Copy className="mr-2 h-4 w-4" />
-                      Deduplicate
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() => {
-                        setAutoFixError(null);
-                        setAddressFixConfirmOpen(true);
-                      }}
-                      className="cursor-pointer focus:text-blue-700 focus:bg-blue-50 data-[highlighted]:bg-blue-50"
-                    >
-                      <MapPin className="mr-2 h-4 w-4" />
-                      Fix Addresses
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="h-7 text-white text-xs bg-black hover:text-white border-rouned-md"
-                  disabled={!issues.length || analyzing || autoFixSubmitting}
-                  onClick={() => {
-                    setAutoFixError(null);
-                    setAutoFixConfirmOpen(true);
+                    <Sparkles className="mr-2 h-4 w-4 text-white fill-white animate-pulse" />
+                    Auto Cleanup
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+
+            <CardContent className="p-0">
+              <div className="rounded-none overflow-hidden ">
+                <div
+                  className="max-h-[415px] overflow-y-auto rounded-none"
+                  onScroll={(e) => {
+                    const el = e.currentTarget;
+                    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 120)
+                      void loadNextPage();
                   }}
                 >
-                  <Sparkles className="mr-2 h-4 w-4 text-white fill-white animate-pulse" />
-                  Auto Cleanup
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
+                  <Table className="w-full text-sm">
+                    <TableHeader className="sticky top-0 z-10 bg-muted">
+                      <TableRow>
+                        {columns.map((col) => {
+                          const hasIssue = (issueByColumn[col] ?? 0) > 0;
+                          return (
+                            <TableHead
+                              key={col}
+                              className="font-normal relative px-2 py-[0.35rem] text-left whitespace-nowrap bg-gray-50 border border-border"
+                            >
+                              <span
+                                className={`absolute left-0 right-0 top-0 h-0.5 transition-colors duration-200 mx-[1px] ${hasIssue ? "bg-red-400" : "bg-emerald-400"}`}
+                              />
+                              <div className="flex items-center gap-1 mt-1">
+                                <span>{col}</span>
+                                <button
+                                  type="button"
+                                  className="inline-flex items-center justify-center h-5 w-5 rounded hover:bg-accent"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    const issueTypesForColumn = Array.from(
+                                      new Set(
+                                        issues
+                                          .filter((i) => i.column === col)
+                                          .map((i) =>
+                                            toCamelCaseIssue(i.issue_type),
+                                          ),
+                                      ),
+                                    );
+                                    setIssueCellPanel({
+                                      rowIndex: -1,
+                                      column: col,
+                                      value: "",
+                                      issueTypes: issueTypesForColumn,
+                                    });
+                                  }}
+                                >
+                                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                                </button>
+                              </div>
+                            </TableHead>
+                          );
+                        })}
+                      </TableRow>
+                    </TableHeader>
 
-          <CardContent className="p-0">
-            <div className="rounded-none overflow-hidden ">
-              <div
-                className="max-h-[415px] overflow-y-auto rounded-none"
-                onScroll={(e) => {
-                  const el = e.currentTarget;
-                  if (el.scrollTop + el.clientHeight >= el.scrollHeight - 120)
-                    void loadNextPage();
-                }}
-              >
-                <Table className="w-full text-sm">
-                  <TableHeader className="sticky top-0 z-10 bg-muted">
-                    <TableRow>
-                      {columns.map((col) => {
-                        const hasIssue = (issueByColumn[col] ?? 0) > 0;
+                    <TableBody>
+                      {filteredVisibleRows.map((row, idx) => {
+                        const rowIndex = Number(row.__rowIndex ?? idx);
                         return (
-                          <TableHead
-                            key={col}
-                            className="font-normal relative px-2 py-[0.35rem] text-left whitespace-nowrap bg-gray-50 border border-border"
-                          >
-                            <span
-                              className={`absolute left-0 right-0 top-0 h-0.5 transition-colors duration-200 mx-[1px] ${hasIssue ? "bg-red-400" : "bg-emerald-400"}`}
-                            />
-                            <div className="flex items-center gap-1 mt-1">
-                              <span>{col}</span>
-                              <button
-                                type="button"
-                                className="inline-flex items-center justify-center h-5 w-5 rounded hover:bg-accent"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  const issueTypesForColumn = Array.from(
-                                    new Set(
-                                      issues
-                                        .filter((i) => i.column === col)
-                                        .map((i) =>
-                                          toCamelCaseIssue(i.issue_type),
-                                        ),
-                                    ),
-                                  );
-                                  setIssueCellPanel({
-                                    rowIndex: -1,
-                                    column: col,
-                                    value: "",
-                                    issueTypes: issueTypesForColumn,
-                                  });
-                                }}
-                              >
-                                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
-                              </button>
-                            </div>
-                          </TableHead>
+                          <TableRow key={`r-${rowIndex}`} className="">
+                            {columns.map((col) => {
+                              const cellIssues =
+                                rowIssueMap[rowIndex]?.[col] ?? [];
+                              const visibleCellIssues =
+                                selectedIssueType === "allIssues"
+                                  ? cellIssues
+                                  : cellIssues.filter(
+                                      (x) => x === selectedIssueType,
+                                    );
+                              const hasCellIssue = visibleCellIssues.length > 0;
+
+                              const cellKey = getCellKey(rowIndex, col);
+                              const isWorkedOn = workedOnCells.has(cellKey);
+                              const isMissingValue = isCellMissing(row[col]);
+                              const isEverEditable =
+                                everEditableCells.has(cellKey);
+                              const issueTitle = hasCellIssue
+                                ? visibleCellIssues.map(toIssueLabel).join(", ")
+                                : undefined;
+                              const isEditing =
+                                editingCell?.rowIndex === rowIndex &&
+                                editingCell?.column === col;
+                              const displayText = displayValue(row[col]) || "";
+
+                              return (
+                                <EditableIssueCell
+                                  key={`c-${rowIndex}-${col}`}
+                                  cellKey={cellKey}
+                                  rowIndex={rowIndex}
+                                  column={col}
+                                  displayText={displayText}
+                                  isWorkedOn={isWorkedOn}
+                                  hasIssue={hasCellIssue}
+                                  isMissingValue={isMissingValue}
+                                  issueTitle={issueTitle}
+                                  isEverEditable={isEverEditable}
+                                  isEditing={isEditing}
+                                  editedValue={editedValue}
+                                  setEditedValue={setEditedValue}
+                                  markEverEditable={markEverEditable}
+                                  onStartEdit={(ri, c, initial) => {
+                                    setEditingCell({ rowIndex: ri, column: c });
+                                    setEditedValue(initial);
+                                  }}
+                                  onCommit={(ri, c, next) => {
+                                    void applyCellEdit(ri, c, next);
+                                  }}
+                                  onCancel={() => setEditingCell(null)}
+                                />
+                              );
+                            })}
+                          </TableRow>
                         );
                       })}
-                    </TableRow>
-                  </TableHeader>
 
-                  <TableBody>
-                    {filteredVisibleRows.map((row, idx) => {
-                      const rowIndex = Number(row.__rowIndex ?? idx);
-                      return (
-                        <TableRow key={`r-${rowIndex}`} className="">
-                          {columns.map((col) => {
-                            const cellIssues =
-                              rowIssueMap[rowIndex]?.[col] ?? [];
-                            const visibleCellIssues =
-                              selectedIssueType === "allIssues"
-                                ? cellIssues
-                                : cellIssues.filter(
-                                  (x) => x === selectedIssueType,
-                                );
-                            const hasCellIssue = visibleCellIssues.length > 0;
-
-                            const cellKey = getCellKey(rowIndex, col);
-                            const isWorkedOn = workedOnCells.has(cellKey);
-                            const isMissingValue = isCellMissing(row[col]);
-                            const isEverEditable =
-                              everEditableCells.has(cellKey);
-                            const issueTitle = hasCellIssue
-                              ? visibleCellIssues.map(toIssueLabel).join(", ")
-                              : undefined;
-                            const isEditing =
-                              editingCell?.rowIndex === rowIndex &&
-                              editingCell?.column === col;
-                            const displayText = displayValue(row[col]) || "";
-
-                            return (
-                              <EditableIssueCell
-                                key={`c-${rowIndex}-${col}`}
-                                cellKey={cellKey}
-                                rowIndex={rowIndex}
-                                column={col}
-                                displayText={displayText}
-                                isWorkedOn={isWorkedOn}
-                                hasIssue={hasCellIssue}
-                                isMissingValue={isMissingValue}
-                                issueTitle={issueTitle}
-                                isEverEditable={isEverEditable}
-                                isEditing={isEditing}
-                                editedValue={editedValue}
-                                setEditedValue={setEditedValue}
-                                markEverEditable={markEverEditable}
-                                onStartEdit={(ri, c, initial) => {
-                                  setEditingCell({ rowIndex: ri, column: c });
-                                  setEditedValue(initial);
-                                }}
-                                onCommit={(ri, c, next) => {
-                                  void applyCellEdit(ri, c, next);
-                                }}
-                                onCancel={() => setEditingCell(null)}
-                              />
-                            );
-                          })}
+                      {fetchingPage && (
+                        <TableRow>
+                          <TableCell
+                            colSpan={Math.max(columns.length, 1)}
+                            className="px-3 py-3 text-center text-muted-foreground"
+                          >
+                            <Loader2 className="h-4 w-4 animate-spin inline mr-2" />
+                            Loading more rows...
+                          </TableCell>
                         </TableRow>
-                      );
-                    })}
-
-                    {fetchingPage && (
-                      <TableRow>
-                        <TableCell
-                          colSpan={Math.max(columns.length, 1)}
-                          className="px-3 py-3 text-center text-muted-foreground"
-                        >
-                          <Loader2 className="h-4 w-4 animate-spin inline mr-2" />
-                          Loading more rows...
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
+            </CardContent>
+            <div className="flex flex-col sm:flex-row justify-between p-2 border-t bg-muted">
+              <Button
+                variant="outline"
+                className="px-4 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
+                onClick={() => navigate("/data-preview")}
+              >
+                <svg
+                  className="mr-2 w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+                Back
+              </Button>
+              <Button
+                onClick={() => {
+                  handleNextClick();
+                }}
+                disabled={submitting}
+                variant="outline"
+                className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
+              >
+                {submitting && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Next
+                <svg
+                  className="ml-2 w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </Button>
             </div>
-          </CardContent>
-          <div className="flex flex-col sm:flex-row justify-between p-2 border-t bg-muted">
-            <Button
-              variant="outline"
-              className="px-4 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
-              onClick={() => navigate("/data-preview")}
+          </Card>
+        </div>
+
+        <IssueCellDetailsDrawer
+          panel={issueCellPanel}
+          sessionId={getActiveSessionId()}
+          onClose={() => setIssueCellPanel(null)}
+          onOperationApplied={handleOperationApplied}
+          toIssueLabel={toIssueLabel}
+        />
+
+        <ColumnActionDialog
+          modal={columnActionModal}
+          menuItems={COLUMN_MENU_ITEMS.map((m) => ({
+            action: m.action,
+            label: m.label,
+          }))}
+          sessionId={getActiveSessionId()}
+          onOperationApplied={handleColumnOperationApplied}
+          onClose={() => setColumnActionModal(null)}
+        />
+
+        <DedupeOverlay
+          drawer={drawer}
+          previewOpen={previewOpen}
+          setDrawer={setDrawer}
+          setPreviewOpen={setPreviewOpen}
+          previewColumns={previewColumns}
+          previewRows={previewRows}
+          displayValue={displayValue}
+          dedupeError={dedupeError}
+          dedupeMode={dedupeMode}
+          setDedupeMode={setDedupeMode}
+          duplicateIndicatorCount={duplicateIndicatorCount}
+          ignoreCase={ignoreCase}
+          setIgnoreCase={setIgnoreCase}
+          ignoreWhitespace={ignoreWhitespace}
+          setIgnoreWhitespace={setIgnoreWhitespace}
+          dedupeColumns={dedupeColumns}
+          setDedupeColumns={setDedupeColumns}
+          columnPickerValue={columnPickerValue}
+          setColumnPickerValue={setColumnPickerValue}
+          columns={columns}
+          keepRemove={keepRemove}
+          setKeepRemove={setKeepRemove}
+          conditions={conditions}
+          setConditions={setConditions}
+          previewLoading={previewLoading}
+          applyDedupLoading={applyDedupLoading}
+          onBuildPreview={buildPreview}
+          onRemoveDuplicates={handleRemoveDuplicates}
+          flagDuplicates={flagDuplicates}
+          setFlagDuplicates={setFlagDuplicates}
+          dedupeMethod={dedupeMethod}
+          setDedupeMethod={setDedupeMethod}
+          dedupeKeepStrategy={dedupeKeepStrategy}
+          setDedupeKeepStrategy={setDedupeKeepStrategy}
+        />
+
+        <ActivityLogDrawer
+          open={activityLogOpen}
+          loading={activityLogLoading}
+          error={activityLogError}
+          items={activityLog}
+          onClose={() => setActivityLogOpen(false)}
+        />
+
+        {autoFixDrawerMounted && (
+          <div className="fixed inset-0 z-[70]">
+            <div
+              className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${autoFixDrawerVisible ? "opacity-100" : "opacity-0"}`}
+              onClick={closeAutoFixDrawer}
+            />
+            <div
+              className={`absolute right-0 top-0 z-10 h-full w-full max-w-[560px] bg-white border-l border-border shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${autoFixDrawerVisible ? "translate-x-0" : "translate-x-full"}`}
+              onClick={(e) => e.stopPropagation()}
             >
-              <svg
-                className="mr-2 w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              Back
-            </Button>
-            <Button
-              onClick={() => {
-                handleNextClick();
-              }}
-              disabled={submitting}
-              variant="outline"
-              className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
-            >
-              {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Next
-              <svg
-                className="ml-2 w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </Button>
-          </div>
-        </Card>
-      </div>
+              <div className="h-12 px-6 border-b border-border bg-muted flex items-center justify-between shrink-0">
+                <h3 className="flex items-center gap-2 text-md leading-none font-light text-foreground">
+                  <Sparkles className="h-4 w-4" />
+                  Data Cleanup Rules
+                </h3>
+                <button
+                  type="button"
+                  disabled={autoFixSubmitting}
+                  onClick={closeAutoFixDrawer}
+                  className="text-muted-foreground hover:text-foreground disabled:opacity-50"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
 
-      <IssueCellDetailsDrawer
-        panel={issueCellPanel}
-        sessionId={getActiveSessionId()}
-        onClose={() => setIssueCellPanel(null)}
-        onOperationApplied={handleOperationApplied}
-        toIssueLabel={toIssueLabel}
-      />
-
-      <ColumnActionDialog
-        modal={columnActionModal}
-        menuItems={COLUMN_MENU_ITEMS.map((m) => ({
-          action: m.action,
-          label: m.label,
-        }))}
-        sessionId={getActiveSessionId()}
-        onOperationApplied={handleColumnOperationApplied}
-        onClose={() => setColumnActionModal(null)}
-      />
-
-      <DedupeOverlay
-        drawer={drawer}
-        previewOpen={previewOpen}
-        setDrawer={setDrawer}
-        setPreviewOpen={setPreviewOpen}
-        previewColumns={previewColumns}
-        previewRows={previewRows}
-        displayValue={displayValue}
-        dedupeError={dedupeError}
-        dedupeMode={dedupeMode}
-        setDedupeMode={setDedupeMode}
-        duplicateIndicatorCount={duplicateIndicatorCount}
-        ignoreCase={ignoreCase}
-        setIgnoreCase={setIgnoreCase}
-        ignoreWhitespace={ignoreWhitespace}
-        setIgnoreWhitespace={setIgnoreWhitespace}
-        dedupeColumns={dedupeColumns}
-        setDedupeColumns={setDedupeColumns}
-        columnPickerValue={columnPickerValue}
-        setColumnPickerValue={setColumnPickerValue}
-        columns={columns}
-        keepRemove={keepRemove}
-        setKeepRemove={setKeepRemove}
-        conditions={conditions}
-        setConditions={setConditions}
-        previewLoading={previewLoading}
-        applyDedupLoading={applyDedupLoading}
-        onBuildPreview={buildPreview}
-        onRemoveDuplicates={handleRemoveDuplicates}
-        flagDuplicates={flagDuplicates}
-        setFlagDuplicates={setFlagDuplicates}
-        dedupeMethod={dedupeMethod}
-        setDedupeMethod={setDedupeMethod}
-        dedupeKeepStrategy={dedupeKeepStrategy}
-        setDedupeKeepStrategy={setDedupeKeepStrategy}
-      />
-
-      <ActivityLogDrawer
-        open={activityLogOpen}
-        loading={activityLogLoading}
-        error={activityLogError}
-        items={activityLog}
-        onClose={() => setActivityLogOpen(false)}
-      />
-
-      {autoFixDrawerMounted && (
-        <div className="fixed inset-0 z-[70]">
-          <div
-            className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${autoFixDrawerVisible ? "opacity-100" : "opacity-0"}`}
-            onClick={closeAutoFixDrawer}
-          />
-          <div
-            className={`absolute right-0 top-0 z-10 h-full w-full max-w-[560px] bg-white border-l border-border shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${autoFixDrawerVisible ? "translate-x-0" : "translate-x-full"}`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="h-12 px-6 border-b border-border bg-muted flex items-center justify-between shrink-0">
-              <h3 className="flex items-center gap-2 text-md leading-none font-light text-foreground">
-                <Sparkles className="h-4 w-4" />
-                Data Cleanup Rules
-              </h3>
-              <button
-                type="button"
-                disabled={autoFixSubmitting}
-                onClick={closeAutoFixDrawer}
-                className="text-muted-foreground hover:text-foreground disabled:opacity-50"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto pt-4">
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 gap-y-2">
-                  <div className="grid grid-cols-1 gap-x-6 gap-y-2">
-                    {[
-                      { key: "datatype_fix", label: "Fix Data Type Issues" },
-                      {
-                        key: "missing_value_fix",
-                        label: "Handle Missing Field Values",
-                      },
-                      {
-                        key: "field_length_fix",
-                        label: "Fix Field Length Violations",
-                      },
-                      {
-                        key: "deduplication",
-                        label: "Remove Duplicate Data Records",
-                      },
-                    ].map((opt) => (
-                      <>
-                        <div key={opt.key} className="space-y-2 px-6">
-                          <label className="text-sm text-foreground">
-                            {opt.label}
-                          </label>
-                          <div className="flex gap-4">
-                            <label className="flex items-center gap-2 cursor-pointer group text-xs">
-                              <input
-                                type="radio"
-                                name={opt.key}
-                                checked={
-                                  autoFixOptions[
-                                  opt.key as keyof typeof autoFixOptions
-                                  ] === true
-                                }
-                                onChange={() =>
-                                  setAutoFixOptions({
-                                    ...autoFixOptions,
-                                    [opt.key]: true,
-                                  })
-                                }
-                                className="w-4 h-4 accent-blue-600 border-gray-300"
-                              />
-                              <span className="text-xs group-hover:text-primary transition-colors">
-                                Yes
-                              </span>
+              <div className="flex-1 overflow-y-auto pt-4">
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 gap-y-2">
+                    <div className="grid grid-cols-1 gap-x-6 gap-y-2">
+                      {[
+                        { key: "datatype_fix", label: "Fix Data Type Issues" },
+                        {
+                          key: "missing_value_fix",
+                          label: "Handle Missing Field Values",
+                        },
+                        {
+                          key: "field_length_fix",
+                          label: "Fix Field Length Violations",
+                        },
+                        {
+                          key: "deduplication",
+                          label: "Remove Duplicate Data Records",
+                        },
+                      ].map((opt) => (
+                        <>
+                          <div key={opt.key} className="space-y-2 px-6">
+                            <label className="text-sm text-foreground">
+                              {opt.label}
                             </label>
-                            <label className="flex items-center gap-2 cursor-pointer group">
-                              <input
-                                type="radio"
-                                name={opt.key}
-                                checked={
-                                  autoFixOptions[
-                                  opt.key as keyof typeof autoFixOptions
-                                  ] === false
-                                }
-                                onChange={() =>
-                                  setAutoFixOptions({
-                                    ...autoFixOptions,
-                                    [opt.key]: false,
-                                  })
-                                }
-                                className="w-4 h-4 accent-blue-600 border-gray-300"
-                              />
-                              <span className="text-xs group-hover:text-primary transition-colors">
-                                No
-                              </span>
-                            </label>
-                          </div>
-                        </div>
-                        <hr className="w-full" />
-                      </>
-                    ))}
-                  </div>
-
-                  <div className="space-y-2">
-                    {[
-                      {
-                        key: "phone_action",
-                        label:
-                          "Select The Cleanup Action For Invalid Phone Number Entries",
-                      },
-                      {
-                        key: "email_action",
-                        label:
-                          "Define The Preferred Treatment For Invalid Email Address Entries",
-                      },
-                    ].map((opt) => (
-                      <>
-                        <div key={opt.key} className="space-y-3 px-6">
-                          <label className="text-sm text-foreground">
-                            {opt.label}
-                          </label>
-                          <div className="flex flex-row flex-wrap gap-4">
-                            {[
-                              { value: "standardize", label: "Standardize" },
-                              { value: "clear", label: "Clear" },
-                              { value: "null", label: "Skip" },
-                            ].map((choice) => (
-                              <label
-                                key={choice.value}
-                                className="flex items-center gap-2.5 cursor-pointer group"
-                              >
+                            <div className="flex gap-4">
+                              <label className="flex items-center gap-2 cursor-pointer group text-xs">
                                 <input
                                   type="radio"
                                   name={opt.key}
                                   checked={
-                                    (choice.value === "null" &&
-                                      autoFixOptions[
-                                      opt.key as keyof typeof autoFixOptions
-                                      ] === null) ||
                                     autoFixOptions[
-                                    opt.key as keyof typeof autoFixOptions
-                                    ] === choice.value
+                                      opt.key as keyof typeof autoFixOptions
+                                    ] === true
                                   }
                                   onChange={() =>
                                     setAutoFixOptions({
                                       ...autoFixOptions,
-                                      [opt.key]:
-                                        choice.value === "null"
-                                          ? null
-                                          : choice.value,
+                                      [opt.key]: true,
                                     })
                                   }
                                   className="w-4 h-4 accent-blue-600 border-gray-300"
                                 />
                                 <span className="text-xs group-hover:text-primary transition-colors">
-                                  {choice.label}
+                                  Yes
                                 </span>
                               </label>
-                            ))}
+                              <label className="flex items-center gap-2 cursor-pointer group">
+                                <input
+                                  type="radio"
+                                  name={opt.key}
+                                  checked={
+                                    autoFixOptions[
+                                      opt.key as keyof typeof autoFixOptions
+                                    ] === false
+                                  }
+                                  onChange={() =>
+                                    setAutoFixOptions({
+                                      ...autoFixOptions,
+                                      [opt.key]: false,
+                                    })
+                                  }
+                                  className="w-4 h-4 accent-blue-600 border-gray-300"
+                                />
+                                <span className="text-xs group-hover:text-primary transition-colors">
+                                  No
+                                </span>
+                              </label>
+                            </div>
                           </div>
-                        </div>
-                        <hr className="w-full" />
-                      </>
-                    ))}
+                          <hr className="w-full" />
+                        </>
+                      ))}
+                    </div>
+
+                    <div className="space-y-2">
+                      {[
+                        {
+                          key: "phone_action",
+                          label:
+                            "Select The Cleanup Action For Invalid Phone Number Entries",
+                        },
+                        {
+                          key: "email_action",
+                          label:
+                            "Define The Preferred Treatment For Invalid Email Address Entries",
+                        },
+                      ].map((opt) => (
+                        <>
+                          <div key={opt.key} className="space-y-3 px-6">
+                            <label className="text-sm text-foreground">
+                              {opt.label}
+                            </label>
+                            <div className="flex flex-row flex-wrap gap-4">
+                              {[
+                                { value: "standardize", label: "Standardize" },
+                                { value: "clear", label: "Clear" },
+                                { value: "null", label: "Skip" },
+                              ].map((choice) => (
+                                <label
+                                  key={choice.value}
+                                  className="flex items-center gap-2.5 cursor-pointer group"
+                                >
+                                  <input
+                                    type="radio"
+                                    name={opt.key}
+                                    checked={
+                                      (choice.value === "null" &&
+                                        autoFixOptions[
+                                          opt.key as keyof typeof autoFixOptions
+                                        ] === null) ||
+                                      autoFixOptions[
+                                        opt.key as keyof typeof autoFixOptions
+                                      ] === choice.value
+                                    }
+                                    onChange={() =>
+                                      setAutoFixOptions({
+                                        ...autoFixOptions,
+                                        [opt.key]:
+                                          choice.value === "null"
+                                            ? null
+                                            : choice.value,
+                                      })
+                                    }
+                                    className="w-4 h-4 accent-blue-600 border-gray-300"
+                                  />
+                                  <span className="text-xs group-hover:text-primary transition-colors">
+                                    {choice.label}
+                                  </span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                          <hr className="w-full" />
+                        </>
+                      ))}
+                    </div>
                   </div>
+
+                  {autoFixError && (
+                    <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                      <p className="text-xs text-destructive font-medium">
+                        {autoFixError}
+                      </p>
+                    </div>
+                  )}
+
+                  {autoFixSubmitting && (
+                    <div className="w-full space-y-3 bg-muted/30 p-4 rounded-lg">
+                      <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-primary transition-all duration-300 shadow-[0_0_8px_rgba(59,130,246,0.5)]"
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground text-center font-medium">
+                        {progress < 100
+                          ? `Processing auto-fix... ${progress}%`
+                          : "Processed successfully ✅"}
+                      </p>
+                    </div>
+                  )}
                 </div>
+              </div>
 
-                {autoFixError && (
-                  <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20">
-                    <p className="text-xs text-destructive font-medium">
-                      {autoFixError}
-                    </p>
-                  </div>
+              <div className="shrink-0 border-t border-border bg-muted p-4 py-2 flex items-center justify-end gap-2">
+                <Button
+                  variant="outline"
+                  disabled={autoFixSubmitting}
+                  onClick={closeAutoFixDrawer}
+                  className="h-9 text-xs px-5"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  disabled={autoFixSubmitting}
+                  onClick={() => void handleAutoFixAllIssues()}
+                  variant="outline"
+                  className="bg-white text-primary border-primary h-9 text-xs px-5 hover:bg-blue-100 "
+                >
+                  {autoFixSubmitting ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : null}
+                  Apply Fixes
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {addressFixConfirmOpen && (
+          <div className="fixed inset-0 z-[70] flex items-center justify-center">
+            <div
+              className="absolute inset-0 bg-black/40"
+              onClick={() => {
+                if (addressFixSubmitting) return;
+                setAddressFixConfirmOpen(false);
+                setAddressFixError(null);
+              }}
+            />
+            <div className="relative z-10 w-full max-w-xl rounded-md border border-border bg-background shadow-2xl overflow-hidden">
+              <div className="py-4 border-b flex items-center justify-between bg-muted">
+                <h3 className="flex items-center text-md leading-none font-light text-foreground px-4">
+                  <span className="mr-2">
+                    <MapPin className="h-4 w-4" />
+                  </span>
+                  <span>Auto-fix Addresses</span>
+                </h3>
+
+                <div className="px-4">
+                  <X
+                    onClick={() => {
+                      setAddressFixConfirmOpen(false);
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="p-6">
+                <p className="text-sm text-muted-foreground whitespace-pre-line">
+                  One-click cleanup that automatically fixes address issues in
+                  the dataset.
+                  {"\n"}All fixes are logged step-by-step.
+                  <Sparkles className="mr-2 h-4 w-4 ml-1 text-blue-500 fill-blue-400 animate-blink inline" />
+                </p>
+                {addressFixError && (
+                  <p className="text-xs text-destructive mt-3">
+                    {addressFixError}
+                  </p>
                 )}
-
-                {autoFixSubmitting && (
-                  <div className="w-full space-y-3 bg-muted/30 p-4 rounded-lg">
-                    <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden">
+                {addressFixSubmitting && (
+                  <div className="mt-4 w-full">
+                    <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-primary transition-all duration-300 shadow-[0_0_8px_rgba(59,130,246,0.5)]"
+                        className="h-full bg-sky-400 transition-all duration-300"
                         style={{ width: `${progress}%` }}
                       />
                     </div>
-                    <p className="text-xs text-muted-foreground text-center font-medium">
+
+                    <p className="text-xs text-muted-foreground mt-1">
                       {progress < 100
                         ? `Processing auto-fix... ${progress}%`
                         : "Processed successfully ✅"}
@@ -2541,197 +2635,114 @@ export function DataCleaningPage() {
                   </div>
                 )}
               </div>
-            </div>
 
-            <div className="shrink-0 border-t border-border bg-muted p-4 py-2 flex items-center justify-end gap-2">
-              <Button
-                variant="outline"
-                disabled={autoFixSubmitting}
-                onClick={closeAutoFixDrawer}
-                className="h-9 text-xs px-5"
-              >
-                Cancel
-              </Button>
-              <Button
-                disabled={autoFixSubmitting}
-                onClick={() => void handleAutoFixAllIssues()}
-                variant="outline"
-                className="bg-white text-primary border-primary h-9 text-xs px-5 hover:bg-blue-100 "
-              >
-                {autoFixSubmitting ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : null}
-                Apply Fixes
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {addressFixConfirmOpen && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center">
-          <div
-            className="absolute inset-0 bg-black/40"
-            onClick={() => {
-              if (addressFixSubmitting) return;
-              setAddressFixConfirmOpen(false);
-              setAddressFixError(null);
-            }}
-          />
-          <div className="relative z-10 w-full max-w-xl rounded-md border border-border bg-background shadow-2xl overflow-hidden">
-            <div className="py-4 border-b flex items-center justify-between bg-muted">
-              <h3 className="flex items-center text-md leading-none font-light text-foreground px-4">
-                <span className="mr-2">
-                  <MapPin className="h-4 w-4" />
-                </span>
-                <span>Auto-fix Addresses</span>
-              </h3>
-
-              <div className="px-4">
-                <X
+              <div className="p-4 py-2 border-t flex bg-muted items-center justify-end gap-2">
+                <Button
+                  variant="outline"
+                  className="h-9 text-xs px-5"
                   onClick={() => {
                     setAddressFixConfirmOpen(false);
+                    setAddressFixError(null);
                   }}
-                />
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => void handleProceedFixAddresses()}
+                  disabled={addressFixSubmitting}
+                  variant="outline"
+                  className="font-semibold border-primary text-primary hover:bg-primary/10 transition-colors h-9 text-xs px-5"
+                >
+                  {addressFixSubmitting && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Proceed
+                </Button>
               </div>
             </div>
-
-            <div className="p-6">
-              <p className="text-sm text-muted-foreground whitespace-pre-line">
-                One-click cleanup that automatically fixes address issues in the
-                dataset.
-                {"\n"}All fixes are logged step-by-step.
-                <Sparkles className="mr-2 h-4 w-4 ml-1 text-blue-500 fill-blue-400 animate-blink inline" />
-              </p>
-              {addressFixError && (
-                <p className="text-xs text-destructive mt-3">
-                  {addressFixError}
-                </p>
-              )}
-              {addressFixSubmitting && (
-                <div className="mt-4 w-full">
-                  <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-sky-400 transition-all duration-300"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {progress < 100
-                      ? `Processing auto-fix... ${progress}%`
-                      : "Processed successfully ✅"}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            <div className="p-4 py-2 border-t flex bg-muted items-center justify-end gap-2">
-              <Button
-                variant="outline"
-                className="h-9 text-xs px-5"
-                onClick={() => {
-                  setAddressFixConfirmOpen(false);
-                  setAddressFixError(null);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={() => void handleProceedFixAddresses()}
-                disabled={addressFixSubmitting}
-                variant="outline"
-                className="font-semibold border-primary text-primary hover:bg-primary/10 transition-colors h-9 text-xs px-5"
-              >
-                {addressFixSubmitting && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Proceed
-              </Button>
-            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {proceedConfirmOpen && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center">
-          <div
-            className="absolute inset-0 bg-black/40"
-            onClick={() => {
-              if (submitting) return;
-              setProceedConfirmOpen(false);
-            }}
-          />
-          <div className="relative z-10 w-full max-w-xl rounded-md border border-border bg-background shadow-2xl overflow-hidden">
-            <div className="py-4 border-b flex items-center justify-between">
-              <h3 className="text-md leading-none font-light text-foreground px-4 flex gap-2 items-center">
-                <CircleAlert className="inline text-red-400" />
-                Outstanding Issues Alert
-              </h3>
+        {proceedConfirmOpen && (
+          <div className="fixed inset-0 z-[70] flex items-center justify-center">
+            <div
+              className="absolute inset-0 bg-black/40"
+              onClick={() => {
+                if (submitting) return;
+                setProceedConfirmOpen(false);
+              }}
+            />
+            <div className="relative z-10 w-full max-w-xl rounded-md border border-border bg-background shadow-2xl overflow-hidden">
+              <div className="py-4 border-b flex items-center justify-between">
+                <h3 className="text-md leading-none font-light text-foreground px-4 flex gap-2 items-center text-red-400">
+                  <CircleAlert className="inline text-red-400" />
+                  Outstanding Issues Alert
+                </h3>
 
-              <div className="px-4">
-                <X
-                  className="cursor-pointer"
+                <div className="px-4">
+                  <X
+                    className="cursor-pointer"
+                    onClick={() => {
+                      if (submitting) return;
+                      setProceedConfirmOpen(false);
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="p-6">
+                <p className="text-sm text-muted-foreground whitespace-pre-line">
+                  Some data anomalies were not resolved. Proceeding may result
+                  in inconsistencies. <br />
+                  <br />
+                  Do you want to Proceed?
+                </p>
+              </div>
+
+              <div className="p-4 border-t flex items-center justify-end gap-2">
+                <Button
+                  variant="outline"
+                  className="px-3"
+                  disabled={submitting}
                   onClick={() => {
-                    if (submitting) return;
                     setProceedConfirmOpen(false);
                   }}
-                />
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => void handleContinue()}
+                  disabled={submitting}
+                  variant="outline"
+                  className="px-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
+                >
+                  {submitting && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Proceed
+                </Button>
               </div>
             </div>
-
-            <div className="p-6">
-              <p className="text-sm text-muted-foreground whitespace-pre-line">
-                Some data anomalies were not resolved. Proceeding may result in
-                inconsistencies. <br />
-                <br />
-                Do you want to Proceed?
-              </p>
-            </div>
-
-            <div className="p-4 border-t flex items-center justify-end gap-2">
-              <Button
-                variant="outline"
-                className="px-3"
-                disabled={submitting}
-                onClick={() => {
-                  setProceedConfirmOpen(false);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={() => void handleContinue()}
-                disabled={submitting}
-                variant="outline"
-                className="px-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
-              >
-                {submitting && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Proceed
-              </Button>
-            </div>
           </div>
-        </div>
-      )}
-      {/* Navigation Arrows */}
-      <button
-        onClick={() => navigate("/data-preview")}
-        className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
-        title="Previous: Data Preview"
-      >
-        <ChevronLeft className="h-6 w-6" />
-      </button>
+        )}
+        {/* Navigation Arrows */}
+        <button
+          onClick={() => navigate("/data-preview")}
+          className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
+          title="Previous: Data Preview"
+        >
+          <ChevronLeft className="h-6 w-6" />
+        </button>
 
-      <button
-        onClick={handleNextClick}
-        disabled={submitting}
-        className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
-        title="Next: Data Analytics"
-      >
-        <ChevronRight className="h-6 w-6" />
-      </button>
-    </div>
-  </>);
+        <button
+          onClick={handleNextClick}
+          disabled={submitting}
+          className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
+          title="Next: Data Analytics"
+        >
+          <ChevronRight className="h-6 w-6" />
+        </button>
+      </div>
+    </>
+  );
 }

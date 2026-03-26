@@ -82,7 +82,7 @@ export function LoginPage() {
       {/* Centered White Card (Low Opacity) */}
       <section className="relative z-10 w-full max-w-md bg-background/90 rounded-2xl shadow-xl p-6 md:p-8 border-white/50 border">
         <div className="w-full">
-          <CardHeader className="space-y-3 pb-6 border-none">
+          <CardHeader className="space-y-3 pb-3 border-none">
             <div className="flex justify-center">
               <img
                 src="/images/logo.png"
@@ -93,8 +93,9 @@ export function LoginPage() {
             {/* <CardTitle className="h4 text-center text-foreground font-bold">
                 Welcome Back
               </CardTitle> */}
-            <CardDescription className="text-sm text-muted-foreground text-center">
-              Please Login to Your Account
+            <CardDescription className="text-muted-foreground text-center">
+              <div className="text-lg font-semibold">Welcome Back</div>
+              <div>Please sign in to access your account</div>
             </CardDescription>
           </CardHeader>
 

@@ -55,7 +55,7 @@ export function Header() {
               <Button
                 variant="outline"
                 size="icon"
-                className="rounded-full bg-black text-white hover:text-white hover:bg-gray-500"
+                className="rounded-full bg-black text-white hover:text-white hover:bg-gray-500 !h-10"
                 aria-label="Open user menu"
               >
                 <User className="h-5 w-5" />

@@ -23,7 +23,7 @@ export function Footer() {
           </a>
         </div> */}
         <p className="text-xs text-zinc-400 text-center">
-          © {new Date().getFullYear()} Hauler Hero. All rights reserved.
+          © {new Date().getFullYear()} Blueflame Labs. All rights reserved.
         </p>
       </div>
     </footer>

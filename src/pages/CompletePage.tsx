@@ -33,16 +33,26 @@ function StatTile({
   className?: string;
 }) {
   return (
-    <div className={`rounded-lg border p-2 h-[86px] !bg-slate-100 !border-slate-200 ${className}`}>
+    <div
+      className={`rounded-lg border p-2 h-[86px] !bg-slate-100 !border-slate-200 ${className}`}
+    >
       <div className="flex items-start justify-between gap-2">
-        <span className="text-[11px] leading-none text-slate-800 font-medium">{label}</span>
+        <span className="text-[11px] leading-none text-slate-800 font-medium">
+          {label}
+        </span>
         <div className="rounded-md bg-white/60 p-1">
           <Icon className="h-3.5 w-3.5 text-slate-600" />
         </div>
       </div>
       <div className="mt-1.5">
-        <div className="text-[30px] leading-none font-bold tabular-nums text-slate-900">{value}</div>
-        {detail ? <div className="text-[10px] text-slate-700 mt-0.5 leading-none">{detail}</div> : null}
+        <div className="text-[30px] leading-none font-bold tabular-nums text-slate-900">
+          {value}
+        </div>
+        {detail ? (
+          <div className="text-[10px] text-slate-700 mt-0.5 leading-none">
+            {detail}
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -108,7 +118,7 @@ export function CompletePage() {
           key: "total-processed",
           label: "Total Processed",
           value: toNum(apiStats?.total_processed?.rows)!.toLocaleString(),
-          detail: "Records",
+          detail: "Records Processed",
           icon: Database,
           className: "!bg-emerald-200 !border-emerald-300",
         }
@@ -139,10 +149,10 @@ export function CompletePage() {
           key: "mapped-cols",
           label: "Mapped Columns",
           value: `${toNum(apiStats?.mapped_data?.mapped_cols)}/${toNum(apiStats?.mapped_data?.total_cols)}`,
-          detail:
-            toNum(apiStats?.mapped_data?.cols_pct) !== null
-              ? formatPct(toNum(apiStats?.mapped_data?.cols_pct)!)
-              : undefined,
+          detail: `${toNum(apiStats?.mapped_data?.cols_pct)}% Columns Mapped with AI`,
+          // toNum(apiStats?.mapped_data?.cols_pct) !== null
+          //   ? formatPct(toNum(apiStats?.mapped_data?.cols_pct)!)
+          //   : undefined,
           icon: WandSparkles,
           className: "!bg-lime-200 !border-lime-300",
         }
@@ -152,7 +162,9 @@ export function CompletePage() {
           key: "inserted",
           label: "Inserted",
           value: (rawStats.inserted.rows as number).toLocaleString(),
-          detail: hasNum(rawStats?.inserted?.pct) ? formatPct(rawStats.inserted.pct as number) : undefined,
+          detail: hasNum(rawStats?.inserted?.pct)
+            ? formatPct(rawStats.inserted.pct as number)
+            : undefined,
           icon: WandSparkles,
           className: "!bg-lime-200 !border-lime-300",
         }
@@ -165,8 +177,8 @@ export function CompletePage() {
           detail: hasNum(rawStats?.updated?.rows_pct)
             ? formatPct(rawStats.updated.rows_pct as number)
             : hasNum(rawStats?.updated?.pct)
-            ? formatPct(rawStats.updated.pct as number)
-            : undefined,
+              ? formatPct(rawStats.updated.pct as number)
+              : undefined,
           icon: TrendingUp,
           className: "!bg-fuchsia-200 !border-fuchsia-300",
         }
@@ -176,9 +188,10 @@ export function CompletePage() {
           key: "unchanged",
           label: "Unchanged",
           value: toNum(apiStats?.unchanged_data?.rows)!.toLocaleString(),
-          detail: toNum(apiStats?.unchanged_data?.pct) !== null
-            ? formatPct(toNum(apiStats?.unchanged_data?.pct)!)
-            : undefined,
+          detail: `${toNum(apiStats?.unchanged_data?.pct)}% of records were unchanged`,
+          // toNum(apiStats?.unchanged_data?.pct) !== null
+          //   ? formatPct(toNum(apiStats?.unchanged_data?.pct)!)
+          //   : undefined,
           icon: Circle,
           className: "!bg-sky-200 !border-sky-300",
         }
@@ -186,11 +199,16 @@ export function CompletePage() {
     toNum(apiStats?.duplicate_findings?.rows_removed) !== null
       ? {
           key: "duplicates",
-          label: "Duplicates",
-          value: toNum(apiStats?.duplicate_findings?.rows_removed)!.toLocaleString(),
-          detail: toNum(apiStats?.duplicate_findings?.pct) !== null
-            ? formatPct(toNum(apiStats?.duplicate_findings?.pct)!)
-            : undefined,
+          label: "Duplicates removed",
+          value:
+            toNum(
+              apiStats?.duplicate_findings?.rows_removed,
+            )!.toLocaleString() + "%",
+          detail: `${toNum(apiStats?.duplicate_findings?.rows_removed)} rows removed of 
+          ${toNum(apiStats?.duplicate_findings?.total_rows)} rows. `,
+          // toNum(apiStats?.duplicate_findings?.pct) !== null
+          //   ? formatPct(toNum(apiStats?.duplicate_findings?.pct)!)
+          //   : undefined,
           icon: Circle,
           className: "!bg-rose-200 !border-rose-300",
         }
@@ -221,7 +239,9 @@ export function CompletePage() {
           key: "inserted",
           label: "Inserted",
           rows: rawStats.inserted.rows as number,
-          pct: hasNum(rawStats?.inserted?.pct) ? (rawStats.inserted.pct as number) : undefined,
+          pct: hasNum(rawStats?.inserted?.pct)
+            ? (rawStats.inserted.pct as number)
+            : undefined,
           color: "bg-blue-500",
           dotColor: "text-blue-500",
           hex: "#3b82f6",
@@ -235,8 +255,8 @@ export function CompletePage() {
           pct: hasNum(rawStats?.updated?.rows_pct)
             ? (rawStats.updated.rows_pct as number)
             : hasNum(rawStats?.updated?.pct)
-            ? (rawStats.updated.pct as number)
-            : undefined,
+              ? (rawStats.updated.pct as number)
+              : undefined,
           color: "bg-amber-500",
           dotColor: "text-amber-500",
           hex: "#f59e0b",
@@ -277,7 +297,6 @@ export function CompletePage() {
     dotColor: string;
     hex: string;
   }>;
-
   const totalActionRows =
     hasNum(apiStats?.total_processed?.rows) && apiStats.total_processed.rows > 0
       ? apiStats.total_processed.rows
@@ -289,9 +308,10 @@ export function CompletePage() {
       hasNum(item.pct) && item.pct >= 0
         ? item.pct
         : totalActionRows > 0
-        ? (item.rows / totalActionRows) * 100
-        : 0,
+          ? (item.rows / totalActionRows) * 100
+          : 0,
   }));
+  console.log("ActionBreak:", actionBreakdownWithPct);
   const pieData = actionBreakdownWithPct.filter((item) => item.computedPct > 0);
   const pieBackground =
     pieData.length > 0
@@ -328,8 +348,12 @@ export function CompletePage() {
                       <div className="h-14 w-14 flex items-center justify-center rounded-full bg-white border border-emerald-200 text-emerald-600">
                         <Check className="h-8 w-8" strokeWidth={2.5} />
                       </div>
-                      <h1 className="text-4xl font-bold text-slate-900 leading-none">Success!</h1>
-                      <p className="text-sm text-slate-500">Import completed. Review the summary below.</p>
+                      <h1 className="text-4xl font-bold text-slate-900 leading-none">
+                        Success!
+                      </h1>
+                      <p className="text-sm text-slate-500">
+                        Import completed. Review the summary below.
+                      </p>
                       <div className="text-sm text-slate-600 mt-0.5">
                         <span className="font-medium">Entity:</span> Account
                       </div>
@@ -341,7 +365,9 @@ export function CompletePage() {
                   </div>
 
                   <div className="rounded-lg border border-slate-200 p-3 md:p-4">
-                    <h2 className="text-2xl leading-none font-semibold text-slate-800 mb-3">Quick Summary</h2>
+                    <h2 className="text-2xl leading-none font-semibold text-slate-800 mb-3">
+                      Quick Summary
+                    </h2>
                     <ul className="space-y-1.5">
                       {[
                         hasNum(apiStats?.total_processed?.rows)
@@ -372,7 +398,9 @@ export function CompletePage() {
               </div>
 
               <section>
-                <h2 className="text-sm font-medium text-slate-800 mb-1.5">Key metrics</h2>
+                <h2 className="text-sm font-medium text-slate-800 mb-1.5">
+                  Key metrics
+                </h2>
                 <div className="!grid !grid-cols-6 gap-1.5 [&>*]:min-w-0">
                   {metricTilesForRow.slice(0, 6).map((tile) => (
                     <StatTile
@@ -400,10 +428,14 @@ export function CompletePage() {
                           className="flex items-center justify-between rounded-md border border-slate-200 px-3 py-2 text-sm"
                         >
                           <span className="inline-flex items-center gap-2 text-slate-700">
-                            <span className={`h-2.5 w-2.5 rounded-full ${item.color}`} />
+                            <span
+                              className={`h-2.5 w-2.5 rounded-full ${item.color}`}
+                            />
                             {item.label}
                           </span>
-                          <span className="text-slate-600">{formatPct(item.computedPct)}</span>
+                          <span className="text-slate-600">
+                            {formatPct(item.computedPct)}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -411,7 +443,9 @@ export function CompletePage() {
 
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
                     <div className="rounded-lg border border-slate-200 bg-white p-3">
-                      <h3 className="text-base font-semibold text-slate-800 mb-2">Record breakdown</h3>
+                      <h3 className="text-base font-semibold text-slate-800 mb-2">
+                        Record breakdown
+                      </h3>
                       <div className="flex items-center gap-4">
                         <div
                           className="h-28 w-28 rounded-full relative shrink-0"
@@ -420,35 +454,45 @@ export function CompletePage() {
                           <div className="absolute inset-[14px] rounded-full bg-white" />
                         </div>
                         <div className="space-y-2.5 flex-1">
-                        {actionBreakdownWithPct.map((item) => (
-                          <div
-                            key={`${item.key}-breakdown`}
-                            className="flex items-center justify-between text-sm"
-                          >
-                            <span className="inline-flex items-center gap-2 text-slate-700">
-                              <Circle className={`h-3.5 w-3.5 fill-current ${item.dotColor}`} />
-                              {item.label}
-                            </span>
-                            <span className="font-medium tabular-nums">{item.rows.toLocaleString()}</span>
-                          </div>
-                        ))}
+                          {actionBreakdownWithPct.map((item) => (
+                            <div
+                              key={`${item.key}-breakdown`}
+                              className="flex items-center justify-between text-sm"
+                            >
+                              <span className="inline-flex items-center gap-2 text-slate-700">
+                                <Circle
+                                  className={`h-3.5 w-3.5 fill-current ${item.dotColor}`}
+                                />
+                                {item.label}
+                              </span>
+                              <span className="font-medium tabular-nums">
+                                {item.rows.toLocaleString()}
+                              </span>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>
 
                     <div className="rounded-lg border border-slate-200 bg-white p-3">
-                      <h3 className="text-base font-semibold text-slate-800 mb-2">By action</h3>
+                      <h3 className="text-base font-semibold text-slate-800 mb-2">
+                        By action
+                      </h3>
                       <div className="space-y-2">
                         {actionBreakdownWithPct.map((item) => (
                           <div key={`${item.key}-bar`} className="space-y-1.5">
                             <div className="flex items-center justify-between text-sm text-slate-700">
                               <span>{item.label}</span>
-                              <span className="tabular-nums">{item.rows.toLocaleString()}</span>
+                              <span className="tabular-nums">
+                                {item.rows.toLocaleString()}
+                              </span>
                             </div>
                             <div className="h-2.5 rounded-md bg-slate-100 overflow-hidden">
                               <div
                                 className={`h-full ${item.color}`}
-                                style={{ width: `${Math.max(2, Math.min(100, item.computedPct))}%` }}
+                                style={{
+                                  width: `${Math.max(2, Math.min(100, item.computedPct))}%`,
+                                }}
                               />
                             </div>
                           </div>
@@ -457,19 +501,26 @@ export function CompletePage() {
                     </div>
 
                     <div className="rounded-lg border border-slate-200 bg-white p-3">
-                      <h3 className="text-base font-semibold text-slate-800 mb-2">Outcome overview</h3>
+                      <h3 className="text-base font-semibold text-slate-800 mb-2">
+                        Outcome overview
+                      </h3>
                       <div className="h-4 rounded-md bg-slate-100 overflow-hidden flex">
                         {actionBreakdownWithPct.map((item) => (
                           <div
                             key={`${item.key}-stack`}
                             className={item.color}
-                            style={{ width: `${Math.max(2, Math.min(100, item.computedPct))}%` }}
+                            style={{
+                              width: `${Math.max(2, Math.min(100, item.computedPct))}%`,
+                            }}
                           />
                         ))}
                       </div>
                       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-slate-700">
                         {actionBreakdownWithPct.map((item) => (
-                          <span key={`${item.key}-legend`} className="tabular-nums">
+                          <span
+                            key={`${item.key}-legend`}
+                            className="tabular-nums"
+                          >
                             {formatPct(item.computedPct)} {item.label}
                           </span>
                         ))}
@@ -489,7 +540,10 @@ export function CompletePage() {
                 <UploadCloud className="h-4 w-4 mr-2" />
                 Process Another File
               </Button>
-              <Button onClick={handleDownloadProcessedFile} className="px-5 font-semibold">
+              <Button
+                onClick={handleDownloadProcessedFile}
+                className="px-5 font-semibold"
+              >
                 <Download className="h-4 w-4 mr-2" />
                 Download Cleaned Data
               </Button>
