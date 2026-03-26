@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -125,7 +126,7 @@ export function DataPreviewPage() {
     try {
       const allData = ENTITIES.flatMap((entity) => allEntityData[entity] ?? []);
       if (!allData.length) {
-        alert("No mapped data available to process.");
+        toast.error("No mapped data available to process.");
         return;
       }
       navigate("/data-cleaning", { state: { selectedMappedRows: allData } });
@@ -381,7 +382,7 @@ export function DataPreviewPage() {
       pdf.save(`complete_mapping_report_${Date.now()}.pdf`);
     } catch (error) {
       console.error("Error generating PDF:", error);
-      alert("Error generating PDF. Please try again.");
+      toast.error("Error generating PDF. Please try again.");
     } finally {
       setGenerating(false);
     }

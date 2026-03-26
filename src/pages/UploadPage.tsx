@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -144,7 +145,7 @@ export function UploadPage() {
       setFile(selectedFile);
       parseXLSX(selectedFile);
     } else {
-      alert("Please select a valid CSV or XLSX file");
+      toast.error("Please select a valid CSV or XLSX file");
       setFile(null);
     }
   };
@@ -192,7 +193,7 @@ export function UploadPage() {
       },
       error: (error) => {
         console.error("Error parsing CSV:", error);
-        alert("Error parsing CSV file");
+        toast.error("Error parsing CSV file");
         resetUploadState();
       },
     });
@@ -263,7 +264,7 @@ export function UploadPage() {
         }
       } catch (error) {
         console.error("Error parsing XLSX:", error);
-        alert("Error parsing XLSX file");
+        toast.error("Error parsing XLSX file");
         resetUploadState();
       }
     };
@@ -288,19 +289,19 @@ export function UploadPage() {
       setShowSheetSelector(false);
     } catch (error) {
       console.error("Error processing sheet:", error);
-      alert("Error processing sheet");
+      toast.error("Error processing sheet");
       resetUploadState();
     }
   };
 
   const handleConfirmJoinSelection = () => {
     if (!workbookRef.current) {
-      alert("Workbook is not available. Please re-upload the file.");
+      toast.error("Workbook is not available. Please re-upload the file.");
       return;
     }
 
     if (!leftSheetName || !rightSheetName || !leftKey || !rightKey) {
-      alert("Please select both sheets and keys before continuing.");
+      toast.error("Please select both sheets and keys before continuing.");
       return;
     }
 
@@ -311,17 +312,17 @@ export function UploadPage() {
       !availableSheetNames.includes(leftSheetName) ||
       !availableSheetNames.includes(rightSheetName)
     ) {
-      alert("Please choose valid sheet names from the dropdown options.");
+      toast.error("Please choose valid sheet names from the dropdown options.");
       return;
     }
 
     if (!leftHeaders.includes(leftKey) || !rightHeaders.includes(rightKey)) {
-      alert("Please choose valid join keys from the dropdown options.");
+      toast.error("Please choose valid join keys from the dropdown options.");
       return;
     }
 
     if (leftSheetName === rightSheetName) {
-      alert("Please select two different sheets for join.");
+      toast.error("Please select two different sheets for join.");
       return;
     }
 
@@ -339,7 +340,7 @@ export function UploadPage() {
   const handleNext = async () => {
     if (!file || sheets.length === 0) return;
     if (isJoinRequired && !joinSelection) {
-      alert("Please configure sheet join before proceeding.");
+      toast.error("Please configure sheet join before proceeding.");
       return;
     }
 
@@ -394,7 +395,7 @@ export function UploadPage() {
         "Error uploading file, joining sheets, or fetching mappings:",
         error,
       );
-      alert("Something Went Wrong.");
+      toast.error("Something Went Wrong.");
     } finally {
       setLoading(false);
     }
@@ -426,8 +427,8 @@ export function UploadPage() {
         <div className="mb-2">
           <ProcessStepper />
         </div>
-        <Card className="shadow-none border border-border bg-card animate-in min-h-[26rem]">
-          <CardHeader className="p-1 px-2 bg-muted border-none">
+        <Card className="shadow-none border border-border bg-card animate-in min-h-[26rem] flex flex-col">
+          <CardHeader className="p-1 px-2 bg-muted border-none shrink-0">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
@@ -526,15 +527,17 @@ export function UploadPage() {
               <div className="float-right">
                 {file && (
                   <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      className="font-normal text-xs border-primary text-primary hover:bg-primary/10 transition-colors hover:text-primary py-1"
-                      onClick={() => {
-                        setShowSheetSelector(true);
-                      }}
-                    >
-                      Re-Join Sheets
-                    </Button>
+                    {availableSheetNames.length > 1 && (
+                      <Button
+                        variant="outline"
+                        className="font-normal text-xs border-primary text-primary hover:bg-primary/10 transition-colors hover:text-primary py-1"
+                        onClick={() => {
+                          setShowSheetSelector(true);
+                        }}
+                      >
+                        Re-Join Sheets
+                      </Button>
+                    )}
                     <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-sm text-xs font-medium animate-in fade-in slide-in-from-left-2">
                       <span>📄 {file.name}</span>
                       <X
@@ -551,8 +554,8 @@ export function UploadPage() {
             </div>
           </CardHeader>
 
-          <CardContent className="p-0 min-h-[18rem] flex flex-col">
-            <div className="flex justify-center flex-col items-center flex-1">
+          <CardContent className="p-0 min-h-[18rem] flex flex-col flex-1">
+            <div className="flex justify-center flex-col items-center flex-1 w-full h-full pb-4">
               {!file && (
                 <div
                   onDragOver={handleDragOver}
@@ -665,10 +668,11 @@ export function UploadPage() {
               </>
             )}
           </CardContent>
-          {!(loading || !canProceed) && (
-            <div className="flex justify-end p-1 px-2 border-t bg-muted mt-1">
+          {canProceed && (
+            <div className="flex justify-end p-1 px-2 border-t bg-muted shrink-0">
               <Button
                 onClick={handleNext}
+                disabled={loading}
                 variant="outline"
                 className="px-5 pr-3 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
               >
@@ -786,8 +790,6 @@ export function UploadPage() {
                   style={{
                     width: "1px",
                     background: "#909090",
-                    // height: "50px",
-                    // margin: "0 10px",
                   }}
                 ></div>
               </div>

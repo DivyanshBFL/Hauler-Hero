@@ -1,14 +1,11 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Upload,
-  GitMerge,
-  Table2,
   ShieldAlert,
   ChartNoAxesCombined,
   Check,
-  Sparkles
+  Sparkles,
 } from "lucide-react";
-import aiMagic from "../../public/AiMagic1.svg"
 
 type Step = {
   title: string;
@@ -108,8 +105,10 @@ export default function ProcessStepper() {
               >
                 {state === "completed" ? (
                   <Check size={20} strokeWidth={3} />
+                ) : step?.isImageIcon ? (
+                  <img className="h-4 w-6" src={step.Icon} alt={step.title} />
                 ) : (
-                  step?.isImageIcon ?  <img className="h-4 w-6" src={step.Icon} alt={step.title} /> : <step.Icon size={16} />
+                  <step.Icon size={16} />
                 )}
               </span>
 

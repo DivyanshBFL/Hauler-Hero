@@ -86,27 +86,27 @@ const COLUMN_MENU_ITEMS: {
   label: string;
   icon: React.ReactNode;
 }[] = [
-    {
-      action: "replaceValues",
-      label: "Replace values",
-      icon: <Replace className="h-4 w-4" />,
-    },
-    {
-      action: "trimSpaces",
-      label: "Trim spaces",
-      icon: <Scissors className="h-4 w-4" />,
-    },
-    {
-      action: "truncateValues",
-      label: "Truncate values",
-      icon: <AlignLeft className="h-4 w-4" />,
-    },
-    {
-      action: "addPrefixOrSuffix",
-      label: "Add prefix or suffix",
-      icon: <PlusSquare className="h-4 w-4" />,
-    },
-  ];
+  {
+    action: "replaceValues",
+    label: "Replace values",
+    icon: <Replace className="h-4 w-4" />,
+  },
+  {
+    action: "trimSpaces",
+    label: "Trim spaces",
+    icon: <Scissors className="h-4 w-4" />,
+  },
+  {
+    action: "truncateValues",
+    label: "Truncate values",
+    icon: <AlignLeft className="h-4 w-4" />,
+  },
+  {
+    action: "addPrefixOrSuffix",
+    label: "Add prefix or suffix",
+    icon: <PlusSquare className="h-4 w-4" />,
+  },
+];
 
 function isCellMissing(value: unknown): boolean {
   if (value === null || value === undefined) return true;
@@ -451,7 +451,10 @@ export function DataCleaningPage() {
     );
   }, [location.search]);
 
-  const activeSessionId = useMemo(() => getActiveSessionId(), [getActiveSessionId]);
+  const activeSessionId = useMemo(
+    () => getActiveSessionId(),
+    [getActiveSessionId],
+  );
   const everEditableStorageKey = useMemo(() => {
     if (!activeSessionId) return null;
     return `dataCleaning:everEditableCells:${activeSessionId}`;
@@ -702,10 +705,10 @@ export function DataCleaningPage() {
         const row =
           directRow && typeof directRow === "object"
             ? {
-              ...(mappedFromSource ?? {}),
-              ...directRow,
-              __rowIndex: rowIndex,
-            }
+                ...(mappedFromSource ?? {}),
+                ...directRow,
+                __rowIndex: rowIndex,
+              }
             : mappedFromSource;
 
         if (!row || typeof row !== "object") return;
@@ -765,8 +768,8 @@ export function DataCleaningPage() {
       const inferredColumns = normalizedColumns.length
         ? normalizedColumns
         : Object.keys(resultRows[0]?.row ?? {}).filter(
-          (c) => !c.startsWith("__"),
-        );
+            (c) => !c.startsWith("__"),
+          );
 
       return {
         rows: resultRows,
@@ -877,7 +880,6 @@ export function DataCleaningPage() {
     setAnalyzing(true);
     try {
       const result = await api.analyzeDataIssues(data);
-      console.log("Result:", result.issues);
       setIssues(result.issues ?? []);
     } catch (error) {
       showApiErrorToast(error, "Failed to analyze issues");
@@ -2003,10 +2005,11 @@ export function DataCleaningPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className={`h-7 px-2 hover:bg-primary/10 ${selectedIssueType !== "allIssues"
-                        ? "text-primary  bg-primary/5 "
-                        : ""
-                        }`}
+                      className={`h-7 px-2 hover:bg-primary/10 ${
+                        selectedIssueType !== "allIssues"
+                          ? "text-primary  bg-primary/5 "
+                          : ""
+                      }`}
                       title="Filter by issue type"
                     >
                       <Filter className="h-4 w-4" />
@@ -2133,7 +2136,6 @@ export function DataCleaningPage() {
                     <TableRow>
                       {columns.map((col) => {
                         const hasIssue = (issueByColumn[col] ?? 0) > 0;
-                        console.log("has Issues for:", col, issueByColumn[col]);
                         return (
                           <TableHead
                             key={col}
@@ -2176,9 +2178,6 @@ export function DataCleaningPage() {
                   </TableHeader>
 
                   <TableBody>
-
-
-
                     {filteredVisibleRows.map((row, idx) => {
                       const rowIndex = Number(row.__rowIndex ?? idx);
                       return (
@@ -2190,14 +2189,15 @@ export function DataCleaningPage() {
                               selectedIssueType === "allIssues"
                                 ? cellIssues
                                 : cellIssues.filter(
-                                  (x) => x === selectedIssueType,
-                                );
+                                    (x) => x === selectedIssueType,
+                                  );
                             const hasCellIssue = visibleCellIssues.length > 0;
 
                             const cellKey = getCellKey(rowIndex, col);
                             const isWorkedOn = workedOnCells.has(cellKey);
                             const isMissingValue = isCellMissing(row[col]);
-                            const isEverEditable = everEditableCells.has(cellKey);
+                            const isEverEditable =
+                              everEditableCells.has(cellKey);
                             const issueTitle = hasCellIssue
                               ? visibleCellIssues.map(toIssueLabel).join(", ")
                               : undefined;
@@ -2236,10 +2236,6 @@ export function DataCleaningPage() {
                         </TableRow>
                       );
                     })}
-
-
-
-
 
                     {fetchingPage && (
                       <TableRow>
@@ -2426,7 +2422,7 @@ export function DataCleaningPage() {
                                 name={opt.key}
                                 checked={
                                   autoFixOptions[
-                                  opt.key as keyof typeof autoFixOptions
+                                    opt.key as keyof typeof autoFixOptions
                                   ] === true
                                 }
                                 onChange={() =>
@@ -2447,7 +2443,7 @@ export function DataCleaningPage() {
                                 name={opt.key}
                                 checked={
                                   autoFixOptions[
-                                  opt.key as keyof typeof autoFixOptions
+                                    opt.key as keyof typeof autoFixOptions
                                   ] === false
                                 }
                                 onChange={() =>
@@ -2503,10 +2499,10 @@ export function DataCleaningPage() {
                                   checked={
                                     (choice.value === "null" &&
                                       autoFixOptions[
-                                      opt.key as keyof typeof autoFixOptions
+                                        opt.key as keyof typeof autoFixOptions
                                       ] === null) ||
                                     autoFixOptions[
-                                    opt.key as keyof typeof autoFixOptions
+                                      opt.key as keyof typeof autoFixOptions
                                     ] === choice.value
                                   }
                                   onChange={() =>
