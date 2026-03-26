@@ -69,52 +69,19 @@ export function LoginPage() {
     }
   };
   return (
-    <div className="min-h-screen bg-[#f3f3f3]">
-      <div className="grid min-h-screen lg:grid-cols-[1fr_1.05fr]">
-        {/* Left hero panel */}
-        <section className="relative hidden lg:block">
-          <img
-            src="/images/login-hero.png"
-            alt="Hauler Hero"
-            className="h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/35" />
+    <div className="relative min-h-screen flex items-center justify-center p-4">
+      {/* Fullscreen Background Image */}
+      <img
+        src="/images/login-hero.png"
+        alt="Hauler Hero Background"
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      {/* Dark overlay for contrast */}
+      <div className="absolute inset-0 bg-black/40" />
 
-          <div className="absolute bottom-10 left-10 right-10 text-white">
-            {/* <Quote className="mb-4 h-8 w-8 scale-x-[-1] fill-white stroke-0" />
-            <p className="max-w-3xl text-md font-light">
-              Hauler Hero has made our lives more efficient and significantly less complicated. Since switching to Hauler Hero,
-              my time to send our monthly or quarterly bills has been cut in half.
-            </p>
-            <div className="mt-4">
-              <p className="text-2xl font-semibold">Alex Babbitt</p>
-              <p className="text-white/90">Co-Owner - Carolina Trash & Septic
-
-              </p>
-            </div> */}
-
-            {/* <div className="flex justify-end gap-3">
-              <button
-                type="button"
-                aria-label="Previous"
-                className="rounded-full border border-white/50 p-2 text-white hover:bg-white/10"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-              <button
-                type="button"
-                aria-label="Next"
-                className="rounded-full border border-white/50 p-2 text-white hover:bg-white/10"
-              >
-                <ChevronRight className="h-5 w-5" />
-              </button>
-            </div> */}
-          </div>
-        </section>
-
-        {/* Right login panel (restored card + previous font styling) */}
-        <section className="relative flex items-center justify-center p-6 md:p-12 bg-background">
-          <div className="w-full max-w-md">
+      {/* Centered White Card (Low Opacity) */}
+      <section className="relative z-10 w-full max-w-md bg-background/90 rounded-2xl shadow-xl p-6 md:p-8 border-white/50 border">
+        <div className="w-full">
             <CardHeader className="space-y-3 pb-6 border-none">
               <div className="flex justify-center">
                 <img
@@ -221,8 +188,7 @@ export function LoginPage() {
               </form>
             </CardContent>
           </div>
-        </section>
-      </div>
+      </section>
     </div>
   );
 }
