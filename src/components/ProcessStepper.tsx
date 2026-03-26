@@ -24,7 +24,7 @@ const steps: Step[] = [
   },
   {
     title: "Field Mapping",
-    subtitle: "Drag source fields to target entities",
+    subtitle: "Drag source fields to target fields",
     path: "/field-mapping",
     Icon: Sparkles,
   },

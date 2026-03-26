@@ -147,8 +147,9 @@ function resolveFieldName(
   }
   if (partialMatches.length > 1) {
     return {
-      error: `Field "${cleaned}" matched multiple fields: ${partialMatches.slice(0, 4).join(", ")}${partialMatches.length > 4 ? ", ..." : ""
-        }.`,
+      error: `Field "${cleaned}" matched multiple fields: ${partialMatches.slice(0, 4).join(", ")}${
+        partialMatches.length > 4 ? ", ..." : ""
+      }.`,
     };
   }
 
@@ -660,7 +661,10 @@ export function FieldMappingPage() {
         }
 
         return {
-          nodeWidths: { source: nextSourceNodeWidth, target: nextTargetNodeWidth },
+          nodeWidths: {
+            source: nextSourceNodeWidth,
+            target: nextTargetNodeWidth,
+          },
           sourceX: nextSourceX,
           targetX: nextTargetX,
           flowCanvasWidth: nextFlowCanvasWidth,
@@ -680,8 +684,7 @@ export function FieldMappingPage() {
   );
 
   const nodeWidths = measuredNodeLayout?.nodeWidths ?? fallbackNodeWidths;
-  const flowCanvasWidth =
-    measuredNodeLayout?.flowCanvasWidth ?? flowPaneWidth;
+  const flowCanvasWidth = measuredNodeLayout?.flowCanvasWidth ?? flowPaneWidth;
   const sourceX = measuredNodeLayout?.sourceX ?? HORIZONTAL_COLUMN_MARGIN;
   const targetX =
     measuredNodeLayout?.targetX ??
@@ -777,9 +780,9 @@ export function FieldMappingPage() {
             effectiveSheets = loadedSheets.map((sheet, index) =>
               index === 0
                 ? {
-                  ...sheet,
-                  headers: mergedHeaders,
-                }
+                    ...sheet,
+                    headers: mergedHeaders,
+                  }
                 : sheet,
             );
           }
@@ -1129,22 +1132,35 @@ export function FieldMappingPage() {
         baselineMappings,
       );
 
-      await api.submitMappingCorrections(
-        correctionPayload ?? {
-          entityName: selectedEntity,
-          submittedAt: new Date().toISOString(),
-          mappings: toActiveMappings(currentMappings).map((m) => ({
-            sourceField: m.sourceField,
-            targetField: m.targetField,
-            isManual: false,
-          })),
-          manualChanges: [],
-        },
-      );
+      // Run processing in the background non-blocking
+      // DataPreviewPage reruns processMappedData on its own anyway.
+      try {
+        api
+          .submitMappingCorrections(
+            correctionPayload ?? {
+              entityName: selectedEntity,
+              submittedAt: new Date().toISOString(),
+              mappings: toActiveMappings(currentMappings).map((m) => ({
+                sourceField: m.sourceField,
+                targetField: m.targetField,
+                isManual: false,
+              })),
+              manualChanges: [],
+            },
+          )
+          .catch(console.error);
 
-      const result = await api.processMappedData(currentMappings, allRows);
+        // Process data in background and store if needed elsewhere, though DataPreviewPage computes it itself
+        api
+          .processMappedData(currentMappings, allRows)
+          .then((result) => {
+            sessionStorage.setItem("mappedData", JSON.stringify(result.data));
+          })
+          .catch(console.error);
+      } catch (err) {
+        console.error("Failed to initiate background processing", err);
+      }
 
-      sessionStorage.setItem("mappedData", JSON.stringify(result.data));
       sessionStorage.setItem(
         "mappings",
         JSON.stringify(entityMappings[selectedEntity]),
@@ -1161,10 +1177,6 @@ export function FieldMappingPage() {
       );
 
       navigate("/data-preview");
-    } catch (error) {
-      toast.error("Failed to process mapping. Please try again.", {
-        position: "bottom-right",
-      });
     } finally {
       setProcessing(false);
     }
@@ -1349,7 +1361,7 @@ export function FieldMappingPage() {
                           fitView={false}
                           style={{ background: "transparent" }}
                         >
-                          <Background gap={8} size={1} color="#e5e7eb" />
+                          <Background gap={8} size={1} color="#00000" />
                           {/* <Panel position="top-left" className="m-2 mx-4 text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded shadow">
                             {mappings.filter((m) => m.targetField !== 'Unmapped').length} mappings
                           </Panel> */}
@@ -1387,10 +1399,11 @@ export function FieldMappingPage() {
                             {chatMessages.map((message) => (
                               <div
                                 key={message.id}
-                                className={`rounded-md px-3 py-2 text-xs ${message.role === "assistant"
-                                  ? "bg-muted text-foreground"
-                                  : "bg-primary text-primary-foreground ml-auto max-w-[90%]"
-                                  }`}
+                                className={`rounded-md px-3 py-2 text-xs ${
+                                  message.role === "assistant"
+                                    ? "bg-muted text-foreground"
+                                    : "bg-primary text-primary-foreground ml-auto max-w-[90%]"
+                                }`}
                               >
                                 {message.text}
                               </div>
