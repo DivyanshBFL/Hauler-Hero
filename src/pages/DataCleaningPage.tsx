@@ -1974,7 +1974,7 @@ export function DataCleaningPage() {
                       placeholder="Search"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
-                      className="pl-9 h-7 text-xs"
+                      className="pl-9 h-8 text-xs"
                     />
                   </div>
                   <Button
