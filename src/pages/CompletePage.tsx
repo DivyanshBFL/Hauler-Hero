@@ -13,6 +13,19 @@ import {
   UploadCloud,
   WandSparkles,
 } from "lucide-react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  LabelList,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { type ImportStats } from "@/types/importStats";
 import { PAGE_CONTAINER, PAGE_OUTER } from "@/constants/layout";
 import { api } from "@/services/api";
@@ -227,29 +240,12 @@ export function CompletePage() {
   }
 
   const actionBreakdown = [
-    hasNum(rawStats?.inserted?.rows)
+    toNum(apiStats?.records_affected?.rows) !== null
       ? {
-          key: "inserted",
-          label: "Inserted",
-          rows: rawStats.inserted.rows as number,
-          pct: hasNum(rawStats?.inserted?.pct)
-            ? (rawStats.inserted.pct as number)
-            : undefined,
-          color: "bg-blue-500",
-          dotColor: "text-blue-500",
-          hex: "#3b82f6",
-        }
-      : null,
-    hasNum(rawStats?.updated?.rows)
-      ? {
-          key: "updated",
-          label: "Updated",
-          rows: rawStats.updated.rows as number,
-          pct: hasNum(rawStats?.updated?.rows_pct)
-            ? (rawStats.updated.rows_pct as number)
-            : hasNum(rawStats?.updated?.pct)
-              ? (rawStats.updated.pct as number)
-              : undefined,
+          key: "changed-rows",
+          label: "Changed Rows",
+          rows: toNum(apiStats?.records_affected?.rows)!,
+          pct: toNum(apiStats?.records_affected?.rows_pct) ?? undefined,
           color: "bg-amber-500",
           dotColor: "text-amber-500",
           hex: "#f59e0b",
@@ -258,7 +254,7 @@ export function CompletePage() {
     hasNum(apiStats?.unchanged_data?.rows)
       ? {
           key: "unchanged",
-          label: "Unchanged",
+          label: "Unchanged Rows",
           rows: apiStats.unchanged_data.rows,
           pct: hasNum(apiStats?.unchanged_data?.pct)
             ? apiStats.unchanged_data.pct
@@ -271,7 +267,7 @@ export function CompletePage() {
     hasNum(apiStats?.duplicate_findings?.rows_removed)
       ? {
           key: "duplicates",
-          label: "Duplicates",
+          label: "Duplicates Removed",
           rows: apiStats.duplicate_findings.rows_removed,
           pct: hasNum(apiStats?.duplicate_findings?.pct)
             ? apiStats.duplicate_findings.pct
@@ -304,19 +300,46 @@ export function CompletePage() {
           ? (item.rows / totalActionRows) * 100
           : 0,
   }));
-  const pieData = actionBreakdownWithPct.filter((item) => item.computedPct > 0);
-  const pieBackground =
-    pieData.length > 0
-      ? `conic-gradient(${pieData
-          .map((item, index) => {
-            const start = pieData
-              .slice(0, index)
-              .reduce((sum, current) => sum + current.computedPct, 0);
-            const end = start + item.computedPct;
-            return `${item.hex} ${start}% ${end}%`;
-          })
-          .join(", ")})`
-      : "#e5e7eb";
+  const pieData = actionBreakdownWithPct.filter((item) => item.rows > 0);
+  const fieldBreakdown = [
+    toNum(apiStats?.total_processed?.fields) !== null
+      ? {
+          key: "total-fields",
+          label: "Total Fields",
+          value: toNum(apiStats?.total_processed?.fields)!,
+          hex: "#2563eb",
+        }
+      : null,
+    toNum(apiStats?.updated?.fields) !== null
+      ? {
+          key: "changed-fields",
+          label: "Changed Fields",
+          value: toNum(apiStats?.updated?.fields)!,
+          hex: "#f59e0b",
+        }
+      : null,
+    toNum(apiStats?.success_rate?.ai_fixed_fields) !== null
+      ? {
+          key: "auto-fixed-fields",
+          label: "Auto Fixed Fields",
+          value: toNum(apiStats?.success_rate?.ai_fixed_fields)!,
+          hex: "#10b981",
+        }
+      : null,
+  ].filter(Boolean) as Array<{
+    key: string;
+    label: string;
+    value: number;
+    hex: string;
+  }>;
+  const totalFieldsBase =
+    toNum(apiStats?.total_processed?.fields) ??
+    fieldBreakdown.reduce((sum, item) => sum + item.value, 0);
+  const fieldBreakdownWithPct = fieldBreakdown.map((item) => ({
+    ...item,
+    computedPct:
+      totalFieldsBase > 0 ? Math.min(100, (item.value / totalFieldsBase) * 100) : 0,
+  }));
 
   const importDate = new Date().toLocaleString(undefined, {
     dateStyle: "medium",
@@ -431,27 +454,55 @@ export function CompletePage() {
                       <h3 className="text-base font-semibold text-slate-800 mb-2">
                         Record breakdown
                       </h3>
-                      <div className="flex items-center gap-4">
-                        <div
-                          className="h-28 w-28 rounded-full relative shrink-0"
-                          style={{ background: pieBackground }}
-                        >
-                          <div className="absolute inset-[14px] rounded-full bg-white" />
+                      <div className="flex flex-col gap-3">
+                        <div className="h-32 w-full relative">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                              <Pie
+                                data={pieData}
+                                dataKey="rows"
+                                nameKey="label"
+                                innerRadius={38}
+                                outerRadius={56}
+                                paddingAngle={3}
+                                cornerRadius={6}
+                                stroke="none"
+                              >
+                                {pieData.map((entry) => (
+                                  <Cell key={`${entry.key}-cell`} fill={entry.hex} />
+                                ))}
+                              </Pie>
+                              <Tooltip
+                                formatter={(value) =>
+                                  Number(value ?? 0).toLocaleString()
+                                }
+                              />
+                            </PieChart>
+                          </ResponsiveContainer>
+                          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                            <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wide">
+                              Total
+                            </span>
+                            <span className="text-sm font-semibold tabular-nums text-slate-900">
+                              {totalActionRows.toLocaleString()}
+                            </span>
+                          </div>
                         </div>
-                        <div className="space-y-2.5 flex-1">
+                        <div className="space-y-1.5">
                           {actionBreakdownWithPct.map((item) => (
                             <div
                               key={`${item.key}-breakdown`}
-                              className="flex items-center justify-between text-sm"
+                              className="flex items-center justify-between text-xs text-slate-700"
                             >
-                              <span className="inline-flex items-center gap-2 text-slate-700">
-                                <Circle
-                                  className={`h-3.5 w-3.5 fill-current ${item.dotColor}`}
+                              <span className="inline-flex items-center gap-1.5">
+                                <span
+                                  className="h-2.5 w-2.5 rounded-full"
+                                  style={{ backgroundColor: item.hex }}
                                 />
                                 {item.label}
                               </span>
-                              <span className="font-medium tabular-nums">
-                                {item.rows.toLocaleString()}
+                              <span className="tabular-nums font-medium">
+                                {item.rows.toLocaleString()} ({formatPct(item.computedPct)})
                               </span>
                             </div>
                           ))}
@@ -463,23 +514,73 @@ export function CompletePage() {
                       <h3 className="text-base font-semibold text-slate-800 mb-2">
                         By action
                       </h3>
-                      <div className="space-y-2">
-                        {actionBreakdownWithPct.map((item) => (
-                          <div key={`${item.key}-bar`} className="space-y-1.5">
-                            <div className="flex items-center justify-between text-sm text-slate-700">
-                              <span>{item.label}</span>
-                              <span className="tabular-nums">
-                                {item.rows.toLocaleString()}
-                              </span>
-                            </div>
-                            <div className="h-2.5 rounded-md bg-slate-100 overflow-hidden">
-                              <div
-                                className={`h-full ${item.color}`}
+                      <div className="h-[140px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart
+                            data={fieldBreakdownWithPct}
+                            layout="vertical"
+                            margin={{ top: 4, right: 44, left: 0, bottom: 4 }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                            <XAxis
+                              type="number"
+                              domain={[0, 112]}
+                              ticks={[0, 25, 50, 75, 100]}
+                              tickFormatter={(value) => `${value}%`}
+                              tick={{ fontSize: 11 }}
+                            />
+                            <YAxis
+                              type="category"
+                              dataKey="label"
+                              hide
+                              width={0}
+                            />
+                            <Tooltip
+                              formatter={(value, _name, payload) => [
+                                `${Number(value ?? 0).toFixed(1)}%`,
+                                payload?.payload?.label ?? "Category",
+                              ]}
+                              labelFormatter={(_label, payload) =>
+                                payload?.[0]?.payload?.value?.toLocaleString() ?? ""
+                              }
+                            />
+                            <Bar dataKey="computedPct" radius={[0, 8, 8, 0]} barSize={14}>
+                              {fieldBreakdownWithPct.map((entry) => (
+                                <Cell key={`${entry.key}-bar`} fill={entry.hex} />
+                              ))}
+                              <LabelList
+                                dataKey="computedPct"
+                                position="right"
+                                offset={10}
+                                formatter={(value) =>
+                                  `${Number(value ?? 0).toFixed(1)}%`
+                                }
                                 style={{
-                                  width: `${Math.max(2, Math.min(100, item.computedPct))}%`,
+                                  fill: "#334155",
+                                  fontSize: 11,
+                                  fontWeight: 600,
                                 }}
                               />
-                            </div>
+                            </Bar>
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                      <div className="mt-2 space-y-1.5">
+                        {fieldBreakdownWithPct.map((item) => (
+                          <div
+                            key={`${item.key}-value`}
+                            className="flex items-center justify-between text-xs text-slate-700"
+                          >
+                            <span className="inline-flex items-center gap-1.5">
+                              <span
+                                className="h-2.5 w-2.5 rounded-full"
+                                style={{ backgroundColor: item.hex }}
+                              />
+                              {item.label}
+                            </span>
+                            <span className="tabular-nums font-medium">
+                              {item.value.toLocaleString()}
+                            </span>
                           </div>
                         ))}
                       </div>
