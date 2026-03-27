@@ -10,19 +10,11 @@ export function Footer() {
 
   return (
     <footer className="w-full border-t bg-zinc-900">
-      <div className="mx-auto w-full px-6 md:px-8 flex flex-col items-center gap-1 py-3">
-        {/* <div className="flex items-center gap-6 text-xs text-zinc-400">
-          <a href="#" className="hover:text-white transition-colors">
-            Privacy Policy
+      <div className="mx-auto w-full px-6 md:px-8 flex flex-col items-center gap-1 py-1">
+        <p className="text-xs text-zinc-400 text-center flex items-center justify-between w-full">
+          <a href="https://www.theblueflamelabs.com" target="_blank" >
+            <img src={"https://www.theblueflamelabs.com/wp-content/themes/BFL_Custom_Template/images/BlueflameLabslogo2.png"} className="h-8 w-auto" />
           </a>
-          <a href="#" className="hover:text-white transition-colors">
-            Terms of Service
-          </a>
-          <a href="#" className="hover:text-white transition-colors">
-            Support
-          </a>
-        </div> */}
-        <p className="text-xs text-zinc-400 text-center">
           © {new Date().getFullYear()} Blueflame Labs. All rights reserved.
         </p>
       </div>

@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LogOut, User } from "lucide-react";
+import logo from "../../public/images/theblueflamelabs-logo.svg"
 
 export function Header() {
   const navigate = useNavigate();
@@ -35,15 +36,6 @@ export function Header() {
               alt="Hauler-Hero-Landscape-Logo-Black"
               width="100%"
               style={{ maxWidth: "280px", maxHeight: "120px" }}
-              className="kl-navbar__logo"
-            />
-          </a>
-          <a href="">
-            <img
-              src="https://www.theblueflamelabs.com/wp-content/themes/BFL_Custom_Template/images/BlueflameLabslogo1.png"
-              alt="Blueflame Labs"
-              width="100%"
-              style={{ maxWidth: "115px", maxHeight: "120px" }}
               className="kl-navbar__logo"
             />
           </a>
