@@ -1400,7 +1400,7 @@ export function FieldMappingPage() {
                             fitView={false}
                             style={{ background: "transparent" }}
                           >
-                            <Background gap={8} size={1} color="#00000" />
+                            <Background gap={8} size={1} color="#aba7a7" />
                             {/* <Panel position="top-left" className="m-2 mx-4 text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded shadow">
                             {mappings.filter((m) => m.targetField !== 'Unmapped').length} mappings
                           </Panel> */}
@@ -1546,7 +1546,7 @@ export function FieldMappingPage() {
         {/* Navigation Arrows */}
         <button
           onClick={() => navigate("/upload")}
-          className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
+          className="fixed left-0 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
           title="Previous: Data Preview"
         >
           <ChevronLeft className="h-6 w-6" />
@@ -1555,7 +1555,7 @@ export function FieldMappingPage() {
         <button
           onClick={handleNext}
           disabled={processing}
-          className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
+          className="fixed right-0 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
           title="Next: Data Analytics"
         >
           <ChevronRight className="h-6 w-6" />
