@@ -54,9 +54,9 @@ export default function ProcessStepper() {
     currentStep = pathname.startsWith("/data-preview") ? 1 : 0;
   }
 
-  console.log(pathname)
-  console.log(currentStepIndex)
-  console.log(currentStepIndex)
+  console.log(pathname);
+  console.log(currentStepIndex);
+  console.log(currentStepIndex);
 
   return (
     <div className="grid md:grid-cols-4 gap-3">
@@ -95,7 +95,7 @@ export default function ProcessStepper() {
               if (i > currentStep) return;
               navigate(firstPath);
             }}
-            className={`w-full p-1 px-2 rounded-lg border text-left transition-all duration-300 ${styles.card} ${
+            className={`w-full p-1 !text-sm px-2 rounded-lg border text-left transition-all duration-300 ${styles.card} ${
               state === "active" ? "" : "hover:border-primary/50"
             }`}
           >

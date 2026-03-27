@@ -384,12 +384,12 @@ export function UploadPage() {
 
   return (
     <>
-      <div className={`${PAGE_OUTER} !min-h-[30rem]`}>
-        <div className={`${PAGE_CONTAINER} min-h-[30rem]`}>
+      <div className={`${PAGE_OUTER} `}>
+        <div className={`${PAGE_CONTAINER} `}>
           <div className="mb-2">
             <ProcessStepper />
           </div>
-          <Card className="shadow-none border border-border bg-card animate-in flex flex-col relative">
+          <Card className="shadow-none border border-border bg-card animate-in flex flex-col relative !h-[calc(100vh-162px)]">
             <CardHeader className="p-1 px-2 bg-muted border-none shrink-0">
               <div className="flex items-center justify-between gap-3 flex-wrap">
                 <div className="flex items-center gap-2">
@@ -516,10 +516,13 @@ export function UploadPage() {
               </div>
             </CardHeader>
 
-            <CardContent className={`p-0  flex flex-col flex-1 ${file?"":"justify-center min-h-[29rem]"}`}>
-              <div className="flex justify-center flex-col items-center w-full h-full">
-                {/* pb-4 */}
-                {!file && (
+            <CardContent
+              className={`p-0 flex flex-1 flex-col  ${file ? "justify-start" : "justify-center"}`}
+            >
+              {!file && (
+                <div className="flex justify-center flex-col items-center w-full h-full">
+                  {/* pb-4 */}
+
                   <div
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
@@ -569,8 +572,8 @@ export function UploadPage() {
                       className="hidden"
                     />
                   </div>
-                )}
-              </div>
+                </div>
+              )}
               {sheets.length > 0 && (
                 <>
                   <div className="gap-4 mt-0">
@@ -590,7 +593,7 @@ export function UploadPage() {
                           className="group "
                           style={{ animationDelay: `${index * 100}ms` }}
                         >
-                          <div className="max-h-[415px] overflow-auto">
+                          <div className="max-h-[calc(100vh-250px)] overflow-auto">
                             <Table className="w-full min-w-[900px] ">
                               <TableHeader className=" font-bold text-sm ">
                                 <TableRow>

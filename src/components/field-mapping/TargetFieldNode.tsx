@@ -17,7 +17,7 @@ function TargetFieldNodeComponent({ data }: NodeProps<TargetFieldNodeType>) {
 
   return (
     <div
-      className="h-[30px] flex items-center gap-2 px-3 rounded-lg border border-border shadow-sm"
+      className="h-[30px] flex items-center gap-2 px-3 rounded-lg border border-[#00000070] shadow-sm"
       style={{ width, boxSizing: "border-box" }}
     >
       <Handle

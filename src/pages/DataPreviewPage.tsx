@@ -397,8 +397,15 @@ export function DataPreviewPage() {
             <ProcessStepper />
           </div>
 
-          <Card className="shadow-lg border border-border bg-card relative flex-1 flex flex-col">
-            <Loader open={loading} inline className="rounded-lg h-[32rem]" />
+          <Card
+            className="shadow-lg border border-border bg-card relative flex-1 flex flex-col 
+          !h-[calc(100vh-150px)]"
+          >
+            <Loader
+              open={loading}
+              inline
+              className="rounded-lg ] !h-[calc(100vh-160px)]"
+            />
             <CardHeader className="p-1 px-2 bg-muted shrink-0">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <div className="flex items-start gap-2">
@@ -468,7 +475,7 @@ export function DataPreviewPage() {
 
               {/* ── Table ────────────────────────────────────────── */}
               <div className=" rounded-sm overflow-hidden shadow-sm bg-card">
-                <div className="max-h-[25.5rem] overflow-auto">
+                <div className="h-[calc(100vh-260px)] overflow-auto">
                   {previewRows.length > 0 ? (
                     <Table className="w-full text-sm">
                       <TableHeader className="sticky top-0 z-10">

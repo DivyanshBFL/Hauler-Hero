@@ -80,14 +80,14 @@ export function LoginPage() {
       <div className="absolute inset-0 bg-black/40" />
 
       {/* Centered White Card (Low Opacity) */}
-      <section className="relative z-10 w-full max-w-md bg-background/90 rounded-lg shadow-xl p-2 px-2 border-white border">
+      <section className="relative z-10 w-full max-w-sm bg-background/90 rounded-lg shadow-xl p-2 px-2 border-white border">
         <div className="w-full">
           <CardHeader className="space-y-3 pb-3 border-none">
             <div className="flex justify-center">
               <img
                 src="/images/logo.png"
                 alt="Hauler Hero"
-                className="h-12 w-auto mt-1"
+                className="h-[44px] w-auto mt-1"
               />
             </div>
             {/* <CardTitle className="h4 text-center text-foreground font-bold">
@@ -102,7 +102,7 @@ export function LoginPage() {
           <CardContent className="flex justify-center">
             <form
               onSubmit={handleSubmit}
-              className="space-y-5 flex-1 max-w-[400px]  rounded-md p-4"
+              className="space-y-2 flex-1 max-w-[350px]  rounded-md p-4"
             >
               <div className="space-y-1 ">
                 <Label htmlFor="email" className="text-sm font-medium">
@@ -152,7 +152,7 @@ export function LoginPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center justify-between text-sm space-y-1">
                 <label className="flex items-center gap-2 text-muted-foreground">
                   <input
                     type="checkbox"

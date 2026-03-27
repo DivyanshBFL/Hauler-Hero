@@ -759,8 +759,9 @@ export function FieldMappingPage() {
         try {
           const uploadResponse = await uploadFile(fileToUpload);
           const sessionId = uploadResponse?.session_id;
-          if (!sessionId) throw new Error("session_id was not returned from /upload-file");
-          
+          if (!sessionId)
+            throw new Error("session_id was not returned from /upload-file");
+
           dispatch(setSessionId(sessionId));
           sessionStorage.setItem("session_id", sessionId);
 
@@ -780,8 +781,11 @@ export function FieldMappingPage() {
             session_id: sessionId,
             entityName: entityName ?? "string",
           });
-          sessionStorage.setItem("mappingResponse", JSON.stringify(mappingResponse));
-          
+          sessionStorage.setItem(
+            "mappingResponse",
+            JSON.stringify(mappingResponse),
+          );
+
           navigate("/field-mapping", { replace: true, state: {} });
         } catch (error) {
           console.error("Error Processing Upload:", error);
@@ -1231,7 +1235,7 @@ export function FieldMappingPage() {
           <div className="mb-2">
             <ProcessStepper />
           </div>
-          <Card className="shadow-lg border border-border bg-card animate-in relative">
+          <Card className="shadow-lg border border-border bg-card animate-in relative min-h-[calc(100vh-200px)] !h-auto">
             <Loader
               open={loading || processing}
               inline
@@ -1247,7 +1251,7 @@ export function FieldMappingPage() {
                   <CardDescription className="text-[11px] ">
                     <span className="flex items-center gap-1 text-primary">
                       Summary: <span>AI Mapped:</span>
-                      <b >
+                      <b>
                         {autoMappedCoveragePct}% ({autoMappedCount}/
                         {targetFieldsAll.length})
                       </b>
@@ -1280,7 +1284,7 @@ export function FieldMappingPage() {
                       <div className="grid grid-cols-[1fr_auto_1fr] gap-[5rem] bg-muted px-6 py-1">
                         <div className="space-y-2">
                           <div className="flex items-center justify-start text-sm gap-2 mb-[-5px]">
-                            <span className="font-bold text-xs ">
+                            <span className="font-bold text-xs text-[#383838ee] ">
                               Source Schema :
                             </span>
                             <span className="text-muted-foreground text-xs">
@@ -1318,7 +1322,7 @@ export function FieldMappingPage() {
                         <div className="space-y-2">
                           <div className="flex justify-between mb-[-5px]">
                             <div className="flex items-center justify-start text-sm gap-2">
-                              <span className="font-bold text-xs">
+                              <span className="font-bold text-xs text-[#383838ee]">
                                 Target Schema :
                               </span>
                               <span className="text-muted-foreground text-xs">
@@ -1400,7 +1404,7 @@ export function FieldMappingPage() {
                             fitView={false}
                             style={{ background: "transparent" }}
                           >
-                            <Background gap={8} size={1} color="#aba7a7" />
+                            <Background gap={10} size={1} color="#c2bebe" />
                             {/* <Panel position="top-left" className="m-2 mx-4 text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded shadow">
                             {mappings.filter((m) => m.targetField !== 'Unmapped').length} mappings
                           </Panel> */}

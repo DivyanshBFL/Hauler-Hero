@@ -140,7 +140,9 @@ export function CompletePage() {
       ? {
           key: "Field-mapping",
           label: "Field Mapping",
-          value: toNum(apiStats?.mapped_data?.mapped_cols ?? 0)!.toLocaleString(),
+          value: toNum(
+            apiStats?.mapped_data?.mapped_cols ?? 0,
+          )!.toLocaleString(),
           detail: "Fields Auto Mapped",
           icon: GitMerge,
           className: "",
@@ -161,7 +163,9 @@ export function CompletePage() {
       ? {
           key: "mapped-cols",
           label: "Data Cleaning",
-          value: toNum(apiStats?.duplicate_findings?.rows_removed ?? 0)!.toLocaleString(),
+          value: toNum(
+            apiStats?.duplicate_findings?.rows_removed ?? 0,
+          )!.toLocaleString(),
           detail: "Duplicate(s) Removed",
           // toNum(apiStats?.mapped_data?.cols_pct) !== null
           //   ? formatPct(toNum(apiStats?.mapped_data?.cols_pct)!)
@@ -200,7 +204,9 @@ export function CompletePage() {
       ? {
           key: "unchanged",
           label: "Data Cleaning",
-          value:toNum(apiStats?.success_rate?.ai_fixed_fields ?? 0)!.toLocaleString(),
+          value: toNum(
+            apiStats?.success_rate?.ai_fixed_fields ?? 0,
+          )!.toLocaleString(),
           detail: "Fields Auto Corrected ",
           icon: Circle,
           className: "!bg-sky-200 !border-sky-300",
@@ -210,10 +216,9 @@ export function CompletePage() {
       ? {
           key: "duplicates",
           label: "Data Cleaning",
-          value:
-            toNum(
-              apiStats?.duplicate_findings?.rows_removed,
-            )!.toLocaleString(),
+          value: toNum(
+            apiStats?.duplicate_findings?.rows_removed,
+          )!.toLocaleString(),
           detail: "Address Correction ",
           icon: Circle,
           className: "!bg-rose-200 !border-rose-300",
@@ -338,7 +343,9 @@ export function CompletePage() {
   const fieldBreakdownWithPct = fieldBreakdown.map((item) => ({
     ...item,
     computedPct:
-      totalFieldsBase > 0 ? Math.min(100, (item.value / totalFieldsBase) * 100) : 0,
+      totalFieldsBase > 0
+        ? Math.min(100, (item.value / totalFieldsBase) * 100)
+        : 0,
   }));
 
   const importDate = new Date().toLocaleString(undefined, {
@@ -357,8 +364,8 @@ export function CompletePage() {
             <Loader open={!stats} />
 
             <CardContent className="p-2 space-y-4">
-              <div >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+              <div>
+                <div className="grid grid-cols-1 md:grid-cols-1 gap-3 md:gap-4">
                   <div className="bg-emerald-50 rounded-lg border border-emerald-100 p-3 md:p-4">
                     <div className="flex flex-col items-center text-center gap-1.5">
                       <div className="h-14 w-14 flex items-center justify-center rounded-full bg-white border border-emerald-200 text-emerald-600">
@@ -371,12 +378,12 @@ export function CompletePage() {
                         Import completed. Review the summary below.
                       </p>
                       <div className="text-sm text-slate-600 mt-0.5 flex gap-2 items-center">
-                        <span className="font-medium">Entity:</span> Account 
+                        <span className="font-medium">Entity:</span> Account
                         <span>|</span>
                         <span className="flex items-center gap-1">
                           <Calendar className="h-3 w-3 inline" />
-                        <span>{importDate}</span>
-                          </span>
+                          <span>{importDate}</span>
+                        </span>
                       </div>
                       <div className="flex items-center gap-2 text-xs text-slate-500">
                         {/* <Calendar className="h-3 w-3" />
@@ -385,7 +392,7 @@ export function CompletePage() {
                     </div>
                   </div>
 
-                  <div className="rounded-lg border border-slate-200 p-3 md:p-4">
+                  {/* <div className="rounded-lg border border-slate-200 p-3 md:p-4">
                     <h2 className="text-xl leading-7 font-semibold text-slate-800 mb-3">
                       Quick Summary
                     </h2>
@@ -401,7 +408,7 @@ export function CompletePage() {
                           </li>
                         ))}
                     </ul>
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
@@ -469,7 +476,10 @@ export function CompletePage() {
                                 stroke="none"
                               >
                                 {pieData.map((entry) => (
-                                  <Cell key={`${entry.key}-cell`} fill={entry.hex} />
+                                  <Cell
+                                    key={`${entry.key}-cell`}
+                                    fill={entry.hex}
+                                  />
                                 ))}
                               </Pie>
                               <Tooltip
@@ -502,7 +512,8 @@ export function CompletePage() {
                                 {item.label}
                               </span>
                               <span className="tabular-nums font-medium">
-                                {item.rows.toLocaleString()} ({formatPct(item.computedPct)})
+                                {item.rows.toLocaleString()} (
+                                {formatPct(item.computedPct)})
                               </span>
                             </div>
                           ))}
@@ -521,7 +532,10 @@ export function CompletePage() {
                             layout="vertical"
                             margin={{ top: 4, right: 44, left: 0, bottom: 4 }}
                           >
-                            <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                            <CartesianGrid
+                              strokeDasharray="3 3"
+                              horizontal={false}
+                            />
                             <XAxis
                               type="number"
                               domain={[0, 112]}
@@ -541,12 +555,20 @@ export function CompletePage() {
                                 payload?.payload?.label ?? "Category",
                               ]}
                               labelFormatter={(_label, payload) =>
-                                payload?.[0]?.payload?.value?.toLocaleString() ?? ""
+                                payload?.[0]?.payload?.value?.toLocaleString() ??
+                                ""
                               }
                             />
-                            <Bar dataKey="computedPct" radius={[0, 8, 8, 0]} barSize={14}>
+                            <Bar
+                              dataKey="computedPct"
+                              radius={[0, 8, 8, 0]}
+                              barSize={14}
+                            >
                               {fieldBreakdownWithPct.map((entry) => (
-                                <Cell key={`${entry.key}-bar`} fill={entry.hex} />
+                                <Cell
+                                  key={`${entry.key}-bar`}
+                                  fill={entry.hex}
+                                />
                               ))}
                               <LabelList
                                 dataKey="computedPct"

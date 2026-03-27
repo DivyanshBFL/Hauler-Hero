@@ -1890,7 +1890,10 @@ export function DataCleaningPage() {
             <ProcessStepper />
           </div>
 
-          <Card className="shadow-lg border border-border bg-card relative flex-1 flex flex-col">
+          <Card
+            className="shadow-lg border border-border bg-card relative flex-1 flex flex-col 
+          !h-[calc(100vh-150px)]"
+          >
             <Loader open={loading} inline className="rounded-lg" />
             <CardHeader className="p-1 px-2 bg-muted border-none shrink-0">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
@@ -2034,18 +2037,22 @@ export function DataCleaningPage() {
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       {availableIssueTypes.map((type) => (
-                        <DropdownMenuItem
-                          key={type}
-                          onClick={() => setSelectedIssueType(type)}
-                          className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${selectedIssueType === type ? "text-primary bg-primary/5" : ""}`}
-                        >
-                          <span className="flex-1">
-                            {toIssueLabel(type)} ({issueCountByType[type] || 0})
-                          </span>
-                          {selectedIssueType === type && (
-                            <span className="text-primary">✓</span>
-                          )}
-                        </DropdownMenuItem>
+                        <>
+                          <DropdownMenuItem
+                            key={type}
+                            onClick={() => setSelectedIssueType(type)}
+                            className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${selectedIssueType === type ? "text-primary bg-primary/5" : ""}`}
+                          >
+                            <span className="flex-1">
+                              {toIssueLabel(type)} (
+                              {issueCountByType[type] || 0})
+                            </span>
+                            {selectedIssueType === type && (
+                              <span className="text-primary">✓</span>
+                            )}
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                        </>
                       ))}
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -2120,7 +2127,7 @@ export function DataCleaningPage() {
             <CardContent className="p-0 flex-1 flex flex-col">
               <div className="rounded-none overflow-hidden flex-1 flex flex-col">
                 <div
-                  className="max-h-[61.5vh] overflow-y-auto rounded-none"
+                  className="h-[calc(100vh-260px)]  overflow-y-auto rounded-none"
                   onScroll={(e) => {
                     const el = e.currentTarget;
                     if (el.scrollTop + el.clientHeight >= el.scrollHeight - 120)

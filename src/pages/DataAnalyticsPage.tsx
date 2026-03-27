@@ -265,7 +265,7 @@ const DataAnalyticsPage = () => {
           <div className="mb-2">
             <ProcessStepper />
           </div>
-          <Card className="shadow-lg border border-border bg-card relative">
+          <Card className="shadow-lg border border-border bg-card relative !h-[calc(100vh-180px)]">
             <Loader open={loading} inline className="rounded-lg" />
             <CardHeader className="p-1 px-2 bg-muted border-none">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
@@ -310,7 +310,7 @@ const DataAnalyticsPage = () => {
                       sideOffset={8}
                       className="w-56"
                     >
-                      <DropdownMenuItem
+                      {/* <DropdownMenuItem
                         onClick={() => setSelectedIssueType("allIssues")}
                         className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${selectedIssueType === "allIssues" ? "text-primary bg-primary/5" : ""}`}
                       >
@@ -325,24 +325,9 @@ const DataAnalyticsPage = () => {
                         {selectedIssueType === "allIssues" && (
                           <span className="text-primary">✓</span>
                         )}
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      {availableIssueTypes.map((type) => (
-                        <DropdownMenuItem
-                          key={type}
-                          onClick={() => setSelectedIssueType(type)}
-                          className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${selectedIssueType === type ? "text-primary bg-primary/5" : ""}`}
-                        >
-                          <span className="flex-1">
-                            {toIssueLabel(type)} ({issueCountByType[type] || 0})
-                          </span>
-                          {selectedIssueType === type && (
-                            <span className="text-primary">✓</span>
-                          )}
-                        </DropdownMenuItem>
-                      ))}
+                      </DropdownMenuItem> */}
+                      {/* <DropdownMenuSeparator /> */}
 
-                      <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onClick={() => setFilterMode("ALL")}
                         className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${filterMode === "ALL" ? "text-primary bg-primary/5" : ""}`}
@@ -352,6 +337,7 @@ const DataAnalyticsPage = () => {
                           <span className="text-primary">✓</span>
                         )}
                       </DropdownMenuItem>
+                      <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onClick={() => setFilterMode("CHANGED")}
                         className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${filterMode === "CHANGED" ? "text-primary bg-primary/5" : ""}`}
@@ -361,6 +347,7 @@ const DataAnalyticsPage = () => {
                           <span className="text-primary">✓</span>
                         )}
                       </DropdownMenuItem>
+                      <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onClick={() => setFilterMode("UNCHANGED")}
                         className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${filterMode === "UNCHANGED" ? "text-primary bg-primary/5" : ""}`}
@@ -370,15 +357,16 @@ const DataAnalyticsPage = () => {
                           <span className="text-primary">✓</span>
                         )}
                       </DropdownMenuItem>
+                      <DropdownMenuSeparator />
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
               </div>
             </CardHeader>
 
-            <CardContent className="p-0 relative min-h-[calc(100vh-280px)]">
+            <CardContent className="p-0 relative ">
               <div className=" overflow-hidden">
-                <div className="max-h-[calc(100vh-280px)] min-h-[calc(100vh-280px)] overflow-y-auto">
+                <div className="h-[calc(100vh-260px)] overflow-y-auto">
                   <Table className="w-full text-sm">
                     <TableHeader className="sticky top-0 z-10">
                       <TableRow>

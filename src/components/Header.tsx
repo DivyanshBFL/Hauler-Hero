@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LogOut, User } from "lucide-react";
-import logo from "../../public/images/theblueflamelabs-logo.svg"
+import logo from "../../public/images/theblueflamelabs-logo.svg";
 
 export function Header() {
   const navigate = useNavigate();
@@ -47,10 +47,12 @@ export function Header() {
               <Button
                 variant="outline"
                 size="icon"
-                className="rounded-full bg-black text-white hover:text-white hover:bg-gray-500 !h-10"
+                className="rounded-full bg-gray-500 !h-10 overflow-hidden"
                 aria-label="Open user menu"
               >
-                <User className="h-5 w-5" />
+                {/* <User className="h-5 w-5" />
+                 */}
+                <img src="NikhilWagh.png" alt="" className="" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
