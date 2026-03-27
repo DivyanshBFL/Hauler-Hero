@@ -29,6 +29,7 @@ const Loader = ({
     >
       <div className="w-[60px] h-[60px]">
         <DotLottieReact
+          className="text-blue "
           src="https://lottie.host/916ede14-315e-4bac-91df-ddab7758c197/W7DXVNfhyG.lottie"
           loop
           autoplay

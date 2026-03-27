@@ -1247,7 +1247,9 @@ export function FieldMappingPage() {
                   <GitMerge className="w-4 h-4 text-primary" />
                 </div>
                 <div>
-                  <CardTitle className="font-normal">Map Fields</CardTitle>
+                  <CardTitle className="font-normal">
+                    Field Mapping Workspace
+                  </CardTitle>
                   <CardDescription className="text-[11px] ">
                     <span className="flex items-center gap-1 text-primary">
                       Summary: <span>AI Mapped:</span>

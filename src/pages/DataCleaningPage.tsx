@@ -1981,7 +1981,7 @@ export function DataCleaningPage() {
                     />
                   </div>
                   <Button
-                    className="h-7"
+                    className="h-7 px-2"
                     variant="outline"
                     disabled={!canUndo}
                     onClick={handleUndoStable}
@@ -1990,7 +1990,7 @@ export function DataCleaningPage() {
                     <Undo2 className="h-4 w-4" />
                   </Button>
                   <Button
-                    className="h-7"
+                    className="h-7 px-2"
                     variant="outline"
                     disabled={!canRedo}
                     onClick={handleRedoStable}
