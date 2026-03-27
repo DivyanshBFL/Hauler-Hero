@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
+  BrushCleaning,
   Calendar,
   Check,
   Circle,
@@ -208,7 +209,7 @@ export function CompletePage() {
             apiStats?.success_rate?.ai_fixed_fields ?? 0,
           )!.toLocaleString(),
           detail: "Fields Auto Corrected ",
-          icon: Circle,
+          icon: BrushCleaning,
           className: "!bg-sky-200 !border-sky-300",
         }
       : null,
@@ -220,7 +221,7 @@ export function CompletePage() {
             apiStats?.duplicate_findings?.rows_removed,
           )!.toLocaleString(),
           detail: "Address Correction ",
-          icon: Circle,
+          icon: BrushCleaning,
           className: "!bg-rose-200 !border-rose-300",
         }
       : null,

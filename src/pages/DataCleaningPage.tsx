@@ -2117,7 +2117,13 @@ export function DataCleaningPage() {
                       setAutoFixConfirmOpen(true);
                     }}
                   >
-                    <Sparkles className="mr-2 h-4 w-4 text-white fill-white animate-pulse" />
+                    {/* <Sparkles className="mr-2 h-4 w-4 text-white fill-white animate-pulse" />
+                     */}
+                    <img
+                      src="ai-icon.png"
+                      alt="Ai Icon"
+                      className="h-4 w-4 mr-2 heartbeat "
+                    />
                     Auto Cleanup
                   </Button>
                 </div>
