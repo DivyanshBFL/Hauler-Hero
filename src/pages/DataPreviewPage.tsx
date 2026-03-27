@@ -391,14 +391,14 @@ export function DataPreviewPage() {
 
   return (
     <>
-      <div className={`${PAGE_OUTER} min-h-[calc(100vh-100px)] flex flex-col`}>
+      <div className={`${PAGE_OUTER} min-h-[calc(80vh-100px)] flex flex-col`}>
         <div className={`${PAGE_CONTAINER} flex flex-col flex-1`}>
           <div className="mb-2 shrink-0">
             <ProcessStepper />
           </div>
 
           <Card className="shadow-lg border border-border bg-card relative flex-1 flex flex-col">
-            <Loader open={loading} inline className="rounded-lg" />
+            <Loader open={loading} inline className="rounded-lg h-[32rem]" />
             <CardHeader className="p-1 px-2 bg-muted shrink-0">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <div className="flex items-start gap-2">
@@ -443,7 +443,7 @@ export function DataPreviewPage() {
               </div>
             </CardHeader>
 
-            <CardContent className="space-y-3 p-0 flex-1 flex flex-col">
+            <CardContent className="space-y-0 p-0 flex-1 flex flex-col">
               {/* ── Entity tabs ─────────────────────────────────── */}
               {availableTabs.length > 1 && (
                 <div className="flex gap-1 border-b border-border">
@@ -468,7 +468,7 @@ export function DataPreviewPage() {
 
               {/* ── Table ────────────────────────────────────────── */}
               <div className=" rounded-sm overflow-hidden shadow-sm bg-card">
-                <div className="max-h-[415px] overflow-auto">
+                <div className="max-h-[25.5rem] overflow-auto">
                   {previewRows.length > 0 ? (
                     <Table className="w-full text-sm">
                       <TableHeader className="sticky top-0 z-10">
@@ -569,7 +569,7 @@ export function DataPreviewPage() {
         {/* Navigation Arrows */}
         <button
           onClick={() => navigate("/field-mapping")}
-          className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
+          className="fixed left-0 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
           title="Previous: Upload"
         >
           <ChevronLeft className="h-6 w-6" />
@@ -578,7 +578,7 @@ export function DataPreviewPage() {
         <button
           onClick={handleNext}
           disabled={processing}
-          className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
+          className="fixed right-0 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
           title="Next: Data Cleaning"
         >
           <ChevronRight className="h-6 w-6" />

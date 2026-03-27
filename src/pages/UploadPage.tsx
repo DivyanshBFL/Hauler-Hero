@@ -389,7 +389,7 @@ export function UploadPage() {
           <div className="mb-2">
             <ProcessStepper />
           </div>
-          <Card className="shadow-none border border-border bg-card animate-in min-h-[26rem] flex flex-col relative">
+          <Card className="shadow-none border border-border bg-card animate-in flex flex-col relative">
             <CardHeader className="p-1 px-2 bg-muted border-none shrink-0">
               <div className="flex items-center justify-between gap-3 flex-wrap">
                 <div className="flex items-center gap-2">
@@ -516,8 +516,9 @@ export function UploadPage() {
               </div>
             </CardHeader>
 
-            <CardContent className="p-0 min-h-[18rem] flex flex-col flex-1">
-              <div className="flex justify-center flex-col items-center flex-1 w-full h-full pb-4">
+            <CardContent className={`p-0  flex flex-col flex-1 ${file?"":"justify-center min-h-[29rem]"}`}>
+              <div className="flex justify-center flex-col items-center w-full h-full">
+                {/* pb-4 */}
                 {!file && (
                   <div
                     onDragOver={handleDragOver}
@@ -681,7 +682,7 @@ export function UploadPage() {
 
               <div className="grid grid-cols-[22vw_2vw_22vw]  p-4 flex-wrap">
                 {/* Left Side */}
-                <div className="rounded-lg p-4 space-y-3 ">
+                <div className="rounded-lg space-y-3 ">
                   {/* <div className="text-sm font-semibold text-foreground">Primary Data</div> */}
                   <div className="space-y-1">
                     <label className="text-sm font-medium text-muted-foreground">
@@ -750,12 +751,12 @@ export function UploadPage() {
                     className=""
                     style={{
                       width: "1px",
-                      background: "#909090",
+                      background: "#d2d2d2",
                     }}
                   ></div>
                 </div>
                 {/* Right Side */}
-                <div className="rounded-lg  p-4 space-y-3 ">
+                <div className="rounded-lg space-y-3 ">
                   {/* <div className="text-sm font-semibold text-foreground">Seconday Data</div> */}
                   <div className="space-y-1">
                     <label className="text-sm font-medium text-muted-foreground">
