@@ -1,6 +1,7 @@
 export const IMPORT_STATS_KEY = 'IMPORT_STATS';
 
 export type ImportStats = {
+  textual_summary:string[];
   total_processed: { rows: number; fields: number };
   records_affected: { rows: number; rows_pct: number; fields: number; fields_pct: number };
   success_rate: {
@@ -21,6 +22,7 @@ export type ImportStats = {
   updated: { description: string; fields: number; total_fields: number; pct: number };
   duplicate_findings: { rows_removed: number; total_rows: number; pct: number };
   unchanged_data: { description: string; rows: number; total_rows: number; pct: number };
+  
 };
 
 export function getDefaultImportStats(): ImportStats {

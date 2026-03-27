@@ -1903,7 +1903,7 @@ export function DataCleaningPage() {
                       Data Cleanup Workspace
                     </CardTitle>
                     <div className="">
-                      <CardDescription className="text-xs text-muted-foreground">
+                      <CardDescription className="text-[11px] text-muted-foreground">
                         <span>
                           <Tooltip>
                             <TooltipTrigger>Issue Summary</TooltipTrigger>

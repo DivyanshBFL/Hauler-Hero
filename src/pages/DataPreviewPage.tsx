@@ -502,7 +502,7 @@ export function DataPreviewPage() {
                       </TableBody>
                     </Table>
                   ) : (
-                    <div className="p-12 text-center text-muted-foreground text-sm">
+                    <div className="p-12 text-center text-muted-foreground text-sm min-h-[25.5rem]">
                       No mapped data available for{" "}
                       <strong>{selectedEntity}</strong>.
                     </div>

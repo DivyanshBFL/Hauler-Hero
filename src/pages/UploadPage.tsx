@@ -450,7 +450,7 @@ export function UploadPage() {
                                       in this selected file.
                                     </span> */}
                                       {isJoinRequired && joinSelection && (
-                                        <span className="text-xs ml-1">
+                                        <span className="text-[11px] ml-1">
                                           Join Configured:{" "}
                                           <span className="">
                                             {joinSelection.leftSheet}
@@ -680,7 +680,7 @@ export function UploadPage() {
                 </DialogDescription>
               </DialogHeader>
 
-              <div className="grid grid-cols-[22vw_2vw_22vw]  p-4 flex-wrap">
+              <div className="grid grid-cols-[22vw_2vw_22vw]  p-4 ">
                 {/* Left Side */}
                 <div className="rounded-lg space-y-3 ">
                   {/* <div className="text-sm font-semibold text-foreground">Primary Data</div> */}

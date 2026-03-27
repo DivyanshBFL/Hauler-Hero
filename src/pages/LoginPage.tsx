@@ -173,7 +173,7 @@ export function LoginPage() {
 
               <Button
                 type="submit"
-                className="w-full h-9 font-semibold hover:scale-x-[1.02]"
+                className="w-full !h-9 font-semibold hover:scale-x-[1.02]"
                 disabled={loading}
               >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

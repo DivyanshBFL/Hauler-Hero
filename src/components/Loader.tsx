@@ -19,7 +19,7 @@ const Loader = ({
     <div
       className={[
         inline ? "absolute inset-0 z-50" : "fixed inset-0 z-[9999]",
-        "flex items-center justify-center bg-[rgba(255,255,255,0.1)] backdrop-blur-[2px]",
+        "flex items-center justify-center bg-[rgba(255,255,255,0.1)] backdrop-blur-[1.5px]",
         blockInteraction ? "pointer-events-auto" : "pointer-events-none",
         className ?? "",
       ].join(" ")}
@@ -27,7 +27,7 @@ const Loader = ({
       aria-live="polite"
       role="status"
     >
-      <div className="w-[100px] h-[100px]">
+      <div className="w-[60px] h-[60px]">
         <DotLottieReact
           src="https://lottie.host/916ede14-315e-4bac-91df-ddab7758c197/W7DXVNfhyG.lottie"
           loop

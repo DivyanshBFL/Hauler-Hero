@@ -45,7 +45,7 @@ function StatTile({
         </div>
       </div>
       <div className="mt-1.5">
-        <div className="text-[30px] leading-none font-bold tabular-nums text-slate-900">
+        <div className="text-[24px] mb-1 leading-none font-bold tabular-nums text-slate-900">
           {value}
         </div>
         {detail ? (
@@ -116,29 +116,29 @@ export function CompletePage() {
     toNum(apiStats?.total_processed?.rows) !== null
       ? {
           key: "total-processed",
-          label: "Total Processed",
+          label: "Upload Data",
           value: toNum(apiStats?.total_processed?.rows)!.toLocaleString(),
-          detail: "Records Processed",
+          detail: "Rows Processed",
           icon: Database,
           className: "!bg-emerald-200 !border-emerald-300",
         }
       : null,
     toNum(apiStats?.records_affected?.rows) !== null
       ? {
-          key: "records-affected",
-          label: "Records Affected",
-          value: toNum(apiStats?.records_affected?.rows)!.toLocaleString(),
-          detail: "Inserted + Updated",
+          key: "Field-mapping",
+          label: "Field Mapping",
+          value: toNum(apiStats?.mapped_data?.mapped_cols ?? 0)!.toLocaleString(),
+          detail: "Fields Auto Mapped",
           icon: GitMerge,
-          className: "!bg-violet-200 !border-violet-300",
+          className: "",
         }
       : null,
     toNum(apiStats?.success_rate?.pct) !== null
       ? {
           key: "success-rate",
-          label: "Success Rate",
-          value: formatPct(toNum(apiStats?.success_rate?.pct)!),
-          detail: "Of Total Affected",
+          label: "Data Cleaning",
+          value: toNum(apiStats?.updated?.fields ?? 0)!.toLocaleString(),
+          detail: "Issues Fixed",
           icon: TrendingUp,
           className: "!bg-amber-200 !border-amber-300",
         }
@@ -147,9 +147,9 @@ export function CompletePage() {
     toNum(apiStats?.mapped_data?.total_cols) !== null
       ? {
           key: "mapped-cols",
-          label: "Mapped Columns",
-          value: `${toNum(apiStats?.mapped_data?.mapped_cols)}/${toNum(apiStats?.mapped_data?.total_cols)}`,
-          detail: `${toNum(apiStats?.mapped_data?.cols_pct)}% Columns Mapped with AI`,
+          label: "Data Cleaning",
+          value: toNum(apiStats?.duplicate_findings?.rows_removed ?? 0)!.toLocaleString(),
+          detail: "Duplicate(s) Removed",
           // toNum(apiStats?.mapped_data?.cols_pct) !== null
           //   ? formatPct(toNum(apiStats?.mapped_data?.cols_pct)!)
           //   : undefined,
@@ -186,12 +186,9 @@ export function CompletePage() {
     toNum(apiStats?.unchanged_data?.rows) !== null
       ? {
           key: "unchanged",
-          label: "Unchanged",
-          value: toNum(apiStats?.unchanged_data?.rows)!.toLocaleString(),
-          detail: `${toNum(apiStats?.unchanged_data?.pct)}% of records were unchanged`,
-          // toNum(apiStats?.unchanged_data?.pct) !== null
-          //   ? formatPct(toNum(apiStats?.unchanged_data?.pct)!)
-          //   : undefined,
+          label: "Data Cleaning",
+          value:toNum(apiStats?.success_rate?.ai_fixed_fields ?? 0)!.toLocaleString(),
+          detail: "Fields Auto Corrected ",
           icon: Circle,
           className: "!bg-sky-200 !border-sky-300",
         }
@@ -199,16 +196,12 @@ export function CompletePage() {
     toNum(apiStats?.duplicate_findings?.rows_removed) !== null
       ? {
           key: "duplicates",
-          label: "Duplicates removed",
+          label: "Data Cleaning",
           value:
             toNum(
               apiStats?.duplicate_findings?.rows_removed,
-            )!.toLocaleString() + "%",
-          detail: `${toNum(apiStats?.duplicate_findings?.rows_removed)} rows removed of 
-          ${toNum(apiStats?.duplicate_findings?.total_rows)} rows. `,
-          // toNum(apiStats?.duplicate_findings?.pct) !== null
-          //   ? formatPct(toNum(apiStats?.duplicate_findings?.pct)!)
-          //   : undefined,
+            )!.toLocaleString(),
+          detail: "Address Correction ",
           icon: Circle,
           className: "!bg-rose-200 !border-rose-300",
         }
@@ -311,7 +304,6 @@ export function CompletePage() {
           ? (item.rows / totalActionRows) * 100
           : 0,
   }));
-  console.log("ActionBreak:", actionBreakdownWithPct);
   const pieData = actionBreakdownWithPct.filter((item) => item.computedPct > 0);
   const pieBackground =
     pieData.length > 0
@@ -341,49 +333,41 @@ export function CompletePage() {
           <Card className="shadow-none border border-border bg-card animate-in overflow-hidden">
             <Loader open={!stats} />
 
-            <CardContent className="p-3 md:p-4 space-y-4">
-              <div className="bg-white rounded-xl border border-border p-3 md:p-4">
+            <CardContent className="p-2 space-y-4">
+              <div >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                   <div className="bg-emerald-50 rounded-lg border border-emerald-100 p-3 md:p-4">
                     <div className="flex flex-col items-center text-center gap-1.5">
                       <div className="h-14 w-14 flex items-center justify-center rounded-full bg-white border border-emerald-200 text-emerald-600">
                         <Check className="h-8 w-8" strokeWidth={2.5} />
                       </div>
-                      <h1 className="text-4xl font-bold text-slate-900 leading-none">
+                      <h1 className="text-xl font-bold text-emerald-600 leading-none">
                         Success!
                       </h1>
                       <p className="text-sm text-slate-500">
                         Import completed. Review the summary below.
                       </p>
-                      <div className="text-sm text-slate-600 mt-0.5">
-                        <span className="font-medium">Entity:</span> Account
+                      <div className="text-sm text-slate-600 mt-0.5 flex gap-2 items-center">
+                        <span className="font-medium">Entity:</span> Account 
+                        <span>|</span>
+                        <span className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3 inline" />
+                        <span>{importDate}</span>
+                          </span>
                       </div>
                       <div className="flex items-center gap-2 text-xs text-slate-500">
-                        <Calendar className="h-3 w-3" />
-                        <span>{importDate}</span>
+                        {/* <Calendar className="h-3 w-3" />
+                        <span>{importDate}</span> */}
                       </div>
                     </div>
                   </div>
 
                   <div className="rounded-lg border border-slate-200 p-3 md:p-4">
-                    <h2 className="text-2xl leading-none font-semibold text-slate-800 mb-3">
+                    <h2 className="text-xl leading-7 font-semibold text-slate-800 mb-3">
                       Quick Summary
                     </h2>
-                    <ul className="space-y-1.5">
-                      {[
-                        hasNum(apiStats?.total_processed?.rows)
-                          ? `Your CSV was uploaded and parsed into ${apiStats.total_processed.rows.toLocaleString()} records.`
-                          : null,
-                        hasNum(apiStats?.mapped_data?.mapped_cols) &&
-                        hasNum(apiStats?.mapped_data?.total_cols)
-                          ? `Source columns were mapped: ${apiStats.mapped_data.mapped_cols}/${apiStats.mapped_data.total_cols} columns matched.`
-                          : null,
-                        hasNum(apiStats?.records_affected?.rows)
-                          ? `${apiStats.records_affected.rows.toLocaleString()} records were affected by this run.`
-                          : null,
-                        "Data has been loaded into the system and is ready to use.",
-                      ]
-                        .filter(Boolean)
+                    <ul className="space-y-1.5 ">
+                      {stats?.textual_summary?.filter(Boolean)
                         .map((text) => (
                           <li
                             key={String(text)}
@@ -418,7 +402,7 @@ export function CompletePage() {
 
               {actionBreakdownWithPct.length > 0 ? (
                 <>
-                  <div className="rounded-lg border border-slate-200 bg-white p-2.5">
+                  {/* <div className="rounded-lg bg-white">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2">
                       <div className="flex items-center rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-700">
                         Distribution
@@ -440,7 +424,7 @@ export function CompletePage() {
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </div> */}
 
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
                     <div className="rounded-lg border border-slate-200 bg-white p-3">
@@ -505,7 +489,7 @@ export function CompletePage() {
                       <h3 className="text-base font-semibold text-slate-800 mb-2">
                         Outcome overview
                       </h3>
-                      <div className="h-4 rounded-md bg-slate-100 overflow-hidden flex">
+                      <div className="h-[10px] rounded-md bg-slate-100 overflow-hidden flex">
                         {actionBreakdownWithPct.map((item) => (
                           <div
                             key={`${item.key}-stack`}
