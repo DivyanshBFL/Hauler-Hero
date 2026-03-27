@@ -19,7 +19,7 @@ const Loader = ({
     <div
       className={[
         inline ? "absolute inset-0 z-50" : "fixed inset-0 z-[9999]",
-        "flex items-center justify-center bg-[rgba(0,0,0,0.5)] backdrop-blur-[6px]",
+        "flex items-center justify-center bg-[rgba(255,255,255,0.1)] backdrop-blur-[2px]",
         blockInteraction ? "pointer-events-auto" : "pointer-events-none",
         className ?? "",
       ].join(" ")}
