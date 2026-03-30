@@ -583,7 +583,7 @@ export function UploadPage() {
                                   {previewHeaders.map((header) => (
                                     <TableHead
                                       key={header}
-                                      className="px-3 py-[0.35rem] text-left font-semibold whitespace-nowrap bg-gray-50 border border-border"
+                                      className="px-3 py-[0.35rem] text-left font-semibold whitespace-nowrap bg-gray-50 border-r"
                                     >
                                       {header}
                                     </TableHead>
