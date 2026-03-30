@@ -1,5 +1,6 @@
 import { memo, type ReactNode } from "react";
 import { Handle, Position, type Node, type NodeProps } from "@xyflow/react";
+import AILogo from "@/../public/ai-primarycolor.svg?react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 export type TargetFieldNodeData = {
@@ -34,11 +35,7 @@ function TargetFieldNodeComponent({ data }: NodeProps<TargetFieldNodeType>) {
         <Tooltip>
           <TooltipTrigger asChild>
             {/* <span className="shrink-0 text-[11px] font-normal px-2 py-0.5 rounded-md flex gap-2 cursor-pointer"> */}
-            <img
-              src="ai-blackcolor.png"
-              alt="AI"
-              className="h-3.5 w-3.5 heartbeat"
-            />
+            <AILogo className="w-3.5 h-3.5 text-primary heartbeat" />
             {/* </span> */}
           </TooltipTrigger>
           <TooltipContent side="left">Mapped</TooltipContent>

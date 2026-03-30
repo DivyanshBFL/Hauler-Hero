@@ -19,11 +19,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(
           "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm  ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:pointer-events-none disabled:opacity-50 !font-extralight !h-8",
           {
-            "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm hover:shadow-md":
+            "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm hover:shadow-md !h-8":
               variant === "default",
             "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm hover:shadow-md":
               variant === "destructive",
-            "border border-input bg-background  hover:text-primary !py-2":
+            "border border-input bg-background  hover:text-primary !py-2 !h-8":
               variant === "outline",
             "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm":
               variant === "secondary",

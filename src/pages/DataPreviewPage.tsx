@@ -407,7 +407,7 @@ export function DataPreviewPage() {
               inline
               className="rounded-lg ] !h-[calc(100vh-160px)]"
             />
-            <CardHeader className="p-1 px-2 bg-muted shrink-0">
+            <CardHeader className="p-1 px-2 bg-muted shrink-0 border-none">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <div className="flex items-start gap-2">
                   <div className="h-8 w-8 rounded-md bg-primary/10 text-primary flex items-center justify-center shadow-sm">
@@ -417,10 +417,10 @@ export function DataPreviewPage() {
                     <CardTitle className="text-sm font-normal">
                       Field Mapping Preview
                     </CardTitle>
-                    <CardDescription className="text-[11px]">
+                    <CardDescription className="text-[11px] text-primary">
                       Showing first {totalRows > 20 ? 20 : totalRows} rows
                       &mdash; all&nbsp;
-                      <span className="font-medium text-foreground">
+                      <span className="font-medium">
                         {totalRows}
                       </span>
                       &nbsp;rows will be processed
@@ -433,7 +433,7 @@ export function DataPreviewPage() {
                     variant="outline"
                     onClick={handleDownloadExcel}
                     disabled={!currentRows.length}
-                    className="bg-muted text-xs py-1 px-4 font-normal bg-white border border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                    className="bg-white text-xs py-1 px-4 h-7 border border-primary text-primary hover:bg-primary/10 transition-colors"
                   >
                     <FileDown className="mr-2 h-4 w-4" />
                     Excel
@@ -442,7 +442,7 @@ export function DataPreviewPage() {
                     variant="outline"
                     onClick={handleDownloadMappingJSON}
                     disabled={!allEntityMappings[selectedEntity]?.length}
-                    className="bg-muted text-xs py-1 px-4 font-normal bg-white border border-primary text-primary hover:bg-primary/10 hover:text-primary"
+                    className="bg-white text-xs py-1 px-4 h-7 border border-primary text-primary hover:bg-primary/10 transition-colors"
                   >
                     <Download className="mr-2 h-4 w-4" />
                     JSON

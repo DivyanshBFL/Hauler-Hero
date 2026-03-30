@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronLeft, ChevronRight, Search, Eye, Filter } from "lucide-react";
+import { ChevronLeft, Search, Eye, Filter } from "lucide-react";
 import {
   getDefaultImportStats,
   IMPORT_STATS_KEY,
@@ -267,7 +267,7 @@ const DataAnalyticsPage = () => {
           </div>
           <Card className="shadow-lg border border-border bg-card relative !h-[calc(100vh-180px)]">
             <Loader open={loading} inline className="rounded-lg" />
-            <CardHeader className="p-1 px-2 bg-muted border-none">
+            <CardHeader className="p-1 px-2 bg-muted shrink-0 border-none">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <div className="flex items-start gap-2">
                   <div className="h-8 w-8 flex items-center justify-center rounded-md bg-primary/10 text-primary shadow-sm">
@@ -275,11 +275,11 @@ const DataAnalyticsPage = () => {
                   </div>
                   <div className="">
                     <CardTitle className="text-sm font-normal">
-                      Data Cleanup Preview
+                      Data Analytics Workspace
                     </CardTitle>
-                    <CardDescription className="text-[11px] text-muted-foreground">
+                    <CardDescription className="text-[11px] text-primary">
                       <span className="inline-flex items-center text-[11px] font-normal">
-                        Changed rows: {changedRowsCount} | Changed cells:{" "}
+                        Cleaned rows: {changedRowsCount} | Changed cells:{" "}
                         {changedCellsCount}
                       </span>
                     </CardDescription>
@@ -292,14 +292,14 @@ const DataAnalyticsPage = () => {
                       placeholder="Search"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
-                      className="pl-8 h-7 text-xs"
+                      className="pl-8 h-8 text-xs"
                     />
                   </div>
                   <DropdownMenu modal={false}>
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="outline"
-                        className={`px-2 !h-7 hover:bg-primary/10 ${selectedIssueType !== "allIssues" ? "text-primary  bg-primary/5 " : ""}`}
+                        className={`px-2 hover:bg-primary/10 ${selectedIssueType !== "allIssues" ? "text-primary  bg-primary/5 " : ""}`}
                         title="Filters"
                       >
                         <Filter className="h-4 w-4" />

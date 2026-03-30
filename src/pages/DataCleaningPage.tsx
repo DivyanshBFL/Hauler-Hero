@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import AILogo from "../../public/ai-primarycolor.svg?react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -179,10 +180,18 @@ function toCamelCaseIssue(value: string): string {
 
 function toIssueLabel(value: string): string {
   if (value === "allIssues") return "All Issues";
-  // Replace underscores with spaces and capitalize
+
+  // Replace underscores with spaces
   const withSpaces = value.replace(/_/g, " ");
+
+  // Add space before capital letters (camelCase → words)
   const camelSpaced = withSpaces.replace(/([A-Z])/g, " $1").trim();
-  return camelSpaced.charAt(0).toUpperCase() + camelSpaced.slice(1);
+
+  // Capitalize each word
+  return camelSpaced
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 }
 
 export function DataCleaningPage() {
@@ -2123,11 +2132,7 @@ export function DataCleaningPage() {
                   >
                     {/* <Sparkles className="mr-2 h-4 w-4 text-white fill-white animate-pulse" />
                      */}
-                    <img
-                      src="ai-icon.png"
-                      alt="Ai Icon"
-                      className="h-4 w-4 mr-2 heartbeat "
-                    />
+                    <AILogo className="h-4 w-4 mr-2 heartbeat" />
                     Auto Cleanup
                   </Button>
                 </div>
@@ -2161,7 +2166,7 @@ export function DataCleaningPage() {
                                 <span>{col}</span>
                                 <button
                                   type="button"
-                                  className="inline-flex items-center justify-center h-5 w-5 rounded hover:bg-accent"
+                                  className="inline-flex items-center justify-center h-5 w-5 rounded hover:bg-primary/10"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     const issueTypesForColumn = Array.from(
@@ -2393,8 +2398,8 @@ export function DataCleaningPage() {
             >
               <div className="h-12 px-6 border-b border-border bg-muted flex items-center justify-between shrink-0">
                 <h3 className="flex items-center gap-2 text-md leading-none font-light text-foreground">
-                  <Sparkles className="h-4 w-4" />
-                  Data Cleanup Rules
+                  <AILogo className="h-[1.4rem] w-4.5" />
+                  Auto Cleanup Rules
                 </h3>
                 <button
                   type="button"
@@ -2427,7 +2432,7 @@ export function DataCleaningPage() {
                       ].map((opt) => (
                         <>
                           <div key={opt.key} className="space-y-2 px-6">
-                            <label className="text-sm text-foreground">
+                            <label className="text-[13px] font-medium text-[#171717]">
                               {opt.label}
                             </label>
                             <div className="flex gap-4">
@@ -2495,7 +2500,7 @@ export function DataCleaningPage() {
                       ].map((opt) => (
                         <>
                           <div key={opt.key} className="space-y-3 px-6">
-                            <label className="text-sm text-foreground">
+                            <label className="text-[13px] font-medium text-[#171717]">
                               {opt.label}
                             </label>
                             <div className="flex flex-row flex-wrap gap-4">
@@ -2583,7 +2588,7 @@ export function DataCleaningPage() {
                   disabled={autoFixSubmitting}
                   onClick={() => void handleAutoFixAllIssues()}
                   variant="outline"
-                  className="bg-white text-primary border-primary h-9 text-xs px-5 hover:bg-blue-100 "
+                  className="bg-white text-primary border-primary text-xs px-5 hover:bg-blue-100 "
                 >
                   {autoFixSubmitting ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -2616,6 +2621,7 @@ export function DataCleaningPage() {
 
                 <div className="px-4">
                   <X
+                    className="h-4 w-4"
                     onClick={() => {
                       setAddressFixConfirmOpen(false);
                     }}
@@ -2624,11 +2630,11 @@ export function DataCleaningPage() {
               </div>
 
               <div className="p-6">
-                <p className="text-sm text-muted-foreground whitespace-pre-line">
+                <p className="text-[13px] font-medium text-[#171717] whitespace-pre-line leading-relaxed">
                   One-click cleanup that automatically fixes address issues in
                   the dataset.
                   {"\n"}All fixes are logged step-by-step.
-                  <Sparkles className="mr-2 h-4 w-4 ml-1 text-blue-500 fill-blue-400 animate-blink inline" />
+                  <AILogo className="mr-2 h-5 w-5 ml-1 text-blue-500 fill-blue-400 heartbeat inline" />
                 </p>
                 {addressFixError && (
                   <p className="text-xs text-destructive mt-3">
@@ -2656,7 +2662,7 @@ export function DataCleaningPage() {
               <div className="p-4 py-2 border-t flex bg-muted items-center justify-end gap-2">
                 <Button
                   variant="outline"
-                  className="h-9 text-xs px-5"
+                  className="h-9 text-xs px-4"
                   onClick={() => {
                     setAddressFixConfirmOpen(false);
                     setAddressFixError(null);
@@ -2668,7 +2674,7 @@ export function DataCleaningPage() {
                   onClick={() => void handleProceedFixAddresses()}
                   disabled={addressFixSubmitting}
                   variant="outline"
-                  className="font-semibold border-primary text-primary hover:bg-primary/10 transition-colors h-9 text-xs px-5"
+                  className="font-semibold border-primary text-primary hover:bg-primary/10 transition-colors h-9 text-xs px-4"
                 >
                   {addressFixSubmitting && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -2690,15 +2696,15 @@ export function DataCleaningPage() {
               }}
             />
             <div className="relative z-10 w-full max-w-xl rounded-md border border-border bg-background shadow-2xl overflow-hidden">
-              <div className="py-4 border-b flex items-center justify-between">
+              <div className="py-4 border-b flex items-center justify-between bg-muted">
                 <h3 className="text-md leading-none font-light text-foreground px-4 flex gap-2 items-center text-red-400">
-                  <CircleAlert className="inline text-red-400" />
+                  <CircleAlert className="inline text-red-400 h-4 w-4" />
                   Outstanding Issues Alert
                 </h3>
 
                 <div className="px-4">
                   <X
-                    className="cursor-pointer"
+                    className="cursor-pointer h-4 w-4"
                     onClick={() => {
                       if (submitting) return;
                       setProceedConfirmOpen(false);
@@ -2708,7 +2714,7 @@ export function DataCleaningPage() {
               </div>
 
               <div className="p-6">
-                <p className="text-sm text-muted-foreground whitespace-pre-line">
+                <p className="text-[13px] font-medium text-[#171717] whitespace-pre-line leading-relaxed">
                   Some data anomalies were not resolved. Proceeding may result
                   in inconsistencies. <br />
                   <br />
@@ -2716,10 +2722,10 @@ export function DataCleaningPage() {
                 </p>
               </div>
 
-              <div className="p-4 border-t flex items-center justify-end gap-2">
+              <div className="p-2 border-t flex items-center justify-end gap-2 bg-muted ">
                 <Button
                   variant="outline"
-                  className="px-3"
+                  className="text-xs px-4"
                   disabled={submitting}
                   onClick={() => {
                     setProceedConfirmOpen(false);
@@ -2731,7 +2737,7 @@ export function DataCleaningPage() {
                   onClick={() => void handleContinue()}
                   disabled={submitting}
                   variant="outline"
-                  className="px-3 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors "
+                  className="px-4 font-semibold border-primary text-primary hover:bg-primary/10 transition-colors text-xs"
                 >
                   {submitting && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

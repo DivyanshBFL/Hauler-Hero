@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload, X, ChevronRight } from "lucide-react";
+import { Upload, X } from "lucide-react";
 import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
 import {
   Dialog,
@@ -376,7 +376,9 @@ export function UploadPage() {
             <ProcessStepper />
           </div>
           <Card className="shadow-none border border-border bg-card hauler-animate-in flex flex-col relative !h-[calc(100vh-170px)]">
-            <CardHeader className={`p-1 px-2 bg-muted shrink-0 ${file && "border-b border-gray-200"}`}>
+            <CardHeader
+              className={`p-1 px-2 bg-muted shrink-0 ${file && "border-b border-gray-200"}`}
+            >
               <div className="flex items-center justify-between gap-3 flex-wrap">
                 <div className="flex items-center gap-2">
                   <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
@@ -657,7 +659,7 @@ export function UploadPage() {
               className="w-[50vw] max-w-[80vw] p-0 !animate-none 
           !duration-0 overflow-hidden gap-0"
             >
-              <DialogHeader className="border-b p-4 bg-muted space-y-0">
+              <DialogHeader className="border-b !py-2 p-4 bg-muted space-y-0">
                 <DialogTitle className="text-md">
                   Select Sheets To Join
                 </DialogTitle>
@@ -666,12 +668,12 @@ export function UploadPage() {
                 </DialogDescription>
               </DialogHeader>
 
-              <div className="grid grid-cols-[22vw_2vw_22vw]  p-4 ">
+              <div className="grid grid-cols-[22.66vw_2vw_22.66vw]  p-4 ">
                 {/* Left Side */}
                 <div className="rounded-lg space-y-3 ">
                   {/* <div className="text-sm font-semibold text-foreground">Primary Data</div> */}
                   <div className="space-y-1">
-                    <label className="text-sm font-medium text-muted-foreground">
+                    <label className="text-[13px] font-medium text-[#171717]">
                       Primary Sheet
                     </label>
                     <Select
@@ -690,7 +692,7 @@ export function UploadPage() {
                         setRightKey(sheetHeadersByName[nextRight]?.[0] ?? "");
                       }}
                     >
-                      <SelectTrigger className="w-full h-9 rounded-sm border-gray-200 bg-background px-3 text-xs font-normal shadow-none hover:bg-gray-50 transition-colors">
+                      <SelectTrigger>
                         <SelectValue placeholder="Select primary sheet" />
                       </SelectTrigger>
                       <SelectContent className="rounded-sm border-gray-200 shadow-md">
@@ -707,7 +709,7 @@ export function UploadPage() {
                     </Select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-sm font-medium text-muted-foreground">
+                    <label className="text-[13px] font-medium text-[#171717]">
                       Column
                     </label>
                     <Select
@@ -715,7 +717,7 @@ export function UploadPage() {
                       onValueChange={(val) => setLeftKey(val)}
                       disabled={!effectiveLeftSheet}
                     >
-                      <SelectTrigger className="w-full h-9 rounded-sm border-gray-200 bg-background px-3 text-xs font-normal shadow-none hover:bg-gray-50 transition-colors">
+                      <SelectTrigger>
                         <SelectValue placeholder="Select column" />
                       </SelectTrigger>
                       <SelectContent className="rounded-sm border-gray-200 shadow-md">
@@ -745,7 +747,7 @@ export function UploadPage() {
                 <div className="rounded-lg space-y-3 ">
                   {/* <div className="text-sm font-semibold text-foreground">Seconday Data</div> */}
                   <div className="space-y-1">
-                    <label className="text-sm font-medium text-muted-foreground">
+                    <label className="text-[13px] font-medium text-[#171717]">
                       Reference Sheet
                     </label>
                     <Select
@@ -755,7 +757,7 @@ export function UploadPage() {
                         setRightKey(sheetHeadersByName[nextRight]?.[0] ?? "");
                       }}
                     >
-                      <SelectTrigger className="w-full h-9 rounded-sm border-gray-200 bg-background px-3 text-xs font-normal shadow-none hover:bg-gray-50 transition-colors">
+                      <SelectTrigger>
                         <SelectValue placeholder="Select reference sheet" />
                       </SelectTrigger>
                       <SelectContent className="rounded-sm border-gray-200 shadow-md">
@@ -772,7 +774,7 @@ export function UploadPage() {
                     </Select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-sm font-medium text-muted-foreground">
+                    <label className="text-[13px] font-medium text-[#171717]">
                       Related Column
                     </label>
                     <Select
@@ -780,7 +782,7 @@ export function UploadPage() {
                       onValueChange={(val) => setRightKey(val)}
                       disabled={!effectiveRightSheet}
                     >
-                      <SelectTrigger className="w-full h-9 rounded-sm border-gray-200 bg-background px-3 text-xs font-normal shadow-none hover:bg-gray-50 transition-colors">
+                      <SelectTrigger>
                         <SelectValue placeholder="Select related column" />
                       </SelectTrigger>
                       <SelectContent className="rounded-sm border-gray-200 shadow-md">

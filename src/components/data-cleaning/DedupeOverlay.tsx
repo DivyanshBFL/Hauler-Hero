@@ -151,8 +151,8 @@ export default function DedupeOverlay(props: Props) {
           className="absolute left-4 top-4 bottom-4 bg-white border border-border rounded shadow-2xl overflow-hidden transition-all duration-300"
           style={{ right: renderDrawer ? "580px" : "4%" }}
         >
-          <div className="h-10 px-6 bg-white border-b border-border flex items-center justify-between">
-            <h2 className="text-xl leading-none font-light text-foreground">
+          <div className="h-10 px-6 bg-muted border-b border-border flex items-center justify-between">
+            <h2 className="text-md leading-none font-light text-foreground">
               Preview
             </h2>
             <button
@@ -226,10 +226,8 @@ export default function DedupeOverlay(props: Props) {
           className={`absolute right-0 top-0 h-full w-full max-w-[560px] bg-white border-l border-border shadow-2xl z-10 transition-transform duration-300 ease-in-out ${drawerVisible ? "translate-x-0" : "translate-x-full"}`}
         >
           <div className="h-12 px-6 border-b border-border bg-muted flex items-center justify-between">
-            <h2 className="flex items-center text-md leading-none font-light text-foreground">
-              <span className="mr-2">
-                <Copy className="h-4 w-4" />
-              </span>
+            <h2 className="flex items-center gap-2 text-md leading-none font-light text-foreground">
+              <Copy className="h-4 w-4" />
               <span>
                 {lastDrawer === "dedupe"
                   ? dedupeMode === "column"
@@ -262,7 +260,7 @@ export default function DedupeOverlay(props: Props) {
                   </div>
                 )}
                 <div className="flex items-center gap-4">
-                  <label className="inline-flex items-center gap-2 text-sm">
+                  <label className="inline-flex items-center gap-2 text-[13px] font-medium text-[#171717]">
                     <input
                       className="accent-blue-600"
                       type="radio"
@@ -271,7 +269,7 @@ export default function DedupeOverlay(props: Props) {
                     />{" "}
                     Column wise
                   </label>
-                  <label className="inline-flex items-center gap-2 text-sm">
+                  <label className="inline-flex items-center gap-2 text-[13px] font-medium text-[#171717]">
                     <input
                       className="accent-blue-600"
                       type="radio"
@@ -285,7 +283,7 @@ export default function DedupeOverlay(props: Props) {
                 {dedupeMode === "column" && (
                   <div className=" rounded-lg  space-y-2">
                     <div className="relative">
-                      <p className="text-sm text-muted-foreground mb-2">
+                      <p className="text-[13px] font-medium text-[#171717]">
                         Select Columns
                       </p>
                       <Select
@@ -305,7 +303,7 @@ export default function DedupeOverlay(props: Props) {
                         </SelectTrigger>
                         <SelectContent>
                           {columns.map((c) => (
-                            <SelectItem key={c} value={c}>
+                            <SelectItem className="text-xs" key={c} value={c}>
                               {c}
                             </SelectItem>
                           ))}
@@ -338,7 +336,7 @@ export default function DedupeOverlay(props: Props) {
                       {dedupeColumns.map((c) => (
                         <span
                           key={c}
-                          className="inline-flex items-center gap-2 px-3 py-1 rounded bg-muted text-sm"
+                          className="inline-flex items-center gap-2 px-3 py-1 rounded bg-muted text-xs"
                         >
                           {c}
                           <button
@@ -359,7 +357,7 @@ export default function DedupeOverlay(props: Props) {
                 {dedupeMode === "column" && (
                   <>
                     <div>
-                      <p className="text-sm text-muted-foreground mb-2">
+                      <p className="text-[13px] font-medium text-[#171717]">
                         Select method
                       </p>
                       <Select
@@ -372,8 +370,12 @@ export default function DedupeOverlay(props: Props) {
                           <SelectValue></SelectValue>
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="automatic">Automatic</SelectItem>
-                          <SelectItem value="manual">Manual</SelectItem>
+                          <SelectItem className="text-xs" value="automatic">
+                            Automatic
+                          </SelectItem>
+                          <SelectItem className="text-xs" value="manual">
+                            Manual
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                       {/* <select
@@ -390,9 +392,9 @@ export default function DedupeOverlay(props: Props) {
 
                     {dedupeMethod === "manual" && (
                       <div className="space-y-4">
-                        <p className="text-sm font-medium flex items-center">
+                        <p className="text-[13px] font-medium text-[#171717] flex items-center">
                           Enter conditions to select which rows to
-                          <label className="ml-3 mr-3 inline-flex items-center gap-2 text-sm font-normal">
+                          <label className="ml-3 mr-3 inline-flex items-center gap-2 text-[13px] font-normal text-[#171717]">
                             <input
                               type="radio"
                               checked={keepRemove === "keep"}
@@ -400,7 +402,7 @@ export default function DedupeOverlay(props: Props) {
                             />{" "}
                             Keep
                           </label>
-                          <label className="inline-flex items-center gap-2 text-sm font-normal">
+                          <label className="inline-flex items-center gap-2 text-[13px] font-normal text-[#171717]">
                             <input
                               type="radio"
                               checked={keepRemove === "remove"}
@@ -415,9 +417,11 @@ export default function DedupeOverlay(props: Props) {
                             key={"cond-" + String(idx)}
                             className="flex items-center gap-2"
                           >
-                            <span className="text-sm shrink-0">if</span>
+                            <span className="text-[13px] font-medium text-[#171717] shrink-0">
+                              if
+                            </span>
                             <select
-                              className="h-11 flex-1 min-w-[120px] border border-border rounded-md px-3 bg-background text-sm"
+                              className="!h-8 flex-1 min-w-[120px] border border-border rounded-sm px-3 bg-background text-xs"
                               value={cond.column}
                               onChange={(e) =>
                                 setConditions((prev) =>
@@ -436,7 +440,7 @@ export default function DedupeOverlay(props: Props) {
                               ))}
                             </select>
                             <select
-                              className="h-11 flex-1 min-w-[120px] border border-border rounded-md px-3 bg-background text-sm"
+                              className="!h-8 flex-1 min-w-[120px] border border-border rounded-sm px-3 bg-background text-xs"
                               value={cond.operator}
                               onChange={(e) =>
                                 setConditions((prev) =>
@@ -512,7 +516,7 @@ export default function DedupeOverlay(props: Props) {
                 )}
 
                 <div>
-                  <p className="text-sm font-medium mb-2 text-muted-foreground">
+                  <p className="text-[13px] font-medium text-[#171717] mb-2">
                     Options
                   </p>
                   <div className="flex flex-wrap gap-4 text-sm">

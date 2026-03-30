@@ -44,6 +44,7 @@ import {
   ChevronRight,
   ChevronLeft,
   GitMerge,
+  CheckCircle2,
 } from "lucide-react";
 import { SourceFieldNode, TargetFieldNode } from "@/components/field-mapping";
 import {
@@ -1658,42 +1659,58 @@ export function FieldMappingPage() {
           }
         }}
       >
-        <DialogContent className="p-0">
-          <DialogHeader className="">
-            <DialogTitle className="text-md leading-none font-light text-foreground flex gap-2 items-center border-b p-4">
-              Confirm Mapping Change
-            </DialogTitle>
-            <DialogDescription className="pt-2 px-4 text-sm text-muted-foreground whitespace-pre-line">
-              {actionDescription}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="sm:justify-end gap-2 mt-4 border-t p-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                setIsConfirmModalOpen(false);
-                setPendingAction(null);
-              }}
-              className="h-9 text-xs px-5"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              className="font-semibold border-primary text-primary hover:bg-primary/10 transition-colors h-9 text-xs px-5"
-              onClick={() => {
+        <DialogContent className="p-0 overflow-hidden">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (pendingAction) {
+                pendingAction();
+              }
+              setIsConfirmModalOpen(false);
+              setPendingAction(null);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
                 if (pendingAction) {
                   pendingAction();
                 }
                 setIsConfirmModalOpen(false);
                 setPendingAction(null);
-              }}
-            >
-              Confirm
-            </Button>
-          </DialogFooter>
+              }
+            }}
+          >
+            <DialogHeader className="">
+              <DialogTitle className="text-md leading-none font-light text-foreground flex gap-2 items-center border-b p-4">
+                <CheckCircle2 className="text-muted-foreground" />
+                Confirm Mapping Change
+              </DialogTitle>
+              <DialogDescription className="pt-2 px-4 text-sm text-muted-foreground whitespace-pre-line">
+                {actionDescription}
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="sm:justify-end gap-2 mt-4 border-t p-4 bg-muted/30">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setIsConfirmModalOpen(false);
+                  setPendingAction(null);
+                }}
+                className="h-9 text-xs px-5"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="outline"
+                autoFocus
+                className="font-semibold border-primary text-primary hover:bg-primary/10 transition-colors h-9 text-xs px-5"
+              >
+                Confirm
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </>

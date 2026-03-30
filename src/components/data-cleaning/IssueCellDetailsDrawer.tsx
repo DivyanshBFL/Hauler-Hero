@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, Type, X, Loader2, Check } from "lucide-react";
+import { ChevronDown, Type, X, Loader2, Check, Columns2 } from "lucide-react";
 import type { IssueCellPanel } from "./types";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "@/services/api";
 
 // ----------- Column Profile types -----------
@@ -208,26 +208,37 @@ export default function IssueCellDetailsDrawer({
     setAppliedOperations(new Set());
   }, [panel]);
 
+  const fetchColumnProfile = useCallback(
+    async (col: string, silent = false) => {
+      if (!sessionId) return;
+      if (!silent) setProfileLoading(true);
+      setProfileError(null);
+      try {
+        const profile = await api.getColumnProfile(sessionId, col);
+        setColumnProfile(profile);
+      } catch (err: unknown) {
+        if (!silent) {
+          setProfileError(
+            err instanceof Error
+              ? err.message
+              : "Failed to load column profile",
+          );
+        }
+      } finally {
+        if (!silent) setProfileLoading(false);
+      }
+    },
+    [sessionId],
+  );
+
   // Fetch column profile when column changes
   useEffect(() => {
-    if (!panel || !sessionId) {
+    if (panel?.column) {
+      void fetchColumnProfile(panel.column);
+    } else {
       setColumnProfile(null);
-      return;
     }
-    setProfileLoading(true);
-    setProfileError(null);
-
-    api
-      .getColumnProfile(sessionId, panel.column)
-      .then((profile: ColumnProfile) => setColumnProfile(profile))
-      .catch((err: unknown) =>
-        setProfileError(
-          err instanceof Error ? err.message : "Failed to load column profile",
-        ),
-      )
-      .finally(() => setProfileLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [panel?.column, sessionId]);
+  }, [panel?.column, fetchColumnProfile]);
 
   if (!mounted) return null;
 
@@ -280,6 +291,9 @@ export default function IssueCellDetailsDrawer({
       setOperationResult({ changedRowCount });
       setAppliedOperations((prev) => new Set(prev).add(activeOperation));
       onOperationApplied(panel.column, result);
+
+      // Refresh the profile to get updated issue counts and stats
+      void fetchColumnProfile(panel.column, true);
     } catch (err: unknown) {
       setOperationError(
         err instanceof Error ? err.message : "Operation failed",
@@ -306,8 +320,9 @@ export default function IssueCellDetailsDrawer({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="h-12 px-5 border-b border-border bg-white flex items-center justify-between shrink-0">
-          <h2 className="text-md leading-none font-light text-foreground">
+        <div className="h-12 px-5 border-b border-border bg-muted flex items-center justify-between shrink-0">
+          <h2 className="text-md leading-none font-light text-foreground flex justify-center items-center gap-2">
+            <Columns2 className="h-4 w-4" />
             Column Details
           </h2>
           <button
@@ -339,7 +354,7 @@ export default function IssueCellDetailsDrawer({
           )}
 
           {/* Profile data */}
-          {columnProfile && !profileLoading && (
+          {columnProfile && (
             <>
               {/* Type row */}
               <div className="border-border">
@@ -796,14 +811,14 @@ export default function IssueCellDetailsDrawer({
                                   <Button
                                     size="sm"
                                     variant="outline"
-                                    className="!h-7 py-0 text-xs px-3 text-red-600"
+                                    className=" py-0 !text-xs px-3 text-red-600"
                                     onClick={resetOperationState}
                                   >
                                     Cancel
                                   </Button>
                                   <Button
                                     size="sm"
-                                    className="h-7 text-xs px-3"
+                                    className=" text-xs px-3"
                                     disabled={
                                       applying ||
                                       !hasRequiredParams(
@@ -833,7 +848,7 @@ export default function IssueCellDetailsDrawer({
         </div>
 
         {/* Footer */}
-        <div className="shrink-0 border-t border-border bg-white p-4 flex items-center justify-end">
+        <div className="shrink-0 border-t border-border bg-muted p-2 px-5 flex items-center justify-end">
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>

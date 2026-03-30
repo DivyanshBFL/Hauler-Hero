@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import AILogo from "../../public/ai-primarycolor.svg?react";
 import {
   Upload,
   ShieldAlert,
@@ -14,6 +15,7 @@ type Step = {
   path: string[];
   isImageIcon?: boolean;
   Icon: any;
+  classname?: string;
 };
 
 const steps: Step[] = [
@@ -27,7 +29,8 @@ const steps: Step[] = [
     title: "Field Mapping",
     subtitle: "Drag source fields to target fields",
     path: ["/field-mapping"],
-    Icon: Sparkles,
+    Icon: AILogo,
+    classname: "h-5 w-5  ",
   },
   {
     title: "Data Cleaning",
@@ -116,7 +119,7 @@ export default function ProcessStepper() {
                           alt={step.title}
                         />
                       );
-                    return <step.Icon size={16} />;
+                    return <step.Icon size={16} class={step.classname} />;
                   })()
                 )}
               </span>
