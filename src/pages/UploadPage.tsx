@@ -375,7 +375,7 @@ export function UploadPage() {
           <div className="mb-2">
             <ProcessStepper />
           </div>
-          <Card className="shadow-none border border-border bg-card animate-in flex flex-col relative !h-[calc(100vh-162px)]">
+          <Card className="shadow-none border border-border bg-card animate-in flex flex-col relative !h-[calc(100vh-170px)]">
             <CardHeader className="p-1 px-2 bg-muted border-none shrink-0">
               <div className="flex items-center justify-between gap-3 flex-wrap">
                 <div className="flex items-center gap-2">
@@ -583,7 +583,7 @@ export function UploadPage() {
                                   {previewHeaders.map((header) => (
                                     <TableHead
                                       key={header}
-                                      className="px-3 py-[0.35rem] text-left font-semibold whitespace-nowrap bg-gray-50 border border-border"
+                                      className="px-3 py-[0.35rem] text-left font-semibold whitespace-nowrap bg-gray-50"
                                     >
                                       {header}
                                     </TableHead>

@@ -148,7 +148,11 @@ export default function DedupeOverlay(props: Props) {
             <h2 className="text-xl leading-none font-light text-foreground">
               Preview
             </h2>
-            <button onClick={() => setPreviewOpen(false)}>
+            <button
+              onClick={() => {
+                setPreviewOpen(false);
+              }}
+            >
               <X className="h-4 w-4" />
             </button>
           </div>
