@@ -1908,7 +1908,7 @@ export function DataCleaningPage() {
                       Data Cleanup Workspace
                     </CardTitle>
                     <div className="">
-                      <CardDescription className="text-[11px] text-muted-foreground">
+                      <CardDescription className="text-[11px] text-primary">
                         <span>
                           <Tooltip>
                             <TooltipTrigger>Issue Summary</TooltipTrigger>
@@ -1926,12 +1926,12 @@ export function DataCleaningPage() {
                                 </span>
                               </p>
                               {Object.keys(issueCountByType).length ? (
-                                <div className="space-y-1 mb-3">
+                                <div className="space-y-2 mb-3">
                                   {Object.entries(issueCountByType).map(
                                     ([issueType, count]) => (
                                       <div
                                         key={issueType}
-                                        className="flex items-center justify-between gap-3"
+                                        className="flex items-center justify-between gap-4"
                                       >
                                         <span className="text-muted-foreground">
                                           {toIssueLabel(issueType)}
