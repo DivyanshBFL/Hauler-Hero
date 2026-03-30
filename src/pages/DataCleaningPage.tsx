@@ -43,11 +43,9 @@ import {
   ShieldAlert,
   FileClock,
   EllipsisVertical,
-  Cross,
   X,
   CircleAlert,
   Filter,
-  TriangleAlert,
 } from "lucide-react";
 import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
 import ProcessStepper from "@/components/ProcessStepper";
@@ -162,10 +160,7 @@ function showApiErrorToast(error: unknown, fallback: string) {
   toast.error(getApiErrorMessage(error, fallback));
 }
 
-function getAddressColumns(columns: string[]): string[] {
-  const r = /(address|street|city|state|zip|postal|country|location)/i;
-  return columns.filter((c) => r.test(c));
-}
+
 
 function getIssueColumnsMap(issues: DataIssueGroup[]): Record<string, number> {
   const map: Record<string, number> = {};
@@ -248,7 +243,6 @@ export function DataCleaningPage() {
     () => new Set(),
   );
 
-  const [fixingAddresses, setFixingAddresses] = useState(false);
   const [originalRows, setOriginalRows] = useState<Record<string, any>[]>([]);
   const [rowIssueMap, setRowIssueMap] = useState<
     Record<number, Record<string, string[]>>
@@ -260,7 +254,7 @@ export function DataCleaningPage() {
     { column: "", operator: "is", value: "" },
   ]);
   const [columnPickerValue, setColumnPickerValue] = useState("");
-  const [openColumnMenu, setOpenColumnMenu] = useState<string | null>(null);
+  const [, setOpenColumnMenu] = useState<string | null>(null);
   const [issueCellPanel, setIssueCellPanel] = useState<IssueCellPanel | null>(
     null,
   );
@@ -284,9 +278,6 @@ export function DataCleaningPage() {
   const [issueSummaryOpen, setIssueSummaryOpen] = useState(false);
   const [issueCountByType, setIssueCountByType] = useState<
     Record<string, number>
-  >({});
-  const [sessionIssueSummary, setSessionIssueSummary] = useState<
-    Record<string, { columns?: string[]; row_count?: number }>
   >({});
 
   const [addressFixConfirmOpen, setAddressFixConfirmOpen] = useState(false);
@@ -420,7 +411,6 @@ export function DataCleaningPage() {
     [columns],
   );
 
-  const addressColumns = useMemo(() => getAddressColumns(columns), [columns]);
   const issueByColumn = useMemo(() => getIssueColumnsMap(issues), [issues]);
 
   const pushHistory = useCallback(
@@ -447,8 +437,6 @@ export function DataCleaningPage() {
     });
     return Array.from(set).sort();
   }, [issueTypes, issues]);
-
-  const issueGroupCount = availableIssueTypes.length;
 
   const getActiveSessionId = useCallback((): string | null => {
     return (
@@ -525,8 +513,6 @@ export function DataCleaningPage() {
       { columns?: string[]; row_count?: number; issue_count?: number }
     >;
     const issueCounts = issuesData?.issue_counts || {};
-
-    setSessionIssueSummary(summary);
 
     const nextIssueMap: Record<number, Record<string, string[]>> = {};
     const nextTypes = new Set<string>();
@@ -971,7 +957,6 @@ export function DataCleaningPage() {
         setIssues([]);
         setIssueTypes([]);
         setIssueCountByType({});
-        setSessionIssueSummary({});
         toast.error(
           error instanceof Error
             ? `Failed to load session issues: ${error.message}`
@@ -1159,15 +1144,42 @@ export function DataCleaningPage() {
         initialRows = initialRows.map((r, idx) => ({ ...r, __rowIndex: idx }));
       }
 
+      const existingOriginal = sessionStorage.getItem(
+        ORIGINAL_CLEANING_DATA_KEY,
+      );
       const baseline = JSON.parse(JSON.stringify(initialRows)) as Record<
         string,
         any
       >[];
-      setOriginalRows(baseline);
-      sessionStorage.setItem(
-        ORIGINAL_CLEANING_DATA_KEY,
-        JSON.stringify(baseline),
-      );
+      let finalOriginal = baseline;
+      if (existingOriginal && !rowsFromNavigation) {
+        finalOriginal = JSON.parse(existingOriginal) as Record<string, any>[];
+        setOriginalRows(finalOriginal);
+      } else {
+        setOriginalRows(baseline);
+        sessionStorage.setItem(
+          ORIGINAL_CLEANING_DATA_KEY,
+          JSON.stringify(baseline),
+        );
+      }
+
+      // Restore "Worked On" (yellow background) state by comparing current and original
+      if (finalOriginal.length === initialRows.length) {
+        const workedOn = new Set<string>();
+        initialRows.forEach((row, i) => {
+          const rowIndex = Number(row.__rowIndex ?? i);
+          const origRow = finalOriginal[i];
+          if (origRow) {
+            Object.keys(row).forEach((col) => {
+              if (col.startsWith("_")) return;
+              if (displayValue(row[col]) !== displayValue(origRow[col])) {
+                workedOn.add(`${rowIndex}:${col}`);
+              }
+            });
+          }
+        });
+        setWorkedOnCells(workedOn);
+      }
 
       setAllRows(initialRows);
       setHistory([JSON.parse(JSON.stringify(initialRows))]);
@@ -1225,6 +1237,7 @@ export function DataCleaningPage() {
       if (editLog.length) {
         const requestBody = { edits: editLog }; // Include the edit log
         await api.submitSessionEdits(sid, requestBody);
+        sessionStartRequestCache.delete(sid); // Clear stale cache after submission
 
         addActivityLog({
           kind: "action",
@@ -1459,21 +1472,7 @@ export function DataCleaningPage() {
     ],
   );
 
-  const clearCellIssue = useCallback((rowIndex: number, column: string) => {
-    setRowIssueMap((prev) => {
-      const rowIssues = prev[rowIndex];
-      if (!rowIssues?.[column]?.length) return prev;
 
-      const next = { ...prev, [rowIndex]: { ...rowIssues } };
-      delete next[rowIndex][column];
-
-      if (!Object.keys(next[rowIndex]).length) {
-        delete next[rowIndex];
-      }
-
-      return next;
-    });
-  }, []);
 
   const applyCellEdit = useCallback(
     async (rowIndex: number, column: string, nextValueRaw: string) => {
@@ -1523,6 +1522,7 @@ export function DataCleaningPage() {
 
         // Submit this single edit
         await api.submitSessionEdits(sid, { edits: [newEdit] });
+        sessionStartRequestCache.delete(sid); // Clear stale cache after submission
 
         // Refresh rows from session to get updated data
         const refreshedRows = await refreshRowsFromSession();
@@ -1633,6 +1633,7 @@ export function DataCleaningPage() {
       }, 300);
 
       const response = await api.autoFix(sid, autoFixOptions);
+      sessionStartRequestCache.delete(sid); // Clear stale cache after submission
 
       const refreshedRows = await refreshRowsFromSession();
       const backendRows =
@@ -1681,6 +1682,7 @@ export function DataCleaningPage() {
       const payload = buildDedupePayload(false);
 
       const response = await api.dedupApply(sessionId, payload);
+      sessionStartRequestCache.delete(sessionId); // Clear stale cache after submission
 
       const refreshedRows = await refreshRowsFromSession();
       const backendRows =
@@ -1733,6 +1735,7 @@ export function DataCleaningPage() {
       }, 300);
 
       const response = await api.addressCorrector(sid);
+      sessionStartRequestCache.delete(sid); // Clear stale cache after submission
 
       const refreshedRows = await refreshRowsFromSession();
       const backendRows =
@@ -1781,6 +1784,7 @@ export function DataCleaningPage() {
         if (!sid)
           throw new Error("Missing session id for column operation refresh");
 
+        sessionStartRequestCache.delete(sid); // Clear stale cache
         const refreshedRows = await refreshRowsFromSession();
         const backendRows =
           refreshedRows && refreshedRows.length
@@ -1842,6 +1846,7 @@ export function DataCleaningPage() {
         if (!sid)
           throw new Error("Missing session id for column operation refresh");
 
+        sessionStartRequestCache.delete(sid); // Clear stale cache
         const refreshedRows = await refreshRowsFromSession();
         const backendRows =
           refreshedRows && refreshedRows.length

@@ -414,7 +414,7 @@ export function DataPreviewPage() {
                   </div>
                   <div className="">
                     <CardTitle className="text-sm font-normal">
-                      Mapped Data Preview
+                      Field Mapping Preview
                     </CardTitle>
                     <CardDescription className="text-[11px]">
                       Showing first {totalRows > 20 ? 20 : totalRows} rows

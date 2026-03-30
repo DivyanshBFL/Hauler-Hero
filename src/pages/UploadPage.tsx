@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload, Loader2, X, ChevronRight } from "lucide-react";
+import { Upload, X, ChevronRight } from "lucide-react";
 import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
 import {
   Dialog,
@@ -37,7 +37,7 @@ import {
 } from "@/components/ui/table";
 import type { SheetData } from "@/services/api";
 import ProcessStepper from "@/components/ProcessStepper";
-import Loader from "@/components/Loader";
+
 
 type JoinSelection = {
   leftSheet: string;
@@ -64,10 +64,7 @@ export function UploadPage() {
   const [rightSheetName, setRightSheetName] = useState("");
   const [leftKey, setLeftKey] = useState("");
   const [rightKey, setRightKey] = useState("");
-  const [leftSheetQuery, setLeftSheetQuery] = useState("");
-  const [rightSheetQuery, setRightSheetQuery] = useState("");
-  const [leftKeyQuery, setLeftKeyQuery] = useState("");
-  const [rightKeyQuery, setRightKeyQuery] = useState("");
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const workbookRef = useRef<XLSX.WorkBook | null>(null);
   const navigate = useNavigate();
@@ -85,10 +82,6 @@ export function UploadPage() {
     setRightSheetName("");
     setLeftKey("");
     setRightKey("");
-    setLeftSheetQuery("");
-    setRightSheetQuery("");
-    setLeftKeyQuery("");
-    setRightKeyQuery("");
     workbookRef.current = null;
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -120,10 +113,6 @@ export function UploadPage() {
     setRightSheetName("");
     setLeftKey("");
     setRightKey("");
-    setLeftSheetQuery("");
-    setRightSheetQuery("");
-    setLeftKeyQuery("");
-    setRightKeyQuery("");
     workbookRef.current = null;
 
     const fileType = selectedFile.type;
@@ -252,10 +241,7 @@ export function UploadPage() {
           setRightSheetName(secondSheet);
           setLeftKey(headersBySheet[firstSheet]?.[0] ?? "");
           setRightKey(headersBySheet[secondSheet]?.[0] ?? "");
-          setLeftSheetQuery("");
-          setRightSheetQuery("");
-          setLeftKeyQuery("");
-          setRightKeyQuery("");
+          setRightKey(headersBySheet[secondSheet]?.[0] ?? "");
           requestAnimationFrame(() => setShowSheetSelector(true));
         }
       } catch (error) {
@@ -342,6 +328,7 @@ export function UploadPage() {
 
     sessionStorage.setItem("sheets", JSON.stringify(sheets));
     sessionStorage.setItem("allRows", JSON.stringify(allRows));
+    sessionStorage.setItem("uploadedFileName", file.name);
 
     if (isJoinRequired && joinSelection) {
       sessionStorage.setItem("joinSelection", JSON.stringify(joinSelection));
@@ -419,10 +406,8 @@ export function UploadPage() {
                         <>
                           <div className="gap-4 mt-0">
                             {sheets.map((sheet, index) => {
-                              const previewHeaders = sheet.headers ?? [];
-                              const previewRows = allRows.slice(0, 20);
-
                               return (
+
                                 // <div
                                 //   key={sheet.name}
                                 //   className="group p-5 border border-border rounded-xl bg-card hover:shadow-md transition-all hover:border-primary/40"
@@ -434,7 +419,7 @@ export function UploadPage() {
                                   className="group "
                                   style={{ animationDelay: `${index * 100}ms` }}
                                 >
-                                  <div className="">
+                                  <div className=" text-primary">
                                     <div>
                                       File Summary: {allRows.length} rows with{" "}
                                       {sheet.headers.length} column(s).

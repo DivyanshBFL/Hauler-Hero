@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   BrushCleaning,
-  Calendar,
   Check,
   Circle,
   Database,
@@ -101,10 +100,24 @@ export function CompletePage() {
       const sessionId = sessionStorage.getItem("session_id");
       if (!sessionId) throw new Error("Session ID is missing");
       const blob = await api.exportCleanedData(sessionId);
+      const originalName = sessionStorage.getItem("uploadedFileName") || "data.csv";
+      
+      let downloadName = "cleaned_data.csv";
+      if (originalName) {
+        const lastDotIndex = originalName.lastIndexOf(".");
+        if (lastDotIndex !== -1) {
+          const baseName = originalName.substring(0, lastDotIndex);
+          const extension = originalName.substring(lastDotIndex); // includes the dot
+          downloadName = `${baseName}_cleaned${extension}`;
+        } else {
+          downloadName = `${originalName}_cleaned`;
+        }
+      }
+
       const url = globalThis.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = "cleaned_data.csv";
+      link.download = downloadName;
       link.click();
       globalThis.URL.revokeObjectURL(url);
     } catch (error) {
@@ -349,10 +362,7 @@ export function CompletePage() {
         : 0,
   }));
 
-  const importDate = new Date().toLocaleString(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
+
 
   return (
     <>

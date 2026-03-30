@@ -5,6 +5,7 @@ import {
   ChartNoAxesCombined,
   Check,
   Sparkles,
+  BrushCleaningIcon,
 } from "lucide-react";
 
 type Step = {
@@ -32,7 +33,7 @@ const steps: Step[] = [
     title: "Data Cleaning",
     subtitle: "Grouped issues with audit trail",
     path: ["/data-cleaning", "/data-analytics"],
-    Icon: ShieldAlert,
+    Icon: BrushCleaningIcon,
   },
   {
     title: "Data Analytics",
@@ -54,9 +55,9 @@ export default function ProcessStepper() {
     currentStep = pathname.startsWith("/data-preview") ? 1 : 0;
   }
 
-  console.log(pathname);
-  console.log(currentStepIndex);
-  console.log(currentStepIndex);
+  // console.log(pathname);
+  // console.log(currentStepIndex);
+  // console.log(currentStepIndex);
 
   return (
     <div className="grid md:grid-cols-4 gap-3">
