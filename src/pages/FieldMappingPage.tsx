@@ -364,45 +364,51 @@ function buildCorrectionPayload(
   const currentActive = toActiveMappings(currentMappings);
   const baselineActive = toActiveMappings(baselineMappings);
 
-  const currentBySource = new Map(
-    currentActive.map((m) => [m.sourceField, m.targetField]),
+  // Build maps indexed by targetField for easier lookup
+  const currentByTarget = new Map(
+    currentActive.map((m) => [m.targetField, m.sourceField]),
   );
-  const baselineBySource = new Map(
-    baselineActive.map((m) => [m.sourceField, m.targetField]),
+  const baselineByTarget = new Map(
+    baselineActive.map((m) => [m.targetField, m.sourceField]),
   );
 
-  const allSources = new Set<string>([
-    ...Array.from(currentBySource.keys()),
-    ...Array.from(baselineBySource.keys()),
+  // Collect all target fields that have changes
+  const allTargets = new Set<string>([
+    ...Array.from(currentByTarget.keys()),
+    ...Array.from(baselineByTarget.keys()),
   ]);
 
   const manualChanges: CorrectionManualChange[] = [];
-  const manuallyChangedSources = new Set<string>();
+  const manuallyChangedTargets = new Set<string>();
 
-  allSources.forEach((sourceField) => {
-    const previousTargetField = baselineBySource.get(sourceField) ?? null;
-    const updatedTargetField = currentBySource.get(sourceField) ?? null;
+  allTargets.forEach((targetField) => {
+    const previousSourceField = baselineByTarget.get(targetField) ?? null;
+    const updatedSourceField = currentByTarget.get(targetField) ?? null;
 
-    if (previousTargetField === updatedTargetField) return;
+    // No change, skip
+    if (previousSourceField === updatedSourceField) return;
 
-    if (previousTargetField && !updatedTargetField) {
+    // Target was mapped before but not anymore -> DELETE action
+    if (previousSourceField && !updatedSourceField) {
       manualChanges.push({
-        sourceField,
-        previousTargetField,
-        updatedTargetField: null,
-        action: "UPDATE",
+        targetField,
+        previousSourceField,
+        updatedSourceField: null,
+        action: "DELETE",
       });
+      manuallyChangedTargets.add(targetField);
       return;
     }
 
-    if (updatedTargetField) {
+    // Target has a mapping (either new or changed) -> UPDATE action
+    if (updatedSourceField) {
       manualChanges.push({
-        sourceField,
-        previousTargetField,
-        updatedTargetField,
+        targetField,
+        previousSourceField,
+        updatedSourceField,
         action: "UPDATE",
       });
-      manuallyChangedSources.add(sourceField);
+      manuallyChangedTargets.add(targetField);
     }
   });
 
@@ -414,7 +420,7 @@ function buildCorrectionPayload(
     mappings: currentActive.map((m) => ({
       sourceField: m.sourceField,
       targetField: m.targetField,
-      isManual: manuallyChangedSources.has(m.sourceField),
+      isManual: manuallyChangedTargets.has(m.targetField),
     })),
     manualChanges,
   };
