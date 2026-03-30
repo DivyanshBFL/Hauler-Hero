@@ -375,7 +375,7 @@ export function UploadPage() {
           <div className="mb-2">
             <ProcessStepper />
           </div>
-          <Card className="shadow-none border border-border bg-card animate-in flex flex-col relative !h-[calc(100vh-170px)]">
+          <Card className="shadow-none border border-border bg-card hauler-animate-in flex flex-col relative !h-[calc(100vh-170px)]">
             <CardHeader className={`p-1 px-2 bg-muted shrink-0 ${file && "border-b border-gray-200"}`}>
               <div className="flex items-center justify-between gap-3 flex-wrap">
                 <div className="flex items-center gap-2">
@@ -388,7 +388,7 @@ export function UploadPage() {
                         Upload File
                       </CardTitle>
                       {/* {file && (
-                      <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-full text-xs font-medium animate-in fade-in slide-in-from-left-2">
+                      <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-full text-xs font-medium hauler-animate-in fade-in slide-in-from-left-2">
                         <span>📄 {file.name}</span>
                         <X
                           className="h-3 w-3 cursor-pointer hover:text-red-500 transition-colors"
@@ -483,7 +483,7 @@ export function UploadPage() {
                           Re-Join Sheets
                         </Button>
                       )}
-                      <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-sm text-xs font-medium animate-in fade-in slide-in-from-left-2">
+                      <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-sm text-xs font-medium hauler-animate-in fade-in slide-in-from-left-2">
                         <span>📄 {file.name}</span>
                         <X
                           className="h-3 w-3 cursor-pointer hover:text-red-500 transition-colors"

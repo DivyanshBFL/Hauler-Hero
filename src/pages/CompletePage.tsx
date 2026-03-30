@@ -372,7 +372,7 @@ export function CompletePage() {
           <div className="mb-2">
             <ProcessStepper />
           </div>
-          <Card className="shadow-none bg-card animate-in overflow-hidden h-[calc(100vh-170px)]">
+          <Card className="shadow-none bg-card hauler-animate-in overflow-hidden h-[calc(100vh-170px)]">
             <Loader open={!stats} />
 
             <CardContent className="p-0 space-y-2 h-[calc(100vh-240px)]">

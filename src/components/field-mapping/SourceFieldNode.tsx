@@ -26,7 +26,7 @@ function SourceFieldNodeComponent({ data }: NodeProps<SourceFieldNodeType>) {
       </span>
 
       {!hideDataType && (
-        <span className="shrink-0 text-[11px] font-semibold uppercase px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">
+        <span className="shrink-0 text-[11px] font-normal uppercase px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">
           {data.dataType ?? "TEXT"}
         </span>
       )}

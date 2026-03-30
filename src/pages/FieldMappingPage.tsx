@@ -1317,7 +1317,7 @@ export function FieldMappingPage() {
           <div className="mb-2">
             <ProcessStepper />
           </div>
-          <Card className="shadow-lg border border-border bg-card animate-in relative min-h-[calc(100vh-200px)] !h-auto">
+          <Card className="shadow-lg border border-border bg-card hauler-animate-in relative min-h-[calc(100vh-200px)] !h-auto">
             <Loader
               open={loading || processing}
               inline
@@ -1658,16 +1658,16 @@ export function FieldMappingPage() {
           }
         }}
       >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-md leading-none font-light text-foreground flex gap-2 items-center">
+        <DialogContent className="p-0">
+          <DialogHeader className="">
+            <DialogTitle className="text-md leading-none font-light text-foreground flex gap-2 items-center border-b p-4">
               Confirm Mapping Change
             </DialogTitle>
-            <DialogDescription className="pt-2 text-sm text-muted-foreground whitespace-pre-line">
+            <DialogDescription className="pt-2 px-4 text-sm text-muted-foreground whitespace-pre-line">
               {actionDescription}
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="sm:justify-end gap-2 mt-4">
+          <DialogFooter className="sm:justify-end gap-2 mt-4 border-t p-4">
             <Button
               type="button"
               variant="outline"

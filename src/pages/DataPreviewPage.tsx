@@ -135,6 +135,7 @@ export function DataPreviewPage() {
       setProcessing(false);
     }
   };
+  const fileName = sessionStorage.getItem("uploadedFileName");
 
   // ── Excel download ───────────────────────────────────────────
   const handleDownloadExcel = () => {
@@ -142,7 +143,7 @@ export function DataPreviewPage() {
     const ws = XLSX.utils.json_to_sheet(currentRows);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, selectedEntity);
-    XLSX.writeFile(wb, `preview_${selectedEntity}_${Date.now()}.xlsx`);
+    XLSX.writeFile(wb, `${fileName}_excel.xlsx`);
   };
 
   // ── Mapping JSON download ────────────────────────────────────
@@ -154,7 +155,7 @@ export function DataPreviewPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `mapping_${selectedEntity}_${Date.now()}.json`;
+    a.download = `${fileName}_JSON.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

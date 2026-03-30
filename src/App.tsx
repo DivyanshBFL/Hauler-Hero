@@ -1,24 +1,23 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider } from '@/components/theme-provider';
-import { AuthProvider } from '@/contexts/AuthContext';
-import { ProtectedRoute } from '@/components/ProtectedRoute';
-import { Layout } from '@/components/Layout';
-import { LoginPage } from '@/pages/LoginPage';
-import { UploadPage } from '@/pages/UploadPage';
-import { FieldMappingPage } from '@/pages/FieldMappingPage';
-import { DataPreviewPage } from '@/pages/DataPreviewPage';
-import { DataCleaningPage } from '@/pages/DataCleaningPage';
-import { CompletePage } from '@/pages/CompletePage';
-import DataAnalyticsPage from './pages/DataAnalyticsPage';
-import { Toaster } from 'sonner';
-import { TooltipProvider } from "@/components/ui/tooltip"
-
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { ThemeProvider } from "@/components/theme-provider";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { Layout } from "@/components/Layout";
+import { LoginPage } from "@/pages/LoginPage";
+import { UploadPage } from "@/pages/UploadPage";
+import { FieldMappingPage } from "@/pages/FieldMappingPage";
+import { DataPreviewPage } from "@/pages/DataPreviewPage";
+import { DataCleaningPage } from "@/pages/DataCleaningPage";
+import { CompletePage } from "@/pages/CompletePage";
+import DataAnalyticsPage from "./pages/DataAnalyticsPage";
+import { Toaster } from "sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 function App() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="app-theme">
       <AuthProvider>
-        <TooltipProvider>
+        <TooltipProvider delayDuration={100}>
           <BrowserRouter>
             <Layout>
               <Routes>
@@ -80,7 +79,6 @@ function App() {
         </TooltipProvider>
       </AuthProvider>
     </ThemeProvider>
-
   );
 }
 
