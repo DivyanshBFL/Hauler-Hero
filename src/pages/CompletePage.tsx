@@ -49,23 +49,25 @@ function StatTile({
 }) {
   return (
     <div
-      className={`rounded-lg border p-1 px-2 !bg-slate-100 !border-slate-200 ${className}`}
+      className={`rounded-lg border p-2 px-2 !bg-slate-100 !border-slate-200 ${className}`}
     >
       <div className="flex items-start justify-between gap-2">
-        <span className="text-[11px] leading-none text-slate-800 font-medium">
+        <span className="text-[14px] leading-none text-slate-800 font-medium">
           {label}
         </span>
-        <div className="rounded-md bg-white/60 p-1">
-          <Icon className="h-3.5 w-3.5 text-slate-600" />
-        </div>
       </div>
-      <div className="mt-0.25">
+      <div className="mt-2">
         <div className="text-md mb-1 leading-none font-bold tabular-nums text-slate-900">
           {value}
         </div>
         {detail ? (
-          <div className="text-[10px] text-slate-700 mt-0.5 leading-none">
-            {detail}
+          <div className="flex items-center justify-between">
+            <div className="text-[11px] text-slate-700 mt-0.5 leading-none">
+              {detail}
+            </div>
+            <div className="rounded-md bg-white/60 p-1">
+              <Icon className="h-3.5 w-3.5 text-slate-600" />
+            </div>
           </div>
         ) : null}
       </div>
@@ -169,7 +171,9 @@ export function CompletePage() {
       ? {
           key: "success-rate",
           label: "Data Cleaning",
-          value: toNum(apiStats?.updated?.fields ?? 0)!.toLocaleString(),
+          value: toNum(
+            apiStats?.total_issues - apiStats.current_issues ?? 0,
+          )!.toLocaleString(),
           detail: "Issues Fixed",
           icon: BrushCleaningIcon,
           className: "!bg-amber-200 !border-amber-300",
@@ -308,6 +312,41 @@ export function CompletePage() {
     dotColor: string;
     hex: string;
   }>;
+  const barChartBreakdown = [
+    toNum(apiStats?.total_issues) !== null
+      ? {
+          key: "total-issues",
+          label: "Total Issues Found",
+          rows: toNum(apiStats?.total_issues)!,
+          pct: toNum(apiStats?.records_affected?.rows_pct) ?? undefined,
+          color: "bg-amber-500",
+          dotColor: "text-amber-500",
+          hex: "#f59e0b",
+        }
+      : null,
+    hasNum(apiStats?.current_issues)
+      ? {
+          key: "remaining-issues",
+          label: "Remaining Issues",
+          rows: apiStats.current_issues,
+          pct: hasNum(apiStats?.unchanged_data?.pct)
+            ? apiStats.unchanged_data.pct
+            : undefined,
+          color: "bg-slate-400",
+          dotColor: "text-slate-400",
+          hex: "#94a3b8",
+        }
+      : null,
+  ].filter(Boolean) as Array<{
+    key: string;
+    label: string;
+    rows: number;
+    pct?: number;
+    color: string;
+    dotColor: string;
+    hex: string;
+  }>;
+
   const totalActionRows =
     hasNum(apiStats?.total_processed?.rows) && apiStats.total_processed.rows > 0
       ? apiStats.total_processed.rows
@@ -372,10 +411,10 @@ export function CompletePage() {
           <div className="mb-2">
             <ProcessStepper />
           </div>
-          <Card className="shadow-none bg-card hauler-animate-in overflow-hidden h-[calc(100vh-170px)]">
+          <Card className="shadow-none bg-card border-none hauler-animate-in overflow-hidden h-[calc(100vh-170px)]">
             <Loader open={!stats} />
 
-            <CardContent className="p-0 space-y-2 h-[calc(100vh-240px)]">
+            <CardContent className="p-0 space-y-2 h-[calc(100vh-240px)] border-none">
               <div>
                 <div className="grid grid-cols-1 md:grid-cols-1 gap-3 md:gap-4">
                   <div className="bg-emerald-50 rounded-lg border border-emerald-600 p-2 ">
@@ -469,6 +508,34 @@ export function CompletePage() {
                   </div> */}
 
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-1.5">
+                    <div className="rounded-lg border border-slate-200 bg-white p-3 ">
+                      <h3 className="text-sm font-normal text-slate-800 mb-2">
+                        Outcome overview
+                      </h3>
+                      <div className="h-[10px] rounded-md bg-slate-100 overflow-hidden flex">
+                        {barChartBreakdown.map((item) => (
+                          <div
+                            key={`${item.key}-stack`}
+                            className={item.color}
+                            style={{
+                              width: `${Math.max(2, Math.min(100, item.rows))}%`,
+                            }}
+                          />
+                        ))}
+                      </div>
+                      <div className="mt-3 flex flex-col flex-wrap gap-x-4 gap-y-2 text-xs text-slate-700">
+                        {barChartBreakdown.map((item) => (
+                          <>
+                            <span
+                              key={`${item.key}-legend`}
+                              className="tabular-nums"
+                            >
+                              {item.rows} {item.label}
+                            </span>
+                          </>
+                        ))}
+                      </div>
+                    </div>
                     <div className="rounded-lg border border-slate-200 bg-white p-3">
                       <h3 className="text-sm font-normal text-slate-800 mb-2">
                         Record breakdown
@@ -620,32 +687,32 @@ export function CompletePage() {
                       </div>
                     </div>
 
-                    <div className="rounded-lg border border-slate-200 bg-white p-3">
+                    {/* <div className="rounded-lg border border-slate-200 bg-white p-3 ">
                       <h3 className="text-sm font-normal text-slate-800 mb-2">
                         Outcome overview
                       </h3>
                       <div className="h-[10px] rounded-md bg-slate-100 overflow-hidden flex">
-                        {actionBreakdownWithPct.map((item) => (
+                        {barChartBreakdown.map((item) => (
                           <div
                             key={`${item.key}-stack`}
                             className={item.color}
                             style={{
-                              width: `${Math.max(2, Math.min(100, item.computedPct))}%`,
+                              width: `${Math.max(2, Math.min(100, item.rows))}%`,
                             }}
                           />
                         ))}
                       </div>
                       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-slate-700">
-                        {actionBreakdownWithPct.map((item) => (
+                        {barChartBreakdown.map((item) => (
                           <span
                             key={`${item.key}-legend`}
                             className="tabular-nums"
                           >
-                            {formatPct(item.computedPct)} {item.label}
+                            {item.rows} {item.label}
                           </span>
                         ))}
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </>
               ) : null}

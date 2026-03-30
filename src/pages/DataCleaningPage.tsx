@@ -2630,7 +2630,7 @@ export function DataCleaningPage() {
               </div>
 
               <div className="p-6">
-                <p className="text-[13px] font-medium text-[#171717] whitespace-pre-line leading-relaxed">
+                <p className="text-[13px] font-medium text-[#171717] whitespace-pre-line leading-[24px]">
                   One-click cleanup that automatically fixes address issues in
                   the dataset.
                   {"\n"}All fixes are logged step-by-step.
@@ -2696,8 +2696,8 @@ export function DataCleaningPage() {
               }}
             />
             <div className="relative z-10 w-full max-w-xl rounded-md border border-border bg-background shadow-2xl overflow-hidden">
-              <div className="py-4 border-b flex items-center justify-between bg-muted">
-                <h3 className="text-md leading-none font-light text-foreground px-4 flex gap-2 items-center text-red-400">
+              <div className="py-2 border-b flex items-center justify-between bg-muted">
+                <h3 className="text-md leading-[24px] font-light text-foreground px-4 flex gap-2 items-center text-red-400">
                   <CircleAlert className="inline text-red-400 h-4 w-4" />
                   Outstanding Issues Alert
                 </h3>
