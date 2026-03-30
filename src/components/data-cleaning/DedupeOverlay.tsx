@@ -152,7 +152,7 @@ export default function DedupeOverlay(props: Props) {
               <X className="h-4 w-4" />
             </button>
           </div>
-          <div className="p-0 px-4 h-[calc(100%-40px)] overflow-auto">
+          <div className="p-0 mt-3 px-4 h-[calc(100%-40px)] overflow-auto">
             <Table className="min-w-full text-sm ">
               <TableHeader className="bg-muted sticky top-0 z-10 shadow-sm">
                 <TableRow>
@@ -244,6 +244,12 @@ export default function DedupeOverlay(props: Props) {
                   </div>
                 )}
 
+                {duplicateIndicatorCount > 0 && (
+                  <div className="ml-auto text-red-500 bg-red-50 border border-red-100 rounded-md px-3 py-1.5 text-[xs] font-medium">
+                    {duplicateIndicatorCount} duplicate{" "}
+                    {dedupeMode === "column" ? "columns" : "rows"} found
+                  </div>
+                )}
                 <div className="flex items-center gap-4">
                   <label className="inline-flex items-center gap-2 text-sm">
                     <input
@@ -263,12 +269,6 @@ export default function DedupeOverlay(props: Props) {
                     />{" "}
                     Row wise
                   </label>
-                  {duplicateIndicatorCount > 0 && (
-                    <div className="ml-auto text-red-500 bg-red-50 border border-red-100 rounded-md px-3 py-1.5 text-sm font-medium">
-                      {duplicateIndicatorCount} duplicate{" "}
-                      {dedupeMode === "column" ? "columns" : "rows"} found
-                    </div>
-                  )}
                 </div>
 
                 {dedupeMode === "column" && (
@@ -473,6 +473,7 @@ export default function DedupeOverlay(props: Props) {
                         type="checkbox"
                         checked={ignoreCase}
                         onChange={(e) => setIgnoreCase(e.target.checked)}
+                        className="accent-blue-600"
                       />{" "}
                       Ignore case
                     </label>
@@ -481,6 +482,7 @@ export default function DedupeOverlay(props: Props) {
                         type="checkbox"
                         checked={ignoreWhitespace}
                         onChange={(e) => setIgnoreWhitespace(e.target.checked)}
+                        className="accent-blue-600"
                       />{" "}
                       Ignore whitespace
                     </label>
@@ -489,6 +491,7 @@ export default function DedupeOverlay(props: Props) {
                         type="checkbox"
                         checked={flagDuplicates}
                         onChange={(e) => setFlagDuplicates(e.target.checked)}
+                        className="accent-blue-600"
                       />{" "}
                       Flag duplicate records
                     </label>
@@ -499,7 +502,9 @@ export default function DedupeOverlay(props: Props) {
                   dedupeMode === "column" &&
                   duplicateIndicatorCount > 0 && (
                     <div className="mt-4">
-                      <p className="text-sm font-medium mb-2 text-muted-foreground">Keep strategy</p>
+                      <p className="text-sm font-medium mb-2 text-muted-foreground">
+                        Keep strategy
+                      </p>
                       <div className="flex flex-wrap gap-4 text-sm mt-2">
                         <label className="inline-flex items-center gap-2">
                           <input
@@ -507,7 +512,7 @@ export default function DedupeOverlay(props: Props) {
                             name="keep_strategy"
                             checked={dedupeKeepStrategy === "oldest"}
                             onChange={() => setDedupeKeepStrategy("oldest")}
-                            className="text-primary h-4 w-4"
+                            className="text-primary h-4 w-4 accent-blue-600"
                           />{" "}
                           Oldest
                         </label>
@@ -517,7 +522,7 @@ export default function DedupeOverlay(props: Props) {
                             name="keep_strategy"
                             checked={dedupeKeepStrategy === "latest"}
                             onChange={() => setDedupeKeepStrategy("latest")}
-                            className="text-primary h-4 w-4"
+                            className="text-primary h-4 w-4 accent-blue-600"
                           />{" "}
                           Latest
                         </label>
@@ -527,7 +532,7 @@ export default function DedupeOverlay(props: Props) {
                             name="keep_strategy"
                             checked={dedupeKeepStrategy === "max_filled"}
                             onChange={() => setDedupeKeepStrategy("max_filled")}
-                            className="text-primary h-4 w-4"
+                            className="text-primary h-4 w-4 accent-blue-600"
                           />{" "}
                           Maximum filled
                         </label>
@@ -552,7 +557,11 @@ export default function DedupeOverlay(props: Props) {
                     <Button
                       variant="outline"
                       onClick={() => void onRemoveDuplicates()}
-                      disabled={previewLoading || applyDedupLoading || (dedupeMode === "column" && dedupeColumns.length === 0)}
+                      disabled={
+                        previewLoading ||
+                        applyDedupLoading ||
+                        (dedupeMode === "column" && dedupeColumns.length === 0)
+                      }
                       className="border-red-400 text-red-400 hover:text-red-400 hover:bg-red-100 h-9 text-xs px-5"
                     >
                       {applyDedupLoading && (
@@ -563,7 +572,11 @@ export default function DedupeOverlay(props: Props) {
                     <Button
                       variant="outline"
                       onClick={() => void onBuildPreview()}
-                      disabled={previewLoading || applyDedupLoading || (dedupeMode === "column" && dedupeColumns.length === 0)}
+                      disabled={
+                        previewLoading ||
+                        applyDedupLoading ||
+                        (dedupeMode === "column" && dedupeColumns.length === 0)
+                      }
                       className="bg-white text-primary border-primary hover:bg-blue-100 h-9 text-xs px-5"
                     >
                       {previewLoading && (

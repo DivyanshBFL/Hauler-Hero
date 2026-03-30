@@ -46,6 +46,7 @@ import {
   X,
   CircleAlert,
   Filter,
+  BrushCleaningIcon,
 } from "lucide-react";
 import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
 import ProcessStepper from "@/components/ProcessStepper";
@@ -1900,7 +1901,7 @@ export function DataCleaningPage() {
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <div className="flex items-start gap-2">
                   <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
-                    <ShieldAlert className="w-4 h-4 text-primary" />
+                    <BrushCleaningIcon className="w-4 h-4 text-primary" />
                   </div>
                   <div>
                     <CardTitle className=" text-sm font-normal">
