@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   BrushCleaning,
+  BrushCleaningIcon,
   Check,
   Circle,
   Database,
   Download,
   GitMerge,
   TrendingUp,
+  Upload,
   UploadCloud,
   WandSparkles,
 } from "lucide-react";
@@ -100,8 +102,9 @@ export function CompletePage() {
       const sessionId = sessionStorage.getItem("session_id");
       if (!sessionId) throw new Error("Session ID is missing");
       const blob = await api.exportCleanedData(sessionId);
-      const originalName = sessionStorage.getItem("uploadedFileName") || "data.csv";
-      
+      const originalName =
+        sessionStorage.getItem("uploadedFileName") || "data.csv";
+
       let downloadName = "cleaned_data.csv";
       if (originalName) {
         const lastDotIndex = originalName.lastIndexOf(".");
@@ -146,7 +149,7 @@ export function CompletePage() {
           label: "Upload Data",
           value: toNum(apiStats?.total_processed?.rows)!.toLocaleString(),
           detail: "Rows Processed",
-          icon: Database,
+          icon: Upload,
           className: "!bg-emerald-200 !border-emerald-300",
         }
       : null,
@@ -168,7 +171,7 @@ export function CompletePage() {
           label: "Data Cleaning",
           value: toNum(apiStats?.updated?.fields ?? 0)!.toLocaleString(),
           detail: "Issues Fixed",
-          icon: TrendingUp,
+          icon: BrushCleaningIcon,
           className: "!bg-amber-200 !border-amber-300",
         }
       : null,
@@ -184,7 +187,7 @@ export function CompletePage() {
           // toNum(apiStats?.mapped_data?.cols_pct) !== null
           //   ? formatPct(toNum(apiStats?.mapped_data?.cols_pct)!)
           //   : undefined,
-          icon: WandSparkles,
+          icon: BrushCleaningIcon,
           className: "!bg-lime-200 !border-lime-300",
         }
       : null,
@@ -362,8 +365,6 @@ export function CompletePage() {
         : 0,
   }));
 
-
-
   return (
     <>
       <div className={PAGE_OUTER}>
@@ -371,10 +372,10 @@ export function CompletePage() {
           <div className="mb-2">
             <ProcessStepper />
           </div>
-          <Card className="shadow-none bg-card animate-in overflow-hidden border-none">
+          <Card className="shadow-none bg-card animate-in overflow-hidden h-[calc(100vh-170px)]">
             <Loader open={!stats} />
 
-            <CardContent className="p-0 space-y-2">
+            <CardContent className="p-0 space-y-2 h-[calc(100vh-240px)]">
               <div>
                 <div className="grid grid-cols-1 md:grid-cols-1 gap-3 md:gap-4">
                   <div className="bg-emerald-50 rounded-lg border border-emerald-600 p-2 ">
