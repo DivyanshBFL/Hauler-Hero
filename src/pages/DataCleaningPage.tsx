@@ -160,8 +160,6 @@ function showApiErrorToast(error: unknown, fallback: string) {
   toast.error(getApiErrorMessage(error, fallback));
 }
 
-
-
 function getIssueColumnsMap(issues: DataIssueGroup[]): Record<string, number> {
   const map: Record<string, number> = {};
   issues.forEach((i) => {
@@ -1472,8 +1470,6 @@ export function DataCleaningPage() {
     ],
   );
 
-
-
   const applyCellEdit = useCallback(
     async (rowIndex: number, column: string, nextValueRaw: string) => {
       const nextValue = nextValueRaw;
@@ -2744,22 +2740,22 @@ export function DataCleaningPage() {
           </div>
         )}
         {/* Navigation Arrows */}
-        <button
+        {/* <button
           onClick={() => navigate("/data-preview")}
           className="fixed left-0 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
           title="Previous: Data Preview"
         >
           <ChevronLeft className="h-6 w-6" />
-        </button>
+        </button> */}
 
-        <button
+        {/* <button
           onClick={handleNextClick}
           disabled={submitting}
           className="fixed right-0 top-1/2 -translate-y-1/2 z-30 p-3 transition-all duration-200 disabled:opacity-50 rounded-md bg-black opacity-40  text-white shadow-lg px-1"
           title="Next: Data Analytics"
         >
           <ChevronRight className="h-6 w-6" />
-        </button>
+        </button> */}
       </div>
     </>
   );

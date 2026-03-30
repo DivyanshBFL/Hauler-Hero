@@ -553,7 +553,7 @@ const DataAnalyticsPage = () => {
           </Card>
         </div>
         {/* Navigation Arrows */}
-        <button
+        {/* <button
           onClick={() => navigate("/data-cleaning")}
           className="fixed left-0 top-1/2 -translate-y-1/2 z-30 p-3  transition-all duration-200 px-1 rounded-md bg-black opacity-40 text-white shadow-lg"
           title="Previous: Data Cleaning"
@@ -597,7 +597,7 @@ const DataAnalyticsPage = () => {
           title="Next: Complete"
         >
           <ChevronRight className="h-6 w-6" />
-        </button>
+        </button> */}
       </div>
     </>
   );

@@ -152,7 +152,7 @@ export function LoginPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-sm space-y-1">
+              <div className="flex items-center justify-between text-sm space-y-1 mt-1">
                 <label className="flex items-center gap-2 text-muted-foreground">
                   <input
                     type="checkbox"

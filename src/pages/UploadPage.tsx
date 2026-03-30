@@ -38,7 +38,6 @@ import {
 import type { SheetData } from "@/services/api";
 import ProcessStepper from "@/components/ProcessStepper";
 
-
 type JoinSelection = {
   leftSheet: string;
   rightSheet: string;
@@ -407,7 +406,6 @@ export function UploadPage() {
                           <div className="gap-4 mt-0">
                             {sheets.map((sheet, index) => {
                               return (
-
                                 // <div
                                 //   key={sheet.name}
                                 //   className="group p-5 border border-border rounded-xl bg-card hover:shadow-md transition-all hover:border-primary/40"
@@ -833,7 +831,7 @@ export function UploadPage() {
           </Dialog>
         </div>
         {/* Next Arrow - Only show if file is ready */}
-        {canProceed && (
+        {/* {canProceed && (
           <button
             onClick={handleNext}
             disabled={false}
@@ -842,7 +840,7 @@ export function UploadPage() {
           >
             <ChevronRight className="h-6 w-6" />
           </button>
-        )}
+        )} */}
       </div>
     </>
   );
