@@ -1911,7 +1911,9 @@ export function DataCleaningPage() {
                       <CardDescription className="text-[11px] text-primary">
                         <span>
                           <Tooltip>
-                            <TooltipTrigger>Issue Summary</TooltipTrigger>
+                            <TooltipTrigger className="underline">
+                              Issue Summary
+                            </TooltipTrigger>
                             <TooltipContent
                               side="bottom"
                               className="m-0 p-0 bg-background px-3 pt-3 text-xs rounded-md border border-border shadow-xl"

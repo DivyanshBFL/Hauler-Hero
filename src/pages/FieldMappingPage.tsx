@@ -24,6 +24,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { api, joinSheets, mapFields, uploadFile } from "@/services/api";
 import type { CorrectionRequest, CorrectionManualChange } from "@/services/api";
 import type { FieldMapping, SheetData } from "@/services/api";
@@ -457,6 +465,18 @@ export function FieldMappingPage() {
     [key: string]: number;
   }>({});
 
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
+  const [actionDescription, setActionDescription] = useState("");
+
+  const requestConfirmation = useRef(
+    (description: string, action: () => void) => {
+      setActionDescription(description);
+      setPendingAction(() => action);
+      setIsConfirmModalOpen(true);
+    },
+  ).current;
+
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -700,13 +720,18 @@ export function FieldMappingPage() {
   const targetX =
     measuredNodeLayout?.targetX ??
     flowCanvasWidth - HORIZONTAL_COLUMN_MARGIN - nodeWidths.target;
-  const handleUnmapTarget = (targetField: string) => {
-    setEntityMappings((prev) => {
-      const current = prev[selectedEntity] ?? [];
-      const updated = current.filter((m) => m.targetField !== targetField);
-      return { ...prev, [selectedEntity]: updated };
-    });
-  };
+  const handleUnmapTarget = useRef((targetField: string) => {
+    requestConfirmation(
+      `Are you sure you want to unmap target field "${targetField}"?`,
+      () => {
+        setEntityMappings((prev) => {
+          const current = prev[selectedEntity] ?? [];
+          const updated = current.filter((m) => m.targetField !== targetField);
+          return { ...prev, [selectedEntity]: updated };
+        });
+      },
+    );
+  }).current;
 
   const initialNodesAndEdges = useMemo(
     () =>
@@ -963,16 +988,26 @@ export function FieldMappingPage() {
         sourceFieldsAll,
         targetFieldsAll,
       );
-      setEntityMappings((prev) => ({
-        ...prev,
-        [selectedEntity]: autoMappings,
-      }));
-      return `Auto mapping completed for ${selectedEntity}. ${autoMappings.length} fields mapped.`;
+      requestConfirmation(
+        `Are you sure you want to auto map ${autoMappings.length} fields?`,
+        () => {
+          setEntityMappings((prev) => ({
+            ...prev,
+            [selectedEntity]: autoMappings,
+          }));
+        },
+      );
+      return `Requested auto mapping for ${selectedEntity}.`;
     }
 
     if (/^(clear|reset)\s+mappings$/i.test(trimmed)) {
-      setEntityMappings((prev) => ({ ...prev, [selectedEntity]: [] }));
-      return `All mappings cleared for ${selectedEntity}.`;
+      requestConfirmation(
+        `Are you sure you want to clear all mappings for ${selectedEntity}?`,
+        () => {
+          setEntityMappings((prev) => ({ ...prev, [selectedEntity]: [] }));
+        },
+      );
+      return `Requested clearing all mappings for ${selectedEntity}.`;
     }
 
     const unmapMatch = trimmed.match(/^(unmap|remove)\s+(.+)$/i);
@@ -981,15 +1016,22 @@ export function FieldMappingPage() {
       if (!sourceLookup.value)
         return sourceLookup.error ?? "Unable to resolve source field.";
       const sourceField = sourceLookup.value;
-      const existing = entityMappings[selectedEntity] ?? [];
-      const nextMappings = existing.filter(
-        (mapping) => mapping.sourceField !== sourceField,
+      requestConfirmation(
+        `Are you sure you want to remove the mapping for source field "${sourceField}"?`,
+        () => {
+          setEntityMappings((prev) => {
+            const existing = prev[selectedEntity] ?? [];
+            const nextMappings = existing.filter(
+              (mapping) => mapping.sourceField !== sourceField,
+            );
+            return {
+              ...prev,
+              [selectedEntity]: nextMappings,
+            };
+          });
+        },
       );
-      setEntityMappings((prev) => ({
-        ...prev,
-        [selectedEntity]: nextMappings,
-      }));
-      return `Removed mapping for ${sourceField}.`;
+      return `Requested removing mapping for ${sourceField}.`;
     }
 
     const mapMatch = trimmed.match(
@@ -1006,21 +1048,27 @@ export function FieldMappingPage() {
 
       const sourceField = sourceLookup.value;
       const targetField = targetLookup.value;
-      const existing = entityMappings[selectedEntity] ?? [];
 
-      const nextMappings = existing
-        .filter(
-          (mapping) =>
-            mapping.sourceField !== sourceField &&
-            mapping.targetField !== targetField,
-        )
-        .concat([{ sourceField, targetField }]);
-
-      setEntityMappings((prev) => ({
-        ...prev,
-        [selectedEntity]: nextMappings,
-      }));
-      return `Mapped ${sourceField} -> ${targetField}.`;
+      requestConfirmation(
+        `Are you sure you want to map source field "${sourceField}" to target field "${targetField}"?`,
+        () => {
+          setEntityMappings((prev) => {
+            const existing = prev[selectedEntity] ?? [];
+            const nextMappings = existing
+              .filter(
+                (mapping) =>
+                  mapping.sourceField !== sourceField &&
+                  mapping.targetField !== targetField,
+              )
+              .concat([{ sourceField, targetField }]);
+            return {
+              ...prev,
+              [selectedEntity]: nextMappings,
+            };
+          });
+        },
+      );
+      return `Requested mapping ${sourceField} -> ${targetField}.`;
     }
 
     return "Unknown command. Use: map <source> to <target>, unmap <source>, auto map, clear mappings, show mappings.";
@@ -1103,45 +1151,62 @@ export function FieldMappingPage() {
       : null;
     if (!sourceField || !targetField) return;
 
-    setEntityMappings((prev) => {
-      const current = prev[selectedEntity] ?? [];
-      const updated: FieldMapping[] = current
-        .filter(
-          (m) => m.sourceField !== sourceField && m.targetField !== targetField,
-        )
-        .concat([{ sourceField, targetField }]);
-      return { ...prev, [selectedEntity]: updated };
-    });
+    requestConfirmation(
+      `Are you sure you want to map source field "${sourceField}" to target field "${targetField}"?`,
+      () => {
+        setEntityMappings((prev) => {
+          const current = prev[selectedEntity] ?? [];
+          const updated: FieldMapping[] = current
+            .filter(
+              (m) =>
+                m.sourceField !== sourceField && m.targetField !== targetField,
+            )
+            .concat([{ sourceField, targetField }]);
+          return { ...prev, [selectedEntity]: updated };
+        });
+      },
+    );
   };
 
   const onEdgesDelete: OnEdgesDelete = (deleted) => {
     const toRemove = new Set(deleted.map((e) => e.id));
     setSelectedEdgeId((prev) => (prev && toRemove.has(prev) ? null : prev));
-    setEntityMappings((prev) => {
-      const current = prev[selectedEntity] ?? [];
-      const updated = current.filter(
-        (m) => !toRemove.has(`e-${m.sourceField}-${m.targetField}`),
-      );
-      return { ...prev, [selectedEntity]: updated };
-    });
+    requestConfirmation(
+      `Are you sure you want to delete ${deleted.length > 1 ? `these ${deleted.length} mappings` : "this mapping"}?`,
+      () => {
+        setEntityMappings((prev) => {
+          const current = prev[selectedEntity] ?? [];
+          const updated = current.filter(
+            (m) => !toRemove.has(`e-${m.sourceField}-${m.targetField}`),
+          );
+          return { ...prev, [selectedEntity]: updated };
+        });
+      },
+    );
   };
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (
         (event.key !== "Delete" && event.key !== "Backspace") ||
-        !selectedEdgeId
+        !selectedEdgeId ||
+        isConfirmModalOpen
       )
         return;
       event.preventDefault();
-      setEntityMappings((prev) => {
-        const current = prev[selectedEntity] ?? [];
-        const updated = current.filter(
-          (m) => `e-${m.sourceField}-${m.targetField}` !== selectedEdgeId,
-        );
-        return { ...prev, [selectedEntity]: updated };
-      });
-      setSelectedEdgeId(null);
+      requestConfirmation(
+        `Are you sure you want to delete the selected mapping?`,
+        () => {
+          setEntityMappings((prev) => {
+            const current = prev[selectedEntity] ?? [];
+            const updated = current.filter(
+              (m) => `e-${m.sourceField}-${m.targetField}` !== selectedEdgeId,
+            );
+            return { ...prev, [selectedEntity]: updated };
+          });
+          setSelectedEdgeId(null);
+        },
+      );
     };
 
     window.addEventListener("keydown", onKeyDown);
@@ -1573,6 +1638,53 @@ export function FieldMappingPage() {
           <ChevronRight className="h-6 w-6" />
         </button> */}
       </div>
+      <Dialog
+        open={isConfirmModalOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setIsConfirmModalOpen(false);
+            setPendingAction(null);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-md leading-none font-light text-foreground flex gap-2 items-center">
+              Confirm Mapping Change
+            </DialogTitle>
+            <DialogDescription className="pt-2 text-sm text-muted-foreground whitespace-pre-line">
+              {actionDescription}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-end gap-2 mt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setIsConfirmModalOpen(false);
+                setPendingAction(null);
+              }}
+              className="h-9 text-xs px-5"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="font-semibold border-primary text-primary hover:bg-primary/10 transition-colors h-9 text-xs px-5"
+              onClick={() => {
+                if (pendingAction) {
+                  pendingAction();
+                }
+                setIsConfirmModalOpen(false);
+                setPendingAction(null);
+              }}
+            >
+              Confirm
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

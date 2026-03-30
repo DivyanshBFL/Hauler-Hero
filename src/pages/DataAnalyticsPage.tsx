@@ -461,7 +461,7 @@ const DataAnalyticsPage = () => {
                             colSpan={Math.max(headers.length, 1)}
                             className="p-6 text-center text-muted-foreground "
                           >
-                            <span className=" p-6 bg-red-400 border-2 border-red-500 mt-4 opacity-40 text-white max-w-[200px] rounded-md">
+                            <span className=" p-6  mt-4 opacity-40 text-white max-w-[200px] rounded-md">
                               {" "}
                               No rows found.
                             </span>
