@@ -19,6 +19,13 @@ import type {
   KeepRemove,
   PreviewRow,
 } from "./types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 type Props = {
   drawer: DrawerType;
@@ -281,8 +288,31 @@ export default function DedupeOverlay(props: Props) {
                       <p className="text-sm text-muted-foreground mb-2">
                         Select Columns
                       </p>
+                      <Select
+                        onValueChange={(new_value) => {
+                          setColumnPickerValue("");
+                          if (!new_value) return;
+                          setDedupeColumns((prev) =>
+                            prev.includes(new_value)
+                              ? prev
+                              : [...prev, new_value],
+                          );
+                        }}
+                        value={columnPickerValue}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select columns to View/Remove Duplicates"></SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {columns.map((c) => (
+                            <SelectItem key={c} value={c}>
+                              {c}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
 
-                      <select
+                      {/* <select
                         className="w-full h-11 border border-border rounded-md px-3 bg-background text-sm"
                         value={columnPickerValue}
                         onChange={(e) => {
@@ -302,7 +332,7 @@ export default function DedupeOverlay(props: Props) {
                             {c}
                           </option>
                         ))}
-                      </select>
+                      </select> */}
                     </div>
                     <div className="flex flex-wrap gap-2 mb-3">
                       {dedupeColumns.map((c) => (
@@ -332,7 +362,21 @@ export default function DedupeOverlay(props: Props) {
                       <p className="text-sm text-muted-foreground mb-2">
                         Select method
                       </p>
-                      <select
+                      <Select
+                        value={dedupeMethod}
+                        onValueChange={(newValue) => {
+                          setDedupeMethod(newValue as DedupeMethod);
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue></SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="automatic">Automatic</SelectItem>
+                          <SelectItem value="manual">Manual</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {/* <select
                         className="w-full h-11 border border-border rounded-md px-3 bg-background text-sm"
                         value={dedupeMethod}
                         onChange={(e) =>
@@ -341,7 +385,7 @@ export default function DedupeOverlay(props: Props) {
                       >
                         <option value="automatic">Automatic</option>
                         <option value="manual">Manual</option>
-                      </select>
+                      </select> */}
                     </div>
 
                     {dedupeMethod === "manual" && (

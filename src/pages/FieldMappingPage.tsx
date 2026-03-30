@@ -215,6 +215,7 @@ function buildNodesAndEdges(
   targetX: number,
   nodeWidths: { source: number; target: number },
   requiredTargetSet: Set<string>,
+  baselineMappings: FieldMapping[],
   onUnmapTarget: (targetField: string) => void,
   selectedEdgeId: string | null,
 ): { nodes: Node[]; edges: Edge[] } {
@@ -271,6 +272,14 @@ function buildNodesAndEdges(
         status: mapped ? "mapped" : "unmapped",
         nodeWidth: nodeWidths.target,
         isWarning: !mapped,
+        isAutoMapped:
+          mapped &&
+          baselineMappings.some(
+            (bm) =>
+              bm.targetField === label &&
+              bm.sourceField ===
+                mappings.find((m) => m.targetField === label)?.sourceField,
+          ),
         onUnmap: onUnmapTarget,
       },
       style: {
@@ -745,6 +754,7 @@ export function FieldMappingPage() {
         targetX,
         nodeWidths,
         requiredTargetSet,
+        baselineMappingsByEntity[selectedEntity] ?? EMPTY_MAPPINGS,
         handleUnmapTarget,
         selectedEdgeId,
       ),
@@ -760,6 +770,7 @@ export function FieldMappingPage() {
       requiredTargetSet,
       selectedEntity,
       selectedEdgeId,
+      baselineMappingsByEntity,
     ],
   );
 

@@ -8,6 +8,7 @@ export type TargetFieldNodeData = {
   status?: "mapped" | "unmapped";
   nodeWidth?: number;
   isWarning?: boolean;
+  isAutoMapped?: boolean;
   onUnmap?: (fieldName: string) => void;
 };
 export type TargetFieldNodeType = Node<TargetFieldNodeData, "targetField">;
@@ -28,7 +29,13 @@ function TargetFieldNodeComponent({ data }: NodeProps<TargetFieldNodeType>) {
       <span className="min-w-0 flex-1 text-xs font-medium text-foreground truncate">
         {data.label}
       </span>
-      <span className="shrink-0 text-[11px] font-semibold uppercase px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">
+      {data.isAutoMapped && (
+        <span className="shrink-0 text-[11px] font-normal  px-2 py-0.5 rounded-md bg-slate-100 text-slate-600  flex gap-2">
+          <img src="ai-blackcolor.png" alt="AI" className="h-3 w-3" />
+          {"Mapped"}
+        </span>
+      )}
+      <span className="shrink-0 text-[11px] font-normal px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">
         {data.dataType ?? "TEXT"}
       </span>
     </div>
