@@ -42,9 +42,9 @@ import {
   Bot,
   Send,
   ChevronRight,
-  ChevronLeft,
   GitMerge,
   CheckCircle2,
+  Trash2,
 } from "lucide-react";
 import {
   SourceFieldNode,
@@ -478,15 +478,17 @@ export function FieldMappingPage() {
   const [autoMappedCountByEntity, setAutoMappedCountByEntity] = useState<{
     [key: string]: number;
   }>({});
+  const [confirmType, setConfirmType] = useState<"change" | "delete">("change");
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
   const [actionDescription, setActionDescription] = useState("");
 
   const requestConfirmation = useRef(
-    (description: string, action: () => void) => {
+    (description: string, action: () => void, type: "change" | "delete" = "change") => {
       setActionDescription(description);
       setPendingAction(() => action);
+      setConfirmType(type);
       setIsConfirmModalOpen(true);
     },
   ).current;
@@ -744,6 +746,7 @@ export function FieldMappingPage() {
           return { ...prev, [selectedEntity]: updated };
         });
       },
+      "delete",
     );
   }).current;
 
@@ -1009,9 +1012,11 @@ export function FieldMappingPage() {
         () => {
           setEntityMappings((prev) => ({
             ...prev,
+            ...prev,
             [selectedEntity]: autoMappings,
           }));
         },
+        "change",
       );
       return `Requested auto mapping for ${selectedEntity}.`;
     }
@@ -1022,6 +1027,7 @@ export function FieldMappingPage() {
         () => {
           setEntityMappings((prev) => ({ ...prev, [selectedEntity]: [] }));
         },
+        "delete",
       );
       return `Requested clearing all mappings for ${selectedEntity}.`;
     }
@@ -1046,6 +1052,7 @@ export function FieldMappingPage() {
             };
           });
         },
+        "delete",
       );
       return `Requested removing mapping for ${sourceField}.`;
     }
@@ -1083,6 +1090,7 @@ export function FieldMappingPage() {
             };
           });
         },
+        "change",
       );
       return `Requested mapping ${sourceField} -> ${targetField}.`;
     }
@@ -1181,6 +1189,7 @@ export function FieldMappingPage() {
           return { ...prev, [selectedEntity]: updated };
         });
       },
+      "change",
     );
   };
 
@@ -1198,6 +1207,7 @@ export function FieldMappingPage() {
           return { ...prev, [selectedEntity]: updated };
         });
       },
+      "delete",
     );
   };
 
@@ -1222,6 +1232,7 @@ export function FieldMappingPage() {
           });
           setSelectedEdgeId(null);
         },
+        "delete",
       );
     };
 
@@ -1694,8 +1705,12 @@ export function FieldMappingPage() {
           >
             <DialogHeader className="">
               <DialogTitle className="text-md leading-none font-light text-foreground flex gap-2 items-center border-b p-4">
-                <CheckCircle2 className="text-muted-foreground" />
-                Confirm Mapping Change
+                {confirmType === "delete" ? (
+                  <Trash2 className="text-destructive h-5 w-5" />
+                ) : (
+                  <CheckCircle2 className="text-muted-foreground" />
+                )}
+                {confirmType === "delete" ? "Confirm Delete" : "Confirm Mapping Change"}
               </DialogTitle>
               <DialogDescription className="pt-2 px-4 text-sm text-muted-foreground whitespace-pre-line">
                 {actionDescription}
