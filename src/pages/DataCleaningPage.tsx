@@ -583,7 +583,7 @@ export function DataCleaningPage() {
 
     const rows = payload.issues?.rows || [];
 
-    if (!rows.length) return null;
+    if (!rows.length) return [];
 
     return rows
       .map((r: any, idx: number) => {
@@ -1657,10 +1657,7 @@ export function DataCleaningPage() {
         actionLabel: "Auto-fix all issues",
       });
 
-      // only needed when refresh fails and fallback is used
-      if (!refreshedRows?.length) {
-        await runIssueAnalysis(backendRows);
-      }
+
       clearInterval(interval);
       setProgress(100);
       setAutoFixConfirmOpen(false);
@@ -1705,9 +1702,7 @@ export function DataCleaningPage() {
         actor: "user",
         actionLabel: "Remove duplicates",
       });
-      if (!refreshedRows?.length) {
-        await runIssueAnalysis(backendRows);
-      }
+
       setPreviewDuplicateCount(0);
       setPreviewOpen(false);
       setDrawer(null);
@@ -1759,10 +1754,7 @@ export function DataCleaningPage() {
         actionLabel: "Address fix",
       });
 
-      // only needed when refresh fails and fallback is used
-      if (!refreshedRows?.length) {
-        await runIssueAnalysis(backendRows);
-      }
+
       clearInterval(interval);
       setProgress(100);
       setAddressFixConfirmOpen(false);
@@ -1813,9 +1805,7 @@ export function DataCleaningPage() {
         });
         setWorkedOnCells((prev) => new Set([...prev, ...cellsToMarkAsWorked]));
 
-        if (!refreshedRows?.length) {
-          await runIssueAnalysis(backendRows);
-        }
+
       } catch (error) {
         showApiErrorToast(
           error,
@@ -1868,9 +1858,7 @@ export function DataCleaningPage() {
           actionLabel: "Column operation applied",
         });
 
-        if (!refreshedRows?.length) {
-          await runIssueAnalysis(backendRows);
-        }
+
       } catch (error) {
         showApiErrorToast(
           error,

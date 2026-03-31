@@ -356,68 +356,7 @@ function detectIssues(data: any[]): DataIssueGroup[] {
   return issues.sort((a, b) => b.count - a.count).slice(0, 150);
 }
 
-function buildStaticIssueFallback(data: any[]): DataIssueGroup[] {
-  const totalRows = Math.max(data.length, 1);
-  const maxIndex = Math.max(totalRows - 1, 0);
-  const inferredColumns = Object.keys(data[0] ?? {});
-  const emailColumn =
-    inferredColumns.find((column) => column.toLowerCase().includes("email")) ??
-    inferredColumns[0] ??
-    "Email";
-  const phoneColumn =
-    inferredColumns.find((column) => column.toLowerCase().includes("phone")) ??
-    inferredColumns[1] ??
-    "Phone";
-  const companyColumn =
-    inferredColumns.find((column) =>
-      column.toLowerCase().includes("company"),
-    ) ??
-    inferredColumns[2] ??
-    "Company";
 
-  const takeByStep = (start: number, step: number, limit: number): number[] => {
-    const rows: number[] = [];
-    for (
-      let index = start;
-      index <= maxIndex && rows.length < limit;
-      index += step
-    ) {
-      rows.push(index);
-    }
-    return rows;
-  };
-
-  const missingRows = takeByStep(0, 9, 220);
-  const invalidRows = takeByStep(3, 11, 180);
-  const duplicateRows = takeByStep(5, 13, 140);
-
-  return [
-    {
-      issue_type: "missing_value",
-      column: phoneColumn,
-      rows: missingRows,
-      count: missingRows.length,
-      severity: [phoneColumn],
-      description: `${missingRows.length} rows contain blank values in ${phoneColumn}.`,
-    },
-    {
-      issue_type: "invalid_email",
-      column: emailColumn,
-      rows: invalidRows,
-      count: invalidRows.length,
-      severity: [emailColumn],
-      description: `${invalidRows.length} rows contain invalid ${emailColumn} format.`,
-    },
-    {
-      issue_type: "duplicate_value",
-      column: companyColumn,
-      rows: duplicateRows,
-      count: duplicateRows.length,
-      severity: [companyColumn],
-      description: `${duplicateRows.length} rows have duplicate values in ${companyColumn}.`,
-    },
-  ].filter((issue) => issue.rows.length > 0);
-}
 
 function applyAiFixToIssue(
   rows: any[],
@@ -571,11 +510,8 @@ export const api = {
     data: any[],
   ): Promise<{ issues: DataIssueGroup[] }> => {
     await delay(1200);
-    const detectedIssues = detectIssues(data);
     return {
-      issues: detectedIssues.length
-        ? detectedIssues
-        : buildStaticIssueFallback(data),
+      issues: detectIssues(data),
     };
   },
 

@@ -275,7 +275,7 @@ const DataAnalyticsPage = () => {
                   </div>
                   <div className="">
                     <CardTitle className="text-sm font-normal">
-                      Data Analytics Workspace
+                      Data Cleanup Preview
                     </CardTitle>
                     <CardDescription className="text-[11px] text-primary">
                       <span className="inline-flex items-center text-[11px] font-normal">
