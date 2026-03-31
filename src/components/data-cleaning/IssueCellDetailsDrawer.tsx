@@ -24,6 +24,7 @@ type ColumnProfileStats = {
 type ColumnProfileSuggestion = {
   operation: string;
   label: string;
+  fill_suggestions?: ColumnProfileFillSuggestion[];
 };
 
 type ColumnProfileSuggestionGroup = {
@@ -92,7 +93,8 @@ function buildOperationPayload(
       return {};
     case "change_case":
       return { case: form.case ?? "title" };
-    case "fill_empty": {
+    case "fill_empty":
+    case "clear_and_fill": {
       const base = { strategy: form.strategy ?? "mode" };
       if (form.value !== undefined && form.value !== "") {
         return { ...base, value: form.value };
@@ -127,10 +129,28 @@ function hasRequiredParams(
   profile?: ColumnProfile | null,
 ): boolean {
   switch (operation) {
-    case "fill_empty": {
-      const strategyObj = Array.isArray(profile?.fill_suggestions)
-        ? profile?.fill_suggestions.find((fs) => fs.strategy === form.strategy)
-        : undefined;
+    case "fill_empty":
+    case "clear_and_fill": {
+      // Find the specific suggestion to see if it has internal fill_suggestions
+      const currentGroup = profile?.suggestions?.find((g) =>
+        g.suggestions.some((s) => s.operation === operation),
+      );
+      const currentSuggestion = currentGroup?.suggestions.find(
+        (s) => s.operation === operation,
+      );
+
+      const suggestions =
+        Array.isArray(currentSuggestion?.fill_suggestions) &&
+        currentSuggestion.fill_suggestions.length > 0
+          ? currentSuggestion.fill_suggestions
+          : Array.isArray(profile?.fill_suggestions)
+            ? profile.fill_suggestions
+            : [];
+
+      const strategyObj = suggestions.find(
+        (fs) => fs.strategy === form.strategy,
+      );
+
       const requiresValue = strategyObj
         ? strategyObj.requires_value
         : form.strategy === "constant";
@@ -256,12 +276,15 @@ export default function IssueCellDetailsDrawer({
 
     // Pre-fill sensible defaults
     const defaults: OperationFormState = {};
-    if (op.operation === "fill_empty") {
-      if (
-        Array.isArray(columnProfile?.fill_suggestions) &&
-        columnProfile?.fill_suggestions.length > 0
-      ) {
-        defaults.strategy = columnProfile.fill_suggestions[0].strategy;
+    if (op.operation === "fill_empty" || op.operation === "clear_and_fill") {
+      const suggestions =
+        Array.isArray(op.fill_suggestions) && op.fill_suggestions.length > 0
+          ? op.fill_suggestions
+          : Array.isArray(columnProfile?.fill_suggestions)
+            ? columnProfile.fill_suggestions
+            : [];
+      if (suggestions.length > 0) {
+        defaults.strategy = suggestions[0].strategy;
       } else {
         defaults.strategy = "constant";
       }
@@ -323,7 +346,7 @@ export default function IssueCellDetailsDrawer({
         <div className="h-12 px-5 border-b border-border bg-muted flex items-center justify-between shrink-0">
           <h2 className="text-md leading-none font-light text-foreground flex justify-center items-center gap-2">
             <Columns2 className="h-4 w-4" />
-            Column Details
+            Column Issues
           </h2>
           <button
             onClick={onClose}
@@ -551,16 +574,25 @@ export default function IssueCellDetailsDrawer({
                                   </div>
                                 )}
 
-                                {/* fill_empty */}
-                                {s.operation === "fill_empty" &&
+                                {/* fill_empty & clear_and_fill */}
+                                {(s.operation === "fill_empty" ||
+                                  s.operation === "clear_and_fill" ||
+                                  (Array.isArray(s.fill_suggestions) &&
+                                    s.fill_suggestions.length > 0)) &&
                                   (() => {
-                                    const strategyObj = Array.isArray(
-                                      columnProfile.fill_suggestions,
-                                    )
-                                      ? columnProfile.fill_suggestions.find(
-                                          (fs) => fs.strategy === form.strategy,
-                                        )
-                                      : undefined;
+                                    const suggestions =
+                                      Array.isArray(s.fill_suggestions) &&
+                                      s.fill_suggestions.length > 0
+                                        ? s.fill_suggestions
+                                        : Array.isArray(
+                                              columnProfile?.fill_suggestions,
+                                            )
+                                          ? columnProfile.fill_suggestions
+                                          : [];
+                                    const strategyObj =
+                                      suggestions.find(
+                                        (fs) => fs.strategy === form.strategy,
+                                      ) || undefined;
                                     const requiresValue = strategyObj
                                       ? strategyObj.requires_value
                                       : form.strategy === "constant" ||
@@ -582,19 +614,15 @@ export default function IssueCellDetailsDrawer({
                                               }))
                                             }
                                           >
-                                            {Array.isArray(
-                                              columnProfile.fill_suggestions,
-                                            ) ? (
-                                              columnProfile.fill_suggestions.map(
-                                                (fs) => (
-                                                  <option
-                                                    key={fs.strategy}
-                                                    value={fs.strategy}
-                                                  >
-                                                    {fs.label}
-                                                  </option>
-                                                ),
-                                              )
+                                            {suggestions.length > 0 ? (
+                                              suggestions.map((fs) => (
+                                                <option
+                                                  key={fs.strategy}
+                                                  value={fs.strategy}
+                                                >
+                                                  {fs.label}
+                                                </option>
+                                              ))
                                             ) : (
                                               <>
                                                 <option value="constant">
