@@ -46,7 +46,11 @@ import {
   GitMerge,
   CheckCircle2,
 } from "lucide-react";
-import { SourceFieldNode, TargetFieldNode } from "@/components/field-mapping";
+import {
+  SourceFieldNode,
+  TargetFieldNode,
+  MappingSkeleton,
+} from "@/components/field-mapping";
 import {
   getTargetColumnsForEntity,
   getRequiredTargetColumnsForEntity,
@@ -1452,48 +1456,56 @@ export function FieldMappingPage() {
                             lastPointerY.current = e.clientY;
                           }}
                         >
-                          <ReactFlow
-                            nodes={nodes}
-                            edges={edges}
-                            onNodesChange={onNodesChange}
-                            onEdgesChange={onEdgesChange}
-                            onConnect={onConnect}
-                            onEdgesDelete={onEdgesDelete}
-                            onEdgeClick={(_, edge) =>
-                              setSelectedEdgeId(edge.id)
-                            }
-                            onPaneClick={() => setSelectedEdgeId(null)}
-                            onConnectStart={() => setIsDraggingConnection(true)}
-                            onConnectEnd={() => setIsDraggingConnection(false)}
-                            deleteKeyCode={["Backspace", "Delete"]}
-                            isValidConnection={() => true}
-                            nodeTypes={NODE_TYPES}
-                            zoomOnScroll={false}
-                            zoomOnPinch={false}
-                            zoomOnDoubleClick={false}
-                            panOnDrag={false}
-                            panOnScroll={false}
-                            preventScrolling={false}
-                            minZoom={1}
-                            maxZoom={1}
-                            nodesDraggable={false}
-                            nodesConnectable={true}
-                            elementsSelectable={true}
-                            edgesReconnectable={false}
-                            defaultEdgeOptions={{
-                              type: "default",
-                              deletable: true,
-                            }}
-                            proOptions={{ hideAttribution: true }}
-                            defaultViewport={{ x: 0, y: 0, zoom: 1 }}
-                            fitView={false}
-                            style={{ background: "transparent" }}
-                          >
-                            <Background gap={10} size={1} color="#c2bebe" />
-                            {/* <Panel position="top-left" className="m-2 mx-4 text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded shadow">
+                          {loading || processing ? (
+                            <MappingSkeleton />
+                          ) : (
+                            <ReactFlow
+                              nodes={nodes}
+                              edges={edges}
+                              onNodesChange={onNodesChange}
+                              onEdgesChange={onEdgesChange}
+                              onConnect={onConnect}
+                              onEdgesDelete={onEdgesDelete}
+                              onEdgeClick={(_, edge) =>
+                                setSelectedEdgeId(edge.id)
+                              }
+                              onPaneClick={() => setSelectedEdgeId(null)}
+                              onConnectStart={() =>
+                                setIsDraggingConnection(true)
+                              }
+                              onConnectEnd={() =>
+                                setIsDraggingConnection(false)
+                              }
+                              deleteKeyCode={["Backspace", "Delete"]}
+                              isValidConnection={() => true}
+                              nodeTypes={NODE_TYPES}
+                              zoomOnScroll={false}
+                              zoomOnPinch={false}
+                              zoomOnDoubleClick={false}
+                              panOnDrag={false}
+                              panOnScroll={false}
+                              preventScrolling={false}
+                              minZoom={1}
+                              maxZoom={1}
+                              nodesDraggable={false}
+                              nodesConnectable={true}
+                              elementsSelectable={true}
+                              edgesReconnectable={false}
+                              defaultEdgeOptions={{
+                                type: "default",
+                                deletable: true,
+                              }}
+                              proOptions={{ hideAttribution: true }}
+                              defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+                              fitView={false}
+                              style={{ background: "transparent" }}
+                            >
+                              <Background gap={10} size={1} color="#c2bebe" />
+                              {/* <Panel position="top-left" className="m-2 mx-4 text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded shadow">
                             {mappings.filter((m) => m.targetField !== 'Unmapped').length} mappings
                           </Panel> */}
-                          </ReactFlow>
+                            </ReactFlow>
+                          )}
                         </div>
                       </ScrollArea>
                     </div>
