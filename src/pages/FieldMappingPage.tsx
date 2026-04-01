@@ -90,9 +90,6 @@ function fieldNamesMatch(source: string, target: string): boolean {
   return normalizeFieldName(source) === normalizeFieldName(target);
 }
 
-function filterMappingsByName(mappings: FieldMapping[]): FieldMapping[] {
-  return mappings.filter((m) => fieldNamesMatch(m.sourceField, m.targetField));
-}
 
 function buildNameBasedAutoMappings(
   headers: string[],
@@ -478,6 +475,14 @@ export function FieldMappingPage() {
   const [autoMappedCountByEntity, setAutoMappedCountByEntity] = useState<{
     [key: string]: number;
   }>({});
+
+  // Sync mappings to sessionStorage whenever they change
+  useEffect(() => {
+    if (Object.keys(entityMappings).length > 0) {
+      sessionStorage.setItem("entityMappings", JSON.stringify(entityMappings));
+    }
+  }, [entityMappings]);
+
   const [confirmType, setConfirmType] = useState<"change" | "delete">("change");
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -485,7 +490,11 @@ export function FieldMappingPage() {
   const [actionDescription, setActionDescription] = useState("");
 
   const requestConfirmation = useRef(
-    (description: string, action: () => void, type: "change" | "delete" = "change") => {
+    (
+      description: string,
+      action: () => void,
+      type: "change" | "delete" = "change",
+    ) => {
       setActionDescription(description);
       setPendingAction(() => action);
       setConfirmType(type);
@@ -899,13 +908,15 @@ export function FieldMappingPage() {
       let nextEntityMappings: { [key: string]: FieldMapping[] } = {};
       let nextAutoMappedCountByEntity: { [key: string]: number } = {};
       const mappingsStr = sessionStorage.getItem("entityMappings");
+      let wasLoadedFromSession = false;
 
       if (mappingsStr) {
+        wasLoadedFromSession = true;
         const parsed = JSON.parse(mappingsStr) as {
           [key: string]: FieldMapping[];
         };
         for (const [entity, maps] of Object.entries(parsed)) {
-          nextEntityMappings[entity] = filterMappingsByName(maps);
+          nextEntityMappings[entity] = maps;
         }
       } else {
         for (const sheet of effectiveSheets) {
@@ -948,15 +959,20 @@ export function FieldMappingPage() {
                 allowedTargets.includes(m.targetField),
             );
 
-          nextEntityMappings = {
-            ...nextEntityMappings,
-            [entityFromApi]: apiMappings,
-          };
+          const isFreshUpload = !!fileToUpload;
+          const shouldApplyAI = isFreshUpload || !wasLoadedFromSession;
 
-          nextAutoMappedCountByEntity = {
-            ...nextAutoMappedCountByEntity,
-            [entityFromApi]: apiMappings.length,
-          };
+          if (shouldApplyAI) {
+            nextEntityMappings = {
+              ...nextEntityMappings,
+              [entityFromApi]: apiMappings,
+            };
+
+            nextAutoMappedCountByEntity = {
+              ...nextAutoMappedCountByEntity,
+              [entityFromApi]: apiMappings.length,
+            };
+          }
         } catch (e) {
           console.error("Invalid mappingResponse in sessionStorage", e);
         }
@@ -1305,16 +1321,7 @@ export function FieldMappingPage() {
         console.error("Failed to initiate background processing", err);
       }
 
-      sessionStorage.setItem(
-        "mappings",
-        JSON.stringify(entityMappings[selectedEntity]),
-      );
       sessionStorage.setItem("selectedEntity", selectedEntity);
-      sessionStorage.setItem("entityMappings", JSON.stringify(entityMappings));
-      sessionStorage.setItem(
-        "allEntityMappings",
-        JSON.stringify(entityMappings),
-      );
       sessionStorage.setItem(
         "autoMappedCoveragePct",
         String(autoMappedCoveragePct),
@@ -1710,7 +1717,9 @@ export function FieldMappingPage() {
                 ) : (
                   <CheckCircle2 className="text-muted-foreground" />
                 )}
-                {confirmType === "delete" ? "Confirm Delete" : "Confirm Mapping Change"}
+                {confirmType === "delete"
+                  ? "Confirm Delete"
+                  : "Confirm Mapping Change"}
               </DialogTitle>
               <DialogDescription className="pt-2 px-4 text-sm text-muted-foreground whitespace-pre-line">
                 {actionDescription}

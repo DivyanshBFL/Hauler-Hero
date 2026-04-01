@@ -28,6 +28,8 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import * as XLSX from "xlsx";
+import { getTargetColumnsForEntity } from "@/constants/targetColumns";
 import { type ImportStats } from "@/types/importStats";
 import { PAGE_CONTAINER, PAGE_OUTER } from "@/constants/layout";
 import { api } from "@/services/api";
@@ -102,28 +104,72 @@ export function CompletePage() {
   const handleDownloadProcessedFile = async () => {
     try {
       const sessionId = sessionStorage.getItem("session_id");
+      const selectedEntity =
+        sessionStorage.getItem("selectedEntity") || "Account";
       if (!sessionId) throw new Error("Session ID is missing");
-      const blob = await api.exportCleanedData(sessionId);
-      const originalName =
-        sessionStorage.getItem("uploadedFileName") || "data.csv";
 
-      let downloadName = "cleaned_data.csv";
-      if (originalName) {
-        const lastDotIndex = originalName.lastIndexOf(".");
-        if (lastDotIndex !== -1) {
-          const baseName = originalName.substring(0, lastDotIndex);
-          const extension = originalName.substring(lastDotIndex); // includes the dot
-          downloadName = `${baseName}_cleaned${extension}`;
-        } else {
-          downloadName = `${originalName}_cleaned`;
-        }
+      // 1. Fetch cleaned data from the preview endpoint (contains JSON data)
+      const payload = await api.previewCleaned(sessionId);
+      const apiRows = Array.isArray(payload?.rows) ? payload.rows : [];
+
+      if (apiRows.length === 0) {
+        throw new Error("No data found to export.");
       }
 
+      // 2. Get the full target schema columns for this entity
+      const targetColumns = getTargetColumnsForEntity(selectedEntity);
+
+      // 3. Flatten and pad the data
+      const exportRows = apiRows.map((row: any) => {
+        const flattenedRow: Record<string, any> = {};
+
+        // Initialize all target columns with empty strings
+        targetColumns.forEach((col) => {
+          flattenedRow[col] = "";
+        });
+
+        // Fill in actual values from mapped data
+        if (row.data) {
+          Object.keys(row.data).forEach((col) => {
+            const cell = row.data[col];
+            // Only include if it's part of the target schema or it's extra data we want to keep
+            if (targetColumns.includes(col)) {
+              flattenedRow[col] = cell?.value ?? "";
+            }
+          });
+        }
+
+        return flattenedRow;
+      });
+
+      // 4. Generate CSV using XLSX
+      const worksheet = XLSX.utils.json_to_sheet(exportRows, {
+        header: targetColumns, // Ensures order matches target schema and includes all columns
+      });
+      const csvOutput = XLSX.utils.sheet_to_csv(worksheet);
+
+      // 5. Trigger download
+      const originalName =
+        sessionStorage.getItem("uploadedFileName") || "data.csv";
+      let downloadName = "cleaned_data.csv";
+
+      if (originalName) {
+        const lastDotIndex = originalName.lastIndexOf(".");
+        const baseName =
+          lastDotIndex !== -1
+            ? originalName.substring(0, lastDotIndex)
+            : originalName;
+        downloadName = `${baseName}_cleaned.csv`;
+      }
+
+      const blob = new Blob([csvOutput], { type: "text/csv;charset=utf-8;" });
       const url = globalThis.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
       link.download = downloadName;
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
       globalThis.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error exporting cleaned data:", error);
@@ -172,7 +218,7 @@ export function CompletePage() {
           key: "success-rate",
           label: "Data Cleaning",
           value: toNum(
-            apiStats?.total_issues - apiStats.current_issues ?? 0,
+            (apiStats?.total_issues ?? 0) - (apiStats?.current_issues ?? 0)
           )!.toLocaleString(),
           detail: "Issues Fixed",
           icon: BrushCleaningIcon,

@@ -22,7 +22,8 @@ export type ImportStats = {
   updated: { description: string; fields: number; total_fields: number; pct: number };
   duplicate_findings: { rows_removed: number; total_rows: number; pct: number };
   unchanged_data: { description: string; rows: number; total_rows: number; pct: number };
-  
+  total_issues: number;
+  current_issues: number;
 };
 
 export function getDefaultImportStats(): ImportStats {
@@ -42,5 +43,8 @@ export function getDefaultImportStats(): ImportStats {
     updated: { description: '', fields: 0, total_fields: 0, pct: 0 },
     duplicate_findings: { rows_removed: 0, total_rows: 0, pct: 0 },
     unchanged_data: { description: '', rows: 0, total_rows: 0, pct: 100 },
+    textual_summary: [],
+    total_issues: 0,
+    current_issues: 0,
   };
 }
