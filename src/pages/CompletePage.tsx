@@ -218,7 +218,7 @@ export function CompletePage() {
           key: "success-rate",
           label: "Data Cleaning",
           value: toNum(
-            (apiStats?.total_issues ?? 0) - (apiStats?.current_issues ?? 0)
+            (apiStats?.total_issues ?? 0) - (apiStats?.current_issues ?? 0),
           )!.toLocaleString(),
           detail: "Issues Fixed",
           icon: BrushCleaningIcon,
@@ -284,9 +284,9 @@ export function CompletePage() {
           key: "duplicates",
           label: "Data Cleaning",
           value: toNum(
-            apiStats?.duplicate_findings?.rows_removed,
+            apiStats?.address_corrections.cells_changed,
           )!.toLocaleString(),
-          detail: "Address Correction ",
+          detail: "Address Field(s) Corrected ",
           icon: BrushCleaning,
           className: "!bg-rose-200 !border-rose-300",
         }
@@ -366,7 +366,7 @@ export function CompletePage() {
           rows: toNum(apiStats?.total_issues)!,
           pct: toNum(apiStats?.records_affected?.rows_pct) ?? undefined,
           color: "bg-amber-500",
-          dotColor: "text-amber-500",
+          dotColor: "amber-500",
           hex: "#f59e0b",
         }
       : null,
@@ -379,7 +379,7 @@ export function CompletePage() {
             ? apiStats.unchanged_data.pct
             : undefined,
           color: "bg-slate-400",
-          dotColor: "text-slate-400",
+          dotColor: "slate-400",
           hex: "#94a3b8",
         }
       : null,
@@ -553,31 +553,37 @@ export function CompletePage() {
                     </div>
                   </div> */}
 
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-1.5">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 ">
                     <div className="rounded-lg border border-slate-200 bg-white p-3 ">
                       <h3 className="text-sm font-normal text-slate-800 mb-2">
                         Outcome overview
                       </h3>
-                      <div className="h-[10px] rounded-md bg-slate-100 overflow-hidden flex">
+                      <div className=" rounded-md bg-slate-100 overflow-hidden flex mt-[3rem]">
                         {barChartBreakdown.map((item) => (
                           <div
                             key={`${item.key}-stack`}
                             className={item.color}
                             style={{
+                              height: "30px",
                               width: `${Math.max(2, Math.min(100, item.rows))}%`,
                             }}
                           />
                         ))}
                       </div>
-                      <div className="mt-3 flex flex-col flex-wrap gap-x-4 gap-y-2 text-xs text-slate-700">
+                      <div className="mt-[3.2rem] flex flex-col flex-wrap gap-x-4 gap-y-2 text-xs text-slate-700">
                         {barChartBreakdown.map((item) => (
                           <>
-                            <span
-                              key={`${item.key}-legend`}
-                              className="tabular-nums"
-                            >
-                              {item.rows} {item.label}
-                            </span>
+                            <div className="flex gap-2 items-center">
+                              <span
+                                className={`h-2.5 w-2.5 rounded-full bg-${item.dotColor}`}
+                              />
+                              <span
+                                key={`${item.key}-legend`}
+                                className="tabular-nums"
+                              >
+                                {item.rows} {item.label}
+                              </span>
+                            </div>
                           </>
                         ))}
                       </div>

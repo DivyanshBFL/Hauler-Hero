@@ -258,7 +258,7 @@ export function DataCleaningPage() {
   const [issueTypes, setIssueTypes] = useState<string[]>([]);
   const [selectedIssueType, setSelectedIssueType] =
     useState<string>("allIssues");
-  const [viewMode, setViewMode] = useState<"ISSUES" | "ALL">("ISSUES");
+  const [viewMode, setViewMode] = useState<"ISSUES" | "ALL">("ALL");
   const [conditions, setConditions] = useState<DedupeCondition[]>([
     { column: "", operator: "is", value: "" },
   ]);
@@ -589,8 +589,6 @@ export function DataCleaningPage() {
 
       if (totalIssues === 0) {
         setViewMode("ALL");
-      } else {
-        setViewMode("ISSUES");
       }
     }
 
@@ -976,8 +974,6 @@ export function DataCleaningPage() {
 
           if (totalIssues === 0) {
             setViewMode("ALL");
-          } else {
-            setViewMode("ISSUES");
           }
         }
 
@@ -2073,7 +2069,7 @@ export function DataCleaningPage() {
                         className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${viewMode === "ALL" && selectedIssueType === "allIssues" ? "text-primary bg-primary/5" : ""}`}
                       >
                         <span className="flex-1">
-                          All rows (incl. clean) ({allRows.length})
+                          All rows({allRows.length})
                         </span>
                         {viewMode === "ALL" &&
                           selectedIssueType === "allIssues" && (
@@ -2091,8 +2087,7 @@ export function DataCleaningPage() {
                           className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${selectedIssueType === type ? "text-primary bg-primary/5" : ""}`}
                         >
                           <span className="flex-1">
-                            {toIssueLabel(type)} (
-                            {issueCountByType[type] || 0})
+                            {toIssueLabel(type)} ({issueCountByType[type] || 0})
                           </span>
                           {selectedIssueType === type && (
                             <span className="text-primary">✓</span>
