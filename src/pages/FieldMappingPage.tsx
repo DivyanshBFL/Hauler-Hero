@@ -475,6 +475,7 @@ export function FieldMappingPage() {
   const [autoMappedCountByEntity, setAutoMappedCountByEntity] = useState<{
     [key: string]: number;
   }>({});
+  const [isApiMappingLoading, setIsApiMappingLoading] = useState(false);
 
   // Sync mappings to sessionStorage whenever they change
   useEffect(() => {
@@ -817,7 +818,10 @@ export function FieldMappingPage() {
 
   useEffect(() => {
     const loadMappings = async () => {
+      let sessionId = sessionStorage.getItem("session_id");
+      let wasAIFreshlyCalled = false;
       const sheetsStr = sessionStorage.getItem("sheets");
+
       if (!sheetsStr) {
         navigate("/upload");
         return;
@@ -829,7 +833,7 @@ export function FieldMappingPage() {
       if (fileToUpload) {
         try {
           const uploadResponse = await uploadFile(fileToUpload);
-          const sessionId = uploadResponse?.session_id;
+          sessionId = uploadResponse?.session_id || sessionId;
           if (!sessionId)
             throw new Error("session_id was not returned from /upload-file");
 
@@ -856,6 +860,7 @@ export function FieldMappingPage() {
             "mappingResponse",
             JSON.stringify(mappingResponse),
           );
+          wasAIFreshlyCalled = true;
 
           navigate("/field-mapping", { replace: true, state: {} });
         } catch (error) {
@@ -1001,12 +1006,82 @@ export function FieldMappingPage() {
 
       setEntityMappings(nextEntityMappings);
       setAutoMappedCountByEntity(nextAutoMappedCountByEntity);
-      setBaselineMappingsByEntity(
-        JSON.parse(JSON.stringify(nextEntityMappings)) as {
-          [key: string]: FieldMapping[];
-        },
-      );
       setLoading(false);
+
+      // --- 3. Persistent AI Mapping Refresh (The User's Request) ---
+      const currentEntity = selectedEntity || defaultEntity;
+      const finalSessionId = sessionStorage.getItem("session_id") || sessionId;
+      if (currentEntity && finalSessionId && !wasAIFreshlyCalled) {
+        setIsApiMappingLoading(true);
+        try {
+          const response = await mapFields({
+            session_id: finalSessionId,
+            entityName: currentEntity,
+          });
+
+          const sourceHeaders =
+            effectiveSheets.find((s) => s.name === currentEntity)?.headers ??
+            [];
+          const allowedTargets = getTargetOptionsForEntity(currentEntity);
+
+          const apiMappings: FieldMapping[] = (response.mappings ?? [])
+            .map((m) => ({
+              sourceField: m.sourceField,
+              targetField: m.targetField,
+            }))
+            .filter(
+              (m) =>
+                sourceHeaders.includes(m.sourceField) &&
+                allowedTargets.includes(m.targetField),
+            );
+
+          setEntityMappings((prev) => {
+            const existingForEntity = prev[currentEntity] ?? [];
+            const existingTargetFields = new Set(
+              existingForEntity
+                .filter((m) => m.targetField !== "Unmapped")
+                .map((m) => m.targetField),
+            );
+
+            const mergedMappings = [...existingForEntity];
+            apiMappings.forEach((apiMap) => {
+              if (!existingTargetFields.has(apiMap.targetField)) {
+                mergedMappings.push(apiMap);
+                existingTargetFields.add(apiMap.targetField);
+              }
+            });
+
+            const next = {
+              ...prev,
+              [currentEntity]: mergedMappings,
+            };
+
+            setBaselineMappingsByEntity(
+              JSON.parse(JSON.stringify(next)) as {
+                [key: string]: FieldMapping[];
+              },
+            );
+
+            return next;
+          });
+
+          setAutoMappedCountByEntity((prev) => ({
+            ...prev,
+            [currentEntity]: apiMappings.length,
+          }));
+        } catch (e) {
+          console.error("Dynamic AI Mapping refresh failed", e);
+        } finally {
+          setIsApiMappingLoading(false);
+        }
+      } else {
+        // Fallback baseline update
+        setBaselineMappingsByEntity(
+          JSON.parse(JSON.stringify(nextEntityMappings)) as {
+            [key: string]: FieldMapping[];
+          },
+        );
+      }
     };
 
     loadMappings();
@@ -1373,12 +1448,22 @@ export function FieldMappingPage() {
             />
             <CardHeader className="bg-muted border-none p-1 px-2">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm">
+                <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center shadow-sm relative">
                   <GitMerge className="w-4 h-4 text-primary" />
+                  {isApiMappingLoading && (
+                    <div className="absolute -top-1 -right-1">
+                      <Bot className="h-3.5 w-3.5 text-primary animate-pulse" />
+                    </div>
+                  )}
                 </div>
                 <div>
-                  <CardTitle className="font-normal">
+                  <CardTitle className="font-normal flex items-center gap-2">
                     Field Mapping Workspace
+                    {isApiMappingLoading && (
+                      <span className="text-[10px] font-normal text-muted-foreground animate-pulse">
+                        (AI is refreshing suggestions...)
+                      </span>
+                    )}
                   </CardTitle>
                   <CardDescription className="text-[11px] ">
                     <span className="flex items-center gap-1 text-primary">
