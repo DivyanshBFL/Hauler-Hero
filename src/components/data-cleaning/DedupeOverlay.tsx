@@ -284,7 +284,7 @@ export default function DedupeOverlay(props: Props) {
                   <div className=" rounded-lg  space-y-2">
                     <div className="relative">
                       <p className="text-[13px] font-medium text-[#171717]">
-                        Select Columns
+                        Select Columns <span style={{ color: "#ef4444" }}>*</span>
                       </p>
                       <Select
                         onValueChange={(new_value) => {

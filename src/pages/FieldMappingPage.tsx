@@ -164,9 +164,8 @@ function resolveFieldName(
   }
   if (partialMatches.length > 1) {
     return {
-      error: `Field "${cleaned}" matched multiple fields: ${partialMatches.slice(0, 4).join(", ")}${
-        partialMatches.length > 4 ? ", ..." : ""
-      }.`,
+      error: `Field "${cleaned}" matched multiple fields: ${partialMatches.slice(0, 4).join(", ")}${partialMatches.length > 4 ? ", ..." : ""
+        }.`,
     };
   }
 
@@ -898,9 +897,9 @@ export function FieldMappingPage() {
             effectiveSheets = loadedSheets.map((sheet, index) =>
               index === 0
                 ? {
-                    ...sheet,
-                    headers: mergedHeaders,
-                  }
+                  ...sheet,
+                  headers: mergedHeaders,
+                }
                 : sheet,
             );
           }
@@ -993,7 +992,7 @@ export function FieldMappingPage() {
 
             nextAutoMappedCountByEntity = {
               ...nextAutoMappedCountByEntity,
-              [entityFromApi]: apiMappings.length,
+              [entityFromApi]: (apiMappings || []).filter(m => !m.isManual).length,
             };
           }
         } catch (e) {
@@ -1015,6 +1014,8 @@ export function FieldMappingPage() {
             session_id: finalSessionId,
             entityName: currentEntity,
           });
+
+          console.log(response)
 
           const sourceHeaders =
             effectiveSheets.find((s) => s.name === currentEntity)?.headers ??
@@ -1068,7 +1069,7 @@ export function FieldMappingPage() {
 
           setAutoMappedCountByEntity((prev) => ({
             ...prev,
-            [currentEntity]: apiMappings.length,
+            [currentEntity]: (apiMappings || []).filter(m => !m.isManual).length,
           }));
         } catch (e) {
           console.error("Dynamic AI Mapping refresh failed", e);
@@ -1670,11 +1671,10 @@ export function FieldMappingPage() {
                               {chatMessages.map((message) => (
                                 <div
                                   key={message.id}
-                                  className={`rounded-md px-3 py-2 text-xs ${
-                                    message.role === "assistant"
-                                      ? "bg-muted text-foreground"
-                                      : "bg-primary text-primary-foreground ml-auto max-w-[90%]"
-                                  }`}
+                                  className={`rounded-md px-3 py-2 text-xs ${message.role === "assistant"
+                                    ? "bg-muted text-foreground"
+                                    : "bg-primary text-primary-foreground ml-auto max-w-[90%]"
+                                    }`}
                                 >
                                   {message.text}
                                 </div>
