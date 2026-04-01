@@ -21,11 +21,7 @@ import { api } from "@/services/api";
 import {
   Loader2,
   Download,
-  ChevronLeft,
-  ChevronRight,
-  Table2,
   FileDown,
-  ScanEye,
   Eye,
 } from "lucide-react";
 import jsPDF from "jspdf";
@@ -53,10 +49,17 @@ export function DataPreviewPage() {
     () => allEntityData[selectedEntity] ?? [],
     [allEntityData, selectedEntity],
   );
-  const currentHeaders = useMemo(
-    () => (currentRows[0] ? Object.keys(currentRows[0]) : []),
-    [currentRows],
-  );
+  const currentHeaders = useMemo(() => {
+    const mappings = allEntityMappings[selectedEntity] ?? [];
+    return mappings
+      .filter(
+        (m) =>
+          m.targetField &&
+          m.targetField.trim() !== "" &&
+          m.targetField !== "Unmapped",
+      )
+      .map((m) => m.targetField);
+  }, [allEntityMappings, selectedEntity]);
   const previewRows = currentRows.slice(0, 20);
 
   // ── available tabs: entities that have data ──────────────────
@@ -77,7 +80,9 @@ export function DataPreviewPage() {
   useEffect(() => {
     const loadData = async () => {
       const allRowsStr = sessionStorage.getItem("allRows");
-      const allMappingsStr = sessionStorage.getItem("allEntityMappings");
+      const allMappingsStr =
+        sessionStorage.getItem("entityMappings") ||
+        sessionStorage.getItem("allEntityMappings");
 
       if (!allRowsStr) {
         navigate("/field-mapping");
@@ -293,8 +298,12 @@ export function DataPreviewPage() {
           pdf.setFontSize(8);
           pdf.setFont("helvetica", "normal");
 
-          const previewHeaders = Object.keys(allEntityRows[0]);
+          const previewHeaders = entityMappings
+            .filter((m) => m.targetField && m.targetField !== "Unmapped")
+            .map((m) => m.targetField);
+
           const tableWidth = pageWidth - 2 * marginX - 5;
+          if (previewHeaders.length === 0) return; // skip table if no headers
           const colWidth = tableWidth / previewHeaders.length;
           const cellPadding = 1.5;
 

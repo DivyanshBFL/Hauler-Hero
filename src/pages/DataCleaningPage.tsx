@@ -1125,7 +1125,7 @@ export function DataCleaningPage() {
         try {
           sessionStorage.setItem("session_id", sessionId);
           sessionIdRef.current = sessionId;
-          const issueRows = await loadSessionStartIssues(sessionId);
+          const issueRows = await loadSessionStartIssues(sessionId, true);
           if (issueRows.length) {
             initialRows = issueRows.map((r: IssueRow) => ({
               ...r.data,

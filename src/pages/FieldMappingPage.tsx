@@ -479,7 +479,9 @@ export function FieldMappingPage() {
   // Sync mappings to sessionStorage whenever they change
   useEffect(() => {
     if (Object.keys(entityMappings).length > 0) {
-      sessionStorage.setItem("entityMappings", JSON.stringify(entityMappings));
+      const mappingsStr = JSON.stringify(entityMappings);
+      sessionStorage.setItem("entityMappings", mappingsStr);
+      sessionStorage.setItem("allEntityMappings", mappingsStr);
     }
   }, [entityMappings]);
 
@@ -1304,6 +1306,10 @@ export function FieldMappingPage() {
 
       const allRows = JSON.parse(allRowsStr);
       const baselineMappings = baselineMappingsByEntity[selectedEntity] ?? [];
+
+      const mappingsStr = JSON.stringify(entityMappings);
+      sessionStorage.setItem("entityMappings", mappingsStr);
+      sessionStorage.setItem("allEntityMappings", mappingsStr);
 
       const correctionPayload = buildCorrectionPayload(
         selectedEntity,
