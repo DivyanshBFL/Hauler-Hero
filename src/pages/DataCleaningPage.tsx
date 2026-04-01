@@ -258,6 +258,7 @@ export function DataCleaningPage() {
   const [issueTypes, setIssueTypes] = useState<string[]>([]);
   const [selectedIssueType, setSelectedIssueType] =
     useState<string>("allIssues");
+  const [viewMode, setViewMode] = useState<"ISSUES" | "ALL">("ISSUES");
   const [conditions, setConditions] = useState<DedupeCondition[]>([
     { column: "", operator: "is", value: "" },
   ]);
@@ -579,9 +580,21 @@ export function DataCleaningPage() {
 
     if (payload.issues) {
       processIssuesData(payload.issues);
+
+      // If no issues remain, automatically switch to "ALL" view mode
+      // so the user doesn't see an empty table after a fix or refresh.
+      const totalIssues = Object.values(
+        payload.issues.issue_counts || {},
+      ).reduce((acc: number, curr: any) => acc + (Number(curr) || 0), 0);
+
+      if (totalIssues === 0) {
+        setViewMode("ALL");
+      } else {
+        setViewMode("ISSUES");
+      }
     }
 
-    const rows = payload.issues?.rows || [];
+    const rows = payload.rows || payload.issues?.rows || [];
 
     if (!rows.length) return [];
 
@@ -950,10 +963,22 @@ export function DataCleaningPage() {
           setServerUndoAvailable(payload.step_count);
         }
 
-        const rows = payload.issues?.rows || [];
+        const rows = payload.rows || payload.issues?.rows || [];
 
         if (payload.issues) {
           processIssuesData(payload.issues);
+
+          // If no issues are found, automatically switch to "ALL" view mode
+          // so the user doesn't see an empty table.
+          const totalIssues = Object.values(
+            payload.issues.issue_counts || {},
+          ).reduce((acc: number, curr: any) => acc + (Number(curr) || 0), 0);
+
+          if (totalIssues === 0) {
+            setViewMode("ALL");
+          } else {
+            setViewMode("ISSUES");
+          }
         }
 
         return rows;
@@ -1126,15 +1151,18 @@ export function DataCleaningPage() {
           sessionStorage.setItem("session_id", sessionId);
           sessionIdRef.current = sessionId;
           const issueRows = await loadSessionStartIssues(sessionId, true);
-          if (issueRows.length) {
-            initialRows = issueRows.map((r: IssueRow) => ({
-              ...r.data,
-              __rowIndex: r.row_index,
-            }));
+          initialRows = (issueRows || []).map((r: IssueRow) => ({
+            ...r.data,
+            __rowIndex: r.row_index,
+          }));
+          loadedFromSession = true;
+        } catch (err) {
+          console.error("Failed to load session:", err);
+          // If we had a sessionId but it failed, still mark as loaded to attempt fallback
+          // to navigation state or storage without redirecting to /data-preview.
+          if (sessionId) {
             loadedFromSession = true;
           }
-        } catch {
-          /* fallback */
         }
       }
 
@@ -1378,11 +1406,14 @@ export function DataCleaningPage() {
       };
 
       // Apply issue-type filter only when a specific type is selected.
-      // "allIssues" is treated as "no issue-type filter" (show all rows).
       if (selectedIssueType !== "allIssues") {
         rows = rows.filter((row) =>
           rowHasIssueType(Number(row.__rowIndex), selectedIssueType),
         );
+      } else if (viewMode === "ISSUES") {
+        // If "Rows with Issues" mode is active and no specific type is selected,
+        // show all rows that have at least one issue.
+        rows = rows.filter((row) => rowHasAnyIssues(Number(row.__rowIndex)));
       }
 
       rows = rows.map((row) => {
@@ -1403,7 +1434,7 @@ export function DataCleaningPage() {
     return rows.filter((r) =>
       columns.some((c) => displayValue(r[c]).toLowerCase().includes(q)),
     );
-  }, [visibleRows, search, columns, rowIssueMap, selectedIssueType]);
+  }, [visibleRows, search, columns, rowIssueMap, selectedIssueType, viewMode]);
   useEffect(() => {
     setPreviewDuplicateCount(0);
   }, [
@@ -1657,7 +1688,6 @@ export function DataCleaningPage() {
         actionLabel: "Auto-fix all issues",
       });
 
-
       clearInterval(interval);
       setProgress(100);
       setAutoFixConfirmOpen(false);
@@ -1754,7 +1784,6 @@ export function DataCleaningPage() {
         actionLabel: "Address fix",
       });
 
-
       clearInterval(interval);
       setProgress(100);
       setAddressFixConfirmOpen(false);
@@ -1804,8 +1833,6 @@ export function DataCleaningPage() {
           cellsToMarkAsWorked.add(getCellKey(edit.row_index, edit.column));
         });
         setWorkedOnCells((prev) => new Set([...prev, ...cellsToMarkAsWorked]));
-
-
       } catch (error) {
         showApiErrorToast(
           error,
@@ -1857,8 +1884,6 @@ export function DataCleaningPage() {
           actor: "user",
           actionLabel: "Column operation applied",
         });
-
-
       } catch (error) {
         showApiErrorToast(
           error,
@@ -2021,39 +2046,58 @@ export function DataCleaningPage() {
                       className="w-56"
                     >
                       <DropdownMenuItem
-                        onClick={() => setSelectedIssueType("allIssues")}
-                        className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${selectedIssueType === "allIssues" ? "text-primary bg-primary/5" : ""}`}
+                        onClick={() => {
+                          setViewMode("ISSUES");
+                          setSelectedIssueType("allIssues");
+                        }}
+                        className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${viewMode === "ISSUES" && selectedIssueType === "allIssues" ? "text-primary bg-primary/5" : ""}`}
                       >
                         <span className="flex-1">
-                          {toIssueLabel("allIssues")} (
+                          Rows with issues (
                           {Object.values(issueCountByType || {}).reduce(
                             (acc, curr) => acc + curr,
                             0,
                           )}
                           )
                         </span>
-                        {selectedIssueType === "allIssues" && (
-                          <span className="text-primary">✓</span>
-                        )}
+                        {viewMode === "ISSUES" &&
+                          selectedIssueType === "allIssues" && (
+                            <span className="text-primary">✓</span>
+                          )}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setViewMode("ALL");
+                          setSelectedIssueType("allIssues");
+                        }}
+                        className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${viewMode === "ALL" && selectedIssueType === "allIssues" ? "text-primary bg-primary/5" : ""}`}
+                      >
+                        <span className="flex-1">
+                          All rows (incl. clean) ({allRows.length})
+                        </span>
+                        {viewMode === "ALL" &&
+                          selectedIssueType === "allIssues" && (
+                            <span className="text-primary">✓</span>
+                          )}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       {availableIssueTypes.map((type) => (
-                        <>
-                          <DropdownMenuItem
-                            key={type}
-                            onClick={() => setSelectedIssueType(type)}
-                            className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${selectedIssueType === type ? "text-primary bg-primary/5" : ""}`}
-                          >
-                            <span className="flex-1">
-                              {toIssueLabel(type)} (
-                              {issueCountByType[type] || 0})
-                            </span>
-                            {selectedIssueType === type && (
-                              <span className="text-primary">✓</span>
-                            )}
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                        </>
+                        <DropdownMenuItem
+                          key={type}
+                          onClick={() => {
+                            setViewMode("ISSUES");
+                            setSelectedIssueType(type);
+                          }}
+                          className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${selectedIssueType === type ? "text-primary bg-primary/5" : ""}`}
+                        >
+                          <span className="flex-1">
+                            {toIssueLabel(type)} (
+                            {issueCountByType[type] || 0})
+                          </span>
+                          {selectedIssueType === type && (
+                            <span className="text-primary">✓</span>
+                          )}
+                        </DropdownMenuItem>
                       ))}
                     </DropdownMenuContent>
                   </DropdownMenu>

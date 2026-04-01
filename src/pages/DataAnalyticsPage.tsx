@@ -477,7 +477,14 @@ const DataAnalyticsPage = () => {
               <Button
                 variant="outline"
                 className="px-4 font-semibold border-primary text-primary hover:bg-primary/10 hover:text-primary transition-colors text-xs"
-                onClick={() => navigate("/data-cleaning")}
+                onClick={() => {
+                  const sid =
+                    new URLSearchParams(location.search).get("session_id") ??
+                    sessionStorage.getItem("session_id");
+                  navigate(
+                    sid ? `/data-cleaning?session_id=${sid}` : "/data-cleaning",
+                  );
+                }}
               >
                 <svg
                   className="mr-2 w-4 h-4"

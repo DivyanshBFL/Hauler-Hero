@@ -167,6 +167,7 @@ export interface RefreshedDataResponse {
   redo_available: number;
   last_saved: string;
   issues: IssuesData;
+  rows: IssueRow[];
 }
 
 export type SessionStartResponse = RefreshedDataResponse;
