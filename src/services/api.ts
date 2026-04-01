@@ -21,6 +21,7 @@ export interface CSVData {
 export interface FieldMapping {
   sourceField: string;
   targetField: string;
+  isManual?: boolean;
 }
 
 export interface EntityMapping {

@@ -104,7 +104,11 @@ function buildNameBasedAutoMappings(
     );
     if (matched) {
       usedTargets.add(matched);
-      result.push({ sourceField: header, targetField: matched });
+      result.push({
+        sourceField: header,
+        targetField: matched,
+        isManual: false,
+      });
     }
   });
 
@@ -217,7 +221,6 @@ function buildNodesAndEdges(
   targetX: number,
   nodeWidths: { source: number; target: number },
   requiredTargetSet: Set<string>,
-  baselineMappings: FieldMapping[],
   onUnmapTarget: (targetField: string) => void,
   selectedEdgeId: string | null,
 ): { nodes: Node[]; edges: Edge[] } {
@@ -275,13 +278,7 @@ function buildNodesAndEdges(
         nodeWidth: nodeWidths.target,
         isWarning: !mapped,
         isAutoMapped:
-          mapped &&
-          baselineMappings.some(
-            (bm) =>
-              bm.targetField === label &&
-              bm.sourceField ===
-                mappings.find((m) => m.targetField === label)?.sourceField,
-          ),
+          mapped && !active.find((m) => m.targetField === label)?.isManual,
         onUnmap: onUnmapTarget,
       },
       style: {
@@ -784,7 +781,6 @@ export function FieldMappingPage() {
         targetX,
         nodeWidths,
         requiredTargetSet,
-        baselineMappingsByEntity[selectedEntity] ?? EMPTY_MAPPINGS,
         handleUnmapTarget,
         selectedEdgeId,
       ),
@@ -978,6 +974,7 @@ export function FieldMappingPage() {
             .map((m) => ({
               sourceField: m.sourceField,
               targetField: m.targetField,
+              isManual: m.isManual,
             }))
             .filter(
               (m) =>
@@ -1028,6 +1025,7 @@ export function FieldMappingPage() {
             .map((m) => ({
               sourceField: m.sourceField,
               targetField: m.targetField,
+              isManual: m.isManual,
             }))
             .filter(
               (m) =>
@@ -1046,7 +1044,10 @@ export function FieldMappingPage() {
             const mergedMappings = [...existingForEntity];
             apiMappings.forEach((apiMap) => {
               if (!existingTargetFields.has(apiMap.targetField)) {
-                mergedMappings.push(apiMap);
+                mergedMappings.push({
+                  ...apiMap,
+                  isManual: apiMap.isManual ?? false,
+                });
                 existingTargetFields.add(apiMap.targetField);
               }
             });
@@ -1297,7 +1298,9 @@ export function FieldMappingPage() {
               (m) =>
                 m.sourceField !== sourceField && m.targetField !== targetField,
             )
-            .concat([{ sourceField, targetField }]);
+            .concat([
+              { sourceField, targetField, isManual: true },
+            ]);
           return { ...prev, [selectedEntity]: updated };
         });
       },
