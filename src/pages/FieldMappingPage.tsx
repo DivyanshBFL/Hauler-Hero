@@ -483,6 +483,16 @@ export function FieldMappingPage() {
     }
   }, [entityMappings]);
 
+  // Sync autoMappedCountByEntity to sessionStorage
+  useEffect(() => {
+    if (Object.keys(autoMappedCountByEntity).length > 0) {
+      sessionStorage.setItem(
+        "autoMappedCountByEntity",
+        JSON.stringify(autoMappedCountByEntity),
+      );
+    }
+  }, [autoMappedCountByEntity]);
+
   const [confirmType, setConfirmType] = useState<"change" | "delete">("change");
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -908,6 +918,7 @@ export function FieldMappingPage() {
       let nextEntityMappings: { [key: string]: FieldMapping[] } = {};
       let nextAutoMappedCountByEntity: { [key: string]: number } = {};
       const mappingsStr = sessionStorage.getItem("entityMappings");
+      const autoMappedCountStr = sessionStorage.getItem("autoMappedCountByEntity");
       let wasLoadedFromSession = false;
 
       if (mappingsStr) {
@@ -917,6 +928,14 @@ export function FieldMappingPage() {
         };
         for (const [entity, maps] of Object.entries(parsed)) {
           nextEntityMappings[entity] = maps;
+        }
+
+        if (autoMappedCountStr) {
+          try {
+            nextAutoMappedCountByEntity = JSON.parse(autoMappedCountStr);
+          } catch (e) {
+            console.error("Error parsing autoMappedCountByEntity", e);
+          }
         }
       } else {
         for (const sheet of effectiveSheets) {
