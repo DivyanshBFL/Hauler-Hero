@@ -17,6 +17,7 @@ import {
 } from "@/types/importStats";
 import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
 import ProcessStepper from "@/components/ProcessStepper";
+import { sortColumnsByPriority } from "@/constants/targetColumns";
 import { api } from "@/services/api";
 import {
   Table,
@@ -116,7 +117,7 @@ const DataAnalyticsPage = () => {
             h.toLowerCase() !== "attribution",
         );
 
-        const cols = [...dataCols, "Attribution"];
+        const cols = sortColumnsByPriority([...dataCols, "Attribution"]);
 
         if (!cancelled) {
           const deletedRows = (
@@ -266,7 +267,11 @@ const DataAnalyticsPage = () => {
             <ProcessStepper />
           </div>
           <Card className="shadow-lg border border-border bg-card relative !h-[calc(100vh-180px)]">
-            <Loader open={loading} inline className="rounded-lg" />
+            <Loader
+              open={loading}
+              inline
+              className="rounded-lg min-h-[31rem]"
+            />
             <CardHeader className="p-1 px-2 bg-muted shrink-0 border-none">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <div className="flex items-start gap-2">

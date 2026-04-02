@@ -49,6 +49,10 @@ import {
   Filter,
   BrushCleaningIcon,
 } from "lucide-react";
+import {
+  getTargetColumnsForEntity,
+  sortColumnsByPriority,
+} from "@/constants/targetColumns";
 import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
 import ProcessStepper from "@/components/ProcessStepper";
 import IssueCellDetailsDrawer from "@/components/data-cleaning/IssueCellDetailsDrawer";
@@ -364,7 +368,7 @@ export function DataCleaningPage() {
         });
 
         if (uniqueTargetFields.size > 0) {
-          return Array.from(uniqueTargetFields);
+          return sortColumnsByPriority(Array.from(uniqueTargetFields));
         }
       } catch (err) {
         console.warn("Could not parse entityMappings for columns:", err);
@@ -374,9 +378,10 @@ export function DataCleaningPage() {
     // 2. Fallback: Use originalRows or allRows as a source for columns if no mapping info found
     const dataSource =
       originalRows.length > 0 ? originalRows[0] : (allRows[0] ?? {});
-    return Object.keys(dataSource).filter(
+    const fields = Object.keys(dataSource).filter(
       (c) => !c.startsWith("__") && c !== "_row_id",
     );
+    return sortColumnsByPriority(fields);
   }, [originalRows, allRows]);
   const addActivityLog = useCallback(
     (entry: Omit<ActivityLogItem, "id" | "timestamp">) => {
@@ -2487,8 +2492,7 @@ export function DataCleaningPage() {
                         },
                         {
                           key: "deduplication",
-                          label:
-                            "Handle Missing Field Values Using Highest Occurrence",
+                          label: "Remove Duplicate Data Records Row-wise",
                         },
                       ].map((opt) => (
                         <>

@@ -27,6 +27,7 @@ import {
 import jsPDF from "jspdf";
 import * as XLSX from "xlsx";
 import type { FieldMapping } from "@/services/api";
+import { sortColumnsByPriority } from "@/constants/targetColumns";
 import { PAGE_OUTER, PAGE_CONTAINER } from "@/constants/layout";
 import ProcessStepper from "@/components/ProcessStepper";
 import Loader from "@/components/Loader";
@@ -51,7 +52,7 @@ export function DataPreviewPage() {
   );
   const currentHeaders = useMemo(() => {
     const mappings = allEntityMappings[selectedEntity] ?? [];
-    return mappings
+    const fields = mappings
       .filter(
         (m) =>
           m.targetField &&
@@ -59,6 +60,7 @@ export function DataPreviewPage() {
           m.targetField !== "Unmapped",
       )
       .map((m) => m.targetField);
+    return sortColumnsByPriority(fields);
   }, [allEntityMappings, selectedEntity]);
   const previewRows = currentRows.slice(0, 20);
 
