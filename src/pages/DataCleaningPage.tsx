@@ -1531,17 +1531,14 @@ export function DataCleaningPage() {
         ),
       );
 
-      // Create the edit entry
-      const newEdit: RowEdit = {
-        seq: editSeqCounter,
+      // Create the edit entry (seq will be set by commitRows)
+      const newEdit: Omit<RowEdit, "seq"> = {
         row_index: rowIndex,
         column,
         old_value: oldValue,
         new_value: nextValue,
       };
 
-      setEditSeqCounter((prev) => prev + 1);
-      setEditLog((prevLog) => [...prevLog, newEdit]);
       setEditingCell(null);
 
       // Mark cell as worked on IMMEDIATELY (yellow background shows instantly)
@@ -1553,24 +1550,25 @@ export function DataCleaningPage() {
         const sid = getActiveSessionId();
         if (!sid) throw new Error("Missing session id for cell edit");
 
-        // Submit this single edit
-        await api.submitSessionEdits(sid, { edits: [newEdit] });
+        // Submit this single edit (api accepts Omit<RowEdit, "seq">)
+        await api.submitSessionEdits(sid, {
+          edits: [{ ...newEdit, seq: editSeqCounter }],
+        });
         sessionStartRequestCache.delete(sid); // Clear stale cache after submission
 
-        // Refresh rows from session to get updated data
+        // Refresh rows from session to get updated data and issues
         const refreshedRows = await refreshRowsFromSession();
         if (refreshedRows?.length) {
-          setAllRows(refreshedRows);
-          await resetVirtualRows(refreshedRows);
+          // Use commitRows to ensure history is updated, which enables the Undo button
+          await commitRows(refreshedRows, [newEdit], {
+            actor: "user",
+            actionLabel: "Cell value change",
+          });
         }
 
         toast.success("Cell updated successfully.");
       } catch (error) {
         showApiErrorToast(error, "Failed to update cell");
-        // Optionally rollback if needed
-        // setAllRows(prev => prev.map(r =>
-        //   Number(r.__rowIndex) === rowIndex ? { ...r, [column]: oldValue } : r
-        // ));
       }
     },
     [
@@ -1578,7 +1576,7 @@ export function DataCleaningPage() {
       editSeqCounter,
       getActiveSessionId,
       refreshRowsFromSession,
-      resetVirtualRows,
+      commitRows,
     ],
   );
 
