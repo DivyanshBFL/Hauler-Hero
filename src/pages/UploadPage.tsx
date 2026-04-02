@@ -464,7 +464,7 @@ export function UploadPage() {
                         </>
                       ) : (
                         <>
-                          Upload your source CSV or XLSX file to begin the data
+                          Upload your source XLSX file to begin the data
                           processing workflow
                         </>
                       )}

@@ -27,7 +27,7 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-  Label
+  Label,
 } from "recharts";
 import * as XLSX from "xlsx";
 import { getTargetColumnsForEntity } from "@/constants/targetColumns";
@@ -56,17 +56,17 @@ function StatTile({
     >
       <div className="flex items-start justify-between gap-2">
         <span className="text-[14px] leading-none text-slate-800 font-medium">
-          {label}
+          {detail}
         </span>
       </div>
       <div className="mt-2">
-        <div className="text-md mb-1 leading-none font-bold tabular-nums text-slate-900">
+        <div className="text-xl mb-1 leading-none font-bold tabular-nums text-slate-900">
           {value}
         </div>
         {detail ? (
           <div className="flex items-center justify-between">
             <div className="text-[11px] text-slate-700 mt-0.5 leading-none">
-              {detail}
+              {label}
             </div>
             <div className="rounded-md bg-white/60 p-1">
               <Icon className="h-3.5 w-3.5 text-slate-600" />
@@ -194,103 +194,103 @@ export function CompletePage() {
   const metricTiles = [
     toNum(apiStats?.total_processed?.rows) !== null
       ? {
-        key: "total-processed",
-        label: "Upload Data",
-        value: toNum(apiStats?.total_processed?.rows)!.toLocaleString(),
-        detail: "Rows Processed",
-        icon: Upload,
-        className: "!bg-emerald-200 !border-emerald-300",
-      }
+          key: "total-processed",
+          label: "Upload Data",
+          value: toNum(apiStats?.total_processed?.rows)!.toLocaleString(),
+          detail: "Rows Processed",
+          icon: Upload,
+          className: "!bg-emerald-200 !border-emerald-300",
+        }
       : null,
     toNum(apiStats?.records_affected?.rows) !== null
       ? {
-        key: "Field-mapping",
-        label: "Field Mapping",
-        value: toNum(
-          apiStats?.mapped_data?.mapped_cols ?? 0,
-        )!.toLocaleString(),
-        detail: "Fields Auto Mapped",
-        icon: GitMerge,
-        className: "",
-      }
+          key: "Field-mapping",
+          label: "Field Mapping",
+          value: toNum(
+            apiStats?.mapped_data?.mapped_cols ?? 0,
+          )!.toLocaleString(),
+          detail: "AI Mapped Fields",
+          icon: GitMerge,
+          className: "",
+        }
       : null,
     toNum(apiStats?.success_rate?.pct) !== null
       ? {
-        key: "success-rate",
-        label: "Data Cleaning",
-        value: toNum(
-          (apiStats?.total_issues ?? 0) - (apiStats?.current_issues ?? 0),
-        )!.toLocaleString(),
-        detail: "Issues Fixed",
-        icon: BrushCleaningIcon,
-        className: "!bg-amber-200 !border-amber-300",
-      }
+          key: "success-rate",
+          label: "Data Cleaning",
+          value: toNum(
+            (apiStats?.total_issues ?? 0) - (apiStats?.current_issues ?? 0),
+          )!.toLocaleString(),
+          detail: "Issues Fixed",
+          icon: BrushCleaningIcon,
+          className: "!bg-amber-200 !border-amber-300",
+        }
       : null,
     toNum(apiStats?.mapped_data?.mapped_cols) !== null &&
-      toNum(apiStats?.mapped_data?.total_cols) !== null
+    toNum(apiStats?.mapped_data?.total_cols) !== null
       ? {
-        key: "mapped-cols",
-        label: "Data Cleaning",
-        value: toNum(
-          apiStats?.duplicate_findings?.rows_removed ?? 0,
-        )!.toLocaleString(),
-        detail: "Duplicate(s) Removed",
-        // toNum(apiStats?.mapped_data?.cols_pct) !== null
-        //   ? formatPct(toNum(apiStats?.mapped_data?.cols_pct)!)
-        //   : undefined,
-        icon: BrushCleaningIcon,
-        className: "!bg-lime-200 !border-lime-300",
-      }
+          key: "mapped-cols",
+          label: "Data Cleaning",
+          value: toNum(
+            apiStats?.duplicate_findings?.rows_removed ?? 0,
+          )!.toLocaleString(),
+          detail: "Duplicate(s) Removed",
+          // toNum(apiStats?.mapped_data?.cols_pct) !== null
+          //   ? formatPct(toNum(apiStats?.mapped_data?.cols_pct)!)
+          //   : undefined,
+          icon: BrushCleaningIcon,
+          className: "!bg-lime-200 !border-lime-300",
+        }
       : null,
     hasNum(rawStats?.inserted?.rows)
       ? {
-        key: "inserted",
-        label: "Inserted",
-        value: (rawStats.inserted.rows as number).toLocaleString(),
-        detail: hasNum(rawStats?.inserted?.pct)
-          ? formatPct(rawStats.inserted.pct as number)
-          : undefined,
-        icon: WandSparkles,
-        className: "!bg-lime-200 !border-lime-300",
-      }
+          key: "inserted",
+          label: "Inserted",
+          value: (rawStats.inserted.rows as number).toLocaleString(),
+          detail: hasNum(rawStats?.inserted?.pct)
+            ? formatPct(rawStats.inserted.pct as number)
+            : undefined,
+          icon: WandSparkles,
+          className: "!bg-lime-200 !border-lime-300",
+        }
       : null,
     hasNum(rawStats?.updated?.rows)
       ? {
-        key: "updated",
-        label: "Updated",
-        value: (rawStats.updated.rows as number).toLocaleString(),
-        detail: hasNum(rawStats?.updated?.rows_pct)
-          ? formatPct(rawStats.updated.rows_pct as number)
-          : hasNum(rawStats?.updated?.pct)
-            ? formatPct(rawStats.updated.pct as number)
-            : undefined,
-        icon: TrendingUp,
-        className: "!bg-fuchsia-200 !border-fuchsia-300",
-      }
+          key: "updated",
+          label: "Updated",
+          value: (rawStats.updated.rows as number).toLocaleString(),
+          detail: hasNum(rawStats?.updated?.rows_pct)
+            ? formatPct(rawStats.updated.rows_pct as number)
+            : hasNum(rawStats?.updated?.pct)
+              ? formatPct(rawStats.updated.pct as number)
+              : undefined,
+          icon: TrendingUp,
+          className: "!bg-fuchsia-200 !border-fuchsia-300",
+        }
       : null,
     toNum(apiStats?.unchanged_data?.rows) !== null
       ? {
-        key: "unchanged",
-        label: "Data Cleaning",
-        value: toNum(
-          apiStats?.success_rate?.ai_fixed_fields ?? 0,
-        )!.toLocaleString(),
-        detail: "Fields Auto Corrected ",
-        icon: BrushCleaning,
-        className: "!bg-sky-200 !border-sky-300",
-      }
+          key: "unchanged",
+          label: "Data Cleaning",
+          value: toNum(
+            apiStats?.success_rate?.ai_fixed_fields ?? 0,
+          )!.toLocaleString(),
+          detail: "Fields Auto Corrected ",
+          icon: BrushCleaning,
+          className: "!bg-sky-200 !border-sky-300",
+        }
       : null,
     toNum(apiStats?.duplicate_findings?.rows_removed) !== null
       ? {
-        key: "duplicates",
-        label: "Data Cleaning",
-        value: toNum(
-          apiStats?.address_corrections.cells_changed,
-        )!.toLocaleString(),
-        detail: "Address Field(s) Corrected ",
-        icon: BrushCleaning,
-        className: "!bg-rose-200 !border-rose-300",
-      }
+          key: "duplicates",
+          label: "Data Cleaning",
+          value: toNum(
+            apiStats?.address_corrections.cells_changed,
+          )!.toLocaleString(),
+          detail: "Address Field(s) Corrected ",
+          icon: BrushCleaning,
+          className: "!bg-rose-200 !border-rose-300",
+        }
       : null,
   ].filter(Boolean) as Array<{
     key: string;
@@ -315,40 +315,40 @@ export function CompletePage() {
   const actionBreakdown = [
     toNum(apiStats?.records_affected?.rows) !== null
       ? {
-        key: "changed-rows",
-        label: "Changed Rows",
-        rows: toNum(apiStats?.records_affected?.rows)!,
-        pct: toNum(apiStats?.records_affected?.rows_pct) ?? undefined,
-        color: "bg-amber-500",
-        dotColor: "text-amber-500",
-        hex: "#f59e0b",
-      }
+          key: "changed-rows",
+          label: "Changed Rows",
+          rows: toNum(apiStats?.records_affected?.rows)!,
+          pct: toNum(apiStats?.records_affected?.rows_pct) ?? undefined,
+          color: "bg-amber-500",
+          dotColor: "text-amber-500",
+          hex: "#f59e0b",
+        }
       : null,
     hasNum(apiStats?.unchanged_data?.rows)
       ? {
-        key: "unchanged",
-        label: "Unchanged Rows",
-        rows: apiStats.unchanged_data.rows,
-        pct: hasNum(apiStats?.unchanged_data?.pct)
-          ? apiStats.unchanged_data.pct
-          : undefined,
-        color: "bg-slate-400",
-        dotColor: "text-slate-400",
-        hex: "#94a3b8",
-      }
+          key: "unchanged",
+          label: "Unchanged Rows",
+          rows: apiStats.unchanged_data.rows,
+          pct: hasNum(apiStats?.unchanged_data?.pct)
+            ? apiStats.unchanged_data.pct
+            : undefined,
+          color: "bg-slate-400",
+          dotColor: "text-slate-400",
+          hex: "#94a3b8",
+        }
       : null,
     hasNum(apiStats?.duplicate_findings?.rows_removed)
       ? {
-        key: "duplicates",
-        label: "Duplicates Removed",
-        rows: apiStats.duplicate_findings.rows_removed,
-        pct: hasNum(apiStats?.duplicate_findings?.pct)
-          ? apiStats.duplicate_findings.pct
-          : undefined,
-        color: "bg-rose-500",
-        dotColor: "text-rose-500",
-        hex: "#f43f5e",
-      }
+          key: "duplicates",
+          label: "Duplicates Removed",
+          rows: apiStats.duplicate_findings.rows_removed,
+          pct: hasNum(apiStats?.duplicate_findings?.pct)
+            ? apiStats.duplicate_findings.pct
+            : undefined,
+          color: "bg-rose-500",
+          dotColor: "text-rose-500",
+          hex: "#f43f5e",
+        }
       : null,
   ].filter(Boolean) as Array<{
     key: string;
@@ -359,30 +359,31 @@ export function CompletePage() {
     dotColor: string;
     hex: string;
   }>;
+  var issuesFixed = toNum(apiStats?.total_issues - apiStats?.current_issues);
   const barChartBreakdown = [
     toNum(apiStats?.total_issues) !== null
       ? {
-        key: "total-issues",
-        label: "Total Issues Found",
-        rows: toNum(apiStats?.total_issues)!,
-        pct: toNum(apiStats?.records_affected?.rows_pct) ?? undefined,
-        color: "bg-amber-500",
-        dotColor: "amber-500",
-        hex: "#f59e0b",
-      }
+          key: "fixed-issues",
+          label: "Issues Fixed",
+          rows: issuesFixed,
+          pct: toNum((issuesFixed / apiStats?.total_issues) * 100) ?? undefined,
+          color: "bg-amber-500",
+          dotColor: "amber-500",
+          hex: "#f59e0b",
+        }
       : null,
     hasNum(apiStats?.current_issues)
       ? {
-        key: "remaining-issues",
-        label: "Remaining Issues",
-        rows: apiStats.current_issues,
-        pct: hasNum(apiStats?.unchanged_data?.pct)
-          ? apiStats.unchanged_data.pct
-          : undefined,
-        color: "bg-slate-400",
-        dotColor: "slate-400",
-        hex: "#94a3b8",
-      }
+          key: "remaining-issues",
+          label: "Remaining Issues",
+          rows: apiStats.current_issues,
+          pct:
+            toNum((apiStats?.current_issues / apiStats.total_issues) * 100) ??
+            undefined,
+          color: "bg-slate-400",
+          dotColor: "slate-400",
+          hex: "#94a3b8",
+        }
       : null,
   ].filter(Boolean) as Array<{
     key: string;
@@ -412,27 +413,27 @@ export function CompletePage() {
   const fieldBreakdown = [
     toNum(apiStats?.total_processed?.fields) !== null
       ? {
-        key: "total-fields",
-        label: "Total Fields",
-        value: toNum(apiStats?.total_processed?.fields)!,
-        hex: "#2563eb",
-      }
+          key: "total-fields",
+          label: "Total Fields",
+          value: toNum(apiStats?.total_processed?.fields)!,
+          hex: "#2563eb",
+        }
       : null,
     toNum(apiStats?.updated?.fields) !== null
       ? {
-        key: "changed-fields",
-        label: "Changed Fields",
-        value: toNum(apiStats?.updated?.fields)!,
-        hex: "#f59e0b",
-      }
+          key: "changed-fields",
+          label: "Changed Fields",
+          value: toNum(apiStats?.updated?.fields)!,
+          hex: "#f59e0b",
+        }
       : null,
     toNum(apiStats?.success_rate?.ai_fixed_fields) !== null
       ? {
-        key: "auto-fixed-fields",
-        label: "Auto Fixed Fields",
-        value: toNum(apiStats?.success_rate?.ai_fixed_fields)!,
-        hex: "#10b981",
-      }
+          key: "auto-fixed-fields",
+          label: "Auto Fixed Fields",
+          value: toNum(apiStats?.success_rate?.ai_fixed_fields)!,
+          hex: "#10b981",
+        }
       : null,
   ].filter(Boolean) as Array<{
     key: string;
@@ -560,16 +561,19 @@ export function CompletePage() {
                         Outcome overview
                       </h3>
                       <div className=" rounded-md bg-slate-100 overflow-hidden flex mt-[3rem]">
-                        {barChartBreakdown.map((item) => (
-                          <div
-                            key={`${item.key}-stack`}
-                            className={item.color}
-                            style={{
-                              height: "30px",
-                              width: `${Math.max(2, Math.min(100, item.rows))}%`,
-                            }}
-                          />
-                        ))}
+                        {barChartBreakdown.map((item) => {
+                          console.log("BarChart :", item);
+                          return (
+                            <div
+                              key={`${item.key}-stack`}
+                              className={item.color}
+                              style={{
+                                height: "30px",
+                                width: `${Math.max(2, Math.min(100, item.pct))}%`,
+                              }}
+                            />
+                          );
+                        })}
                       </div>
                       <div className="mt-[3.2rem] flex flex-col flex-wrap gap-x-4 gap-y-2 text-xs text-slate-700">
                         {barChartBreakdown.map((item) => (

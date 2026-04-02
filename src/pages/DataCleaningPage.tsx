@@ -2043,26 +2043,6 @@ export function DataCleaningPage() {
                     >
                       <DropdownMenuItem
                         onClick={() => {
-                          setViewMode("ISSUES");
-                          setSelectedIssueType("allIssues");
-                        }}
-                        className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${viewMode === "ISSUES" && selectedIssueType === "allIssues" ? "text-primary bg-primary/5" : ""}`}
-                      >
-                        <span className="flex-1">
-                          Rows with issues (
-                          {Object.values(issueCountByType || {}).reduce(
-                            (acc, curr) => acc + curr,
-                            0,
-                          )}
-                          )
-                        </span>
-                        {viewMode === "ISSUES" &&
-                          selectedIssueType === "allIssues" && (
-                            <span className="text-primary">✓</span>
-                          )}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => {
                           setViewMode("ALL");
                           setSelectedIssueType("allIssues");
                         }}
@@ -2077,6 +2057,26 @@ export function DataCleaningPage() {
                           )}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setViewMode("ISSUES");
+                          setSelectedIssueType("allIssues");
+                        }}
+                        className={`cursor-pointer hover:text-primary hover:bg-primary/5 ${viewMode === "ISSUES" && selectedIssueType === "allIssues" ? "text-primary bg-primary/5" : ""}`}
+                      >
+                        <span className="flex-1">
+                          All Issues (
+                          {Object.values(issueCountByType || {}).reduce(
+                            (acc, curr) => acc + curr,
+                            0,
+                          )}
+                          )
+                        </span>
+                        {viewMode === "ISSUES" &&
+                          selectedIssueType === "allIssues" && (
+                            <span className="text-primary">✓</span>
+                          )}
+                      </DropdownMenuItem>
                       {availableIssueTypes.map((type) => (
                         <DropdownMenuItem
                           key={type}
@@ -2446,7 +2446,8 @@ export function DataCleaningPage() {
                         { key: "datatype_fix", label: "Fix Data Type Issues" },
                         {
                           key: "missing_value_fix",
-                          label: "Handle Missing Field Values",
+                          label:
+                            "Handle Missing Field Values Using Highest Occurrence",
                         },
                         {
                           key: "field_length_fix",
@@ -2454,7 +2455,8 @@ export function DataCleaningPage() {
                         },
                         {
                           key: "deduplication",
-                          label: "Remove Duplicate Data Records",
+                          label:
+                            "Handle Missing Field Values Using Highest Occurrence",
                         },
                       ].map((opt) => (
                         <>
