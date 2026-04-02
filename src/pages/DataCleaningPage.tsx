@@ -337,7 +337,42 @@ export function DataCleaningPage() {
   };
 
   const columns = useMemo(() => {
-    // Use originalRows as the stable source for columns to prevent shifts if first row has missing keys
+    // 1. Try to get headers from field mappings in sessionStorage to ensure consistency with what was mapped
+    const allMappingsStr =
+      sessionStorage.getItem("entityMappings") ||
+      sessionStorage.getItem("allEntityMappings");
+
+    if (allMappingsStr) {
+      try {
+        const allMappings = JSON.parse(allMappingsStr) as Record<
+          string,
+          { targetField: string }[]
+        >;
+        const uniqueTargetFields = new Set<string>();
+
+        Object.values(allMappings).forEach((mappings) => {
+          if (Array.isArray(mappings)) {
+            mappings.forEach((m) => {
+              if (
+                m.targetField &&
+                m.targetField.trim() !== "" &&
+                m.targetField !== "Unmapped"
+              ) {
+                uniqueTargetFields.add(m.targetField);
+              }
+            });
+          }
+        });
+
+        if (uniqueTargetFields.size > 0) {
+          return Array.from(uniqueTargetFields);
+        }
+      } catch (err) {
+        console.warn("Could not parse entityMappings for columns:", err);
+      }
+    }
+
+    // 2. Fallback: Use originalRows or allRows as a source for columns if no mapping info found
     const dataSource =
       originalRows.length > 0 ? originalRows[0] : (allRows[0] ?? {});
     return Object.keys(dataSource).filter(
