@@ -337,7 +337,6 @@ export function DataCleaningPage() {
   };
 
   const columns = useMemo(() => {
-    // 1. Try to get headers from field mappings in sessionStorage to ensure consistency with what was mapped
     const allMappingsStr =
       sessionStorage.getItem("entityMappings") ||
       sessionStorage.getItem("allEntityMappings");
